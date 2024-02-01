@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="800" height="800"></canvas>
+    <script type="module">
+        import { Renderer, Texture, BaseTexture } from "../../src/main.ts"
+
+        let image = new Image
+
+        image.onload = () => {
+            let renderer = new Renderer({
+                canvas: document.getElementById('canvas')
+            })
+
+            let texture = Texture.Form(renderer, image)
+
+            renderer.clear()
+            renderer.save()
+
+            renderer.modelMatrix.translate(
+                50, 50
+            )
+            renderer.modelMatrix.rotate(
+               0.5
+            )            
+            renderer.currentCompositors.addQuad(
+                texture.baseTexture,
+                0,
+                0,
+                50,
+                50,
+            )
+            renderer.restore()
+
+            renderer.currentCompositors.addQuad(
+                texture.baseTexture,
+                0,
+                0,
+                50,
+                50,
+            )
+
+            renderer.currentCompositors.flush()
+        }
+
+        image.src = "./test.png"
+    </script>
+</body>
+
+</html>
