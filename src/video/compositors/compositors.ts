@@ -1,4 +1,3 @@
-import { PoolManager } from "../../system/pool"
 import GLShader from "../glshader"
 import { Renderer } from "../renderer"
 import { AttributeInfo, ICompositorOptions } from "../../interface"
@@ -19,13 +18,10 @@ abstract class Compositor {
     protected vertexByteSize: number = 0
     /** 一个顶点有几个 float32 */
     protected vertexFloatSize: number = 0
-    protected pool: PoolManager
-
     currentShader: GLShader
 
     constructor(options: ICompositorOptions) {
         this.gl = options.renderer.gl
-        this.pool = options.renderer.pool
 
         options.attributes.forEach((info) => {
             this.addAttributeInfo(info)

@@ -8,6 +8,7 @@ import { createBuffer } from "../utils/program";
 import { BaseTexture } from "../texture/texture";
 import Color from "../../math/color";
 import GLShader from "../glshader";
+import pool from "../../system/pool";
 
 class TextureCompositors extends Compositor {
     private bufferArray: VertexArray
@@ -27,7 +28,7 @@ class TextureCompositors extends Compositor {
             fragmentShader
         })
         this.buffer = createBuffer(gl)
-        this.color = this.pool.Color.pull( 1, 1, 1, 1)
+        this.color = pool.Color.pull( 1, 1, 1, 1)
         this.bufferArray = new VertexArray(this.vertexFloatSize, 6)
     }
 

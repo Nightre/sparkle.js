@@ -25,7 +25,7 @@ class Transform2D extends Container {
         const [x, y] = invert!.apply(v.x, v.y)
         this.position?.set(x, y)
     }
-    
+
     get global_rotation() {
         return this.modelMatrix.getRotation()
     }
@@ -33,7 +33,9 @@ class Transform2D extends Container {
         const invert = this.modelMatrix.invert()
         this.rotation = r + invert!.getRotation()
     }
-
+    getMouseLocalPositon() {
+        return this.global_position.sub(this.engine.mouse.mousePosition)
+    }
     modelMatrix: Matrix
 
     constructor(options: ITransform2DOptions) {

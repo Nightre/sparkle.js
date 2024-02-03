@@ -3,14 +3,16 @@ import { Renderer } from "./video/renderer"
 import { ISparkleEngineOption } from "./interface";
 import { Loader } from "./main";
 import { TextureManager } from "./video/texture/texture";
+import { InputManager } from "./input/input"
 import pool from "./system/pool";
-
-//TODO:按键
+import MouseManager from "./input/mouse"
 class SparkleEngine {
     renderer: Renderer
 
     root!: Container
     residents: Set<Container> = new Set
+    input: InputManager
+    mouse: MouseManager
     loader: Loader
     texture: TextureManager
 
@@ -32,11 +34,15 @@ class SparkleEngine {
      * @param options
      */
     constructor(options: ISparkleEngineOption) {
-        pool.init()
+        pool.register()
+        this.input = new InputManager(this)
+        this.mouse = new MouseManager(this, options.canvas)
         this.loader = new Loader(this)
         this.texture = new TextureManager(this)
         this.changeSenceTo(new Container({ engine: this }))
+        
         this.renderer = new Renderer(this, { ...options });
+
         requestAnimationFrame(this.loop.bind(this))
     }
     changeSenceTo(sence: Container) {

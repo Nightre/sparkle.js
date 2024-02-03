@@ -106,3 +106,23 @@ export interface IInputEvents {
     onKeyPressRepeat: (key: string) => void
     onKeyRelease: (key: string) => void
 }
+
+// Input > Mouse //
+export interface IMouseEvents {
+    onMouseDown: (position: IMouseData) => void;
+    onMouseMove: (position: IMouseData) => void;
+    onMouseUp: (position: IMouseData) => void;
+}
+export interface IMouseData {
+    position: Vector2
+    event: MouseEvent
+}
+
+// 
+
+export interface IRect {
+    x: number,
+    y: number,
+    w: number,
+    h: number
+}

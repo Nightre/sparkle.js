@@ -18,10 +18,7 @@ let cat2 = new Sprite({
 cat.position.set(200, 200)
 cat.offset.set(320 / 2, 320 / 2)
 cat.addChild(cat2)
-cat.global_rotation = 0.5
-setTimeout(() => {
-    cat2.global_rotation = 0
-}, 1000);
+
 cat2.position.set(50, 50)
 
 sparkle.root.addChild(cat)

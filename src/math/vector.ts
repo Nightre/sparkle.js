@@ -56,15 +56,19 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
     cross(v: Vector2): number {
         return this.x * v.y - this.y * v.x;
     }
-    sub(v: Vector2){
-        this.x -= v.x
-        this.y -= v.y
-        return this
+    sub(v: Vector2) {
+        return pool.Vector2.pull(this.x - v.x, this.y - v.y)
     }
-    add(v :Vector2){
-        this.x += v.x
-        this.y += v.y
-        return this
+    add(v: Vector2) {
+        return pool.Vector2.pull(this.x + v.x, this.y + v.y)
+    }
+    mul (scalar: number): Vector2 {
+        return pool.Vector2.pull(this.x * scalar, this.y * scalar);
+    }
+
+    div(scalar: number): Vector2 {
+        if (scalar === 0) throw new Error("Cannot divide by zero");
+        return pool.Vector2.pull(this.x / scalar, this.y / scalar);
     }
 }
 

@@ -1,6 +1,6 @@
 import { Renderer } from "../video/renderer";
 
-import { IContainerOptions } from "../interface"
+import { IContainerOptions, IMouseData } from "../interface"
 import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import pool, { PoolManager } from "../system/pool";
@@ -45,8 +45,18 @@ class Container extends EventEmitter<{}> {
         }
         this.renderer = this.engine.renderer;
         this.pool = pool
+        this.registerInput()
     }
+    private registerInput() {
+        this.engine.input.on("onKeyDown", this.onKeyDown)
+        this.engine.input.on("onKeyPress", this.onKeyPress)
+        this.engine.input.on("onKeyPressRepeat", this.onKeyPressRepeat)
+        this.engine.input.on("onKeyRelease", this.onKeyRelease)
 
+        this.engine.mouse.on("onMouseDown", this.onMouseDown)
+        this.engine.mouse.on("onMouseMove", this.onMouseMove)
+        this.engine.mouse.on("onMouseUp", this.onMouseUp)
+    }
     /**
      * 添加一个子节点
      * @param child 
@@ -151,7 +161,6 @@ class Container extends EventEmitter<{}> {
         })
     }
 
-    /* eslint-disable @typescript-eslint/no-unused-vars */
     update(_dt: number) {
 
         // 子类实现
@@ -163,10 +172,44 @@ class Container extends EventEmitter<{}> {
         })
     }
 
-
     destory() {
-        this.engine.removeResident(this)
+        this.engine.input.off("onKeyDown", this.onKeyDown)
+        this.engine.input.off("onKeyPress", this.onKeyPress)
+        this.engine.input.off("onKeyPressRepeat", this.onKeyPressRepeat)
+        this.engine.input.off("onKeyRelease", this.onKeyRelease)
+        if (this.resident) {
+            this.engine.removeResident(this)
+        }
     }
+
+    onMouseDown(data: IMouseData) { }
+    onMouseMove(data: IMouseData) { }
+    onMouseUp(data: IMouseData) { }
+
+    getMouseGlobalPositon(){
+        return this.engine.mouse.mousePosition
+    }
+
+    /**
+     * 当按键按下
+     * @param _key 
+     */
+    onKeyDown(_key: string) { }
+    /**
+     * 当按键点击
+     * @param _key 
+     */
+    onKeyPress(_key: string) { }
+    /**
+     * 当按键双击
+     * @param _key 
+     */
+    onKeyPressRepeat(_key: string) { }
+    /**
+     * 当按键释放
+     * @param _key 
+     */
+    onKeyRelease(_key: string) { }
 
     postDestory() {
         this.forEachChildren((child) => {
