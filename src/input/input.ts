@@ -1,0 +1,5 @@
+class InputMannager {
+
+}
+
+export { InputMannager }

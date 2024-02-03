@@ -8,7 +8,7 @@ export default defineConfig({
       fileName: 'sparkle'
     }
   },
-  server:{
-    open:'./test/browser/render.test.html'
+  server: {
+    open: './test/browser/render.test.html'
   }
 })

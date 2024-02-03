@@ -7,7 +7,7 @@
     "dist",
     "index.d.ts"
   ],
-  "main": "./dist/counter.umd.cjs",
+  "main": "./src/index.ts",
   "module": "./dist/counter.js",
   "types": "./index.d.ts",
   "exports": {
@@ -17,15 +17,27 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build"
+    "build": "tsc && vite build",
+    "lint": "eslint .",
+    "docs": "typedoc",
+    "dev:docs": "npx vitepress dev docs"
   },
   "devDependencies": {
+    "@iminu/vitepress-plugin-auto-sidebar": "^1.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.56.0",
+    "tslib": "^2.6.2",
+    "typedoc-theme-category-nav": "^0.0.3",
     "typescript": "^5.3.3",
+    "typescript-eslint": "^0.0.1-alpha.0",
     "vite": "^5.0.10",
-    "vitest": "^1.2.2"
+    "vitepress": "^1.0.0-rc.41",
+    "vitepress-plugin-autobar": "^1.0.8"
   },
+  "author": "Nightre <nightscratchs@gmail.com>",
+  "license": "MIT",
   "dependencies": {
-    "@types/jest": "^29.5.11",
-    "eventemitter3": "^5.0.1"
+    "typedoc": "^0.25.7"
   }
 }

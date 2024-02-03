@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="800" height="800"></canvas>
+    <script type="module">
+        import { SparkleEngine,Renderer, Texture, BaseTexture, Sprite } from "../../src/main.ts"
+
+        let sparkle = new SparkleEngine({
+            canvas: document.getElementById("canvas")
+        })
+        let image = new Image
+
+        image.onload = () => {
+            let renderer = sparkle.renderer
+
+            let texture = Texture.Form(renderer, image)
+
+            let sprites = []
+            for (let index = 0; index < 20; index++) {
+                let s = new Sprite({
+                    engine: sparkle,
+                    texture,
+                })
+                s.position.set(50, 50)
+                sprites.push(
+                    s
+                )
+            }
+
+            sprites[0].addChild(sprites[1])
+            sprites[1].addChild(sprites[2])
+            sprites[0].addChild(sprites[3])
+
+            sparkle.root.addChild(sprites[0])
+
+            console.log(
+                sparkle
+            )
+
+            renderer.draw()
+        }
+
+        image.src = "./test.png"
+    </script>
+</body>
+
+</html>

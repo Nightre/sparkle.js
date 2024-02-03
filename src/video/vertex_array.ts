@@ -1,10 +1,3 @@
-/**
- * @classdesc
- * a Vertex Buffer object
- * @class VertexArrayBuffer
- * @ignore
- */
-
 class VertexArrayBuffer {
     vertexSize: number
     objSize: number
@@ -60,7 +53,7 @@ class VertexArrayBuffer {
         }
 
         // save a reference to the previous data
-        let data = this.bufferF32;
+        const data = this.bufferF32;
 
         // recreate ArrayBuffer and views
         this.buffer = new ArrayBuffer(this.maxVertex * this.vertexSize * this.objSize);
@@ -78,7 +71,7 @@ class VertexArrayBuffer {
      * @ignore
      */
     pushVertex(...data: number[]) {
-        let offset = this.vertexCount * this.vertexSize;
+        const offset = this.vertexCount * this.vertexSize;
 
         if (this.vertexCount >= this.maxVertex) {
             this.resize(this.vertexCount);

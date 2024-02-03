@@ -2,7 +2,7 @@
  * @ignore
  */
 function compileShader(gl: WebGLRenderingContext, type: number, source: string) {
-    let shader = gl.createShader(type)!;
+    const shader = gl.createShader(type)!;
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
 
@@ -18,8 +18,8 @@ function compileShader(gl: WebGLRenderingContext, type: number, source: string) 
  * @ignore
  */
 export function compileProgram(gl: WebGLRenderingContext, vertex: string, fragment: string) {
-    let vertShader = compileShader(gl, gl.VERTEX_SHADER, vertex);
-    let fragShader = compileShader(gl, gl.FRAGMENT_SHADER, fragment);
+    const vertShader = compileShader(gl, gl.VERTEX_SHADER, vertex);
+    const fragShader = compileShader(gl, gl.FRAGMENT_SHADER, fragment);
 
     let program = gl.createProgram();
 
@@ -34,7 +34,7 @@ export function compileProgram(gl: WebGLRenderingContext, vertex: string, fragme
     gl.linkProgram(program);
 
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        let error_msg =
+        const error_msg =
             "Error initializing Shader " +
             "gl.VALIDATE_STATUS: " + gl.getProgramParameter(program, gl.VALIDATE_STATUS) + "\n" +
             "gl.getError()" + gl.getError() + "\n" +
@@ -54,6 +54,11 @@ export function compileProgram(gl: WebGLRenderingContext, vertex: string, fragme
 
     return program;
 }
+/**
+ * @ignore
+ * @param gl 
+ * @returns 
+ */
 export function createBuffer(gl: WebGLRenderingContext) {
     const buffer = gl.createBuffer()
     if (!buffer) {

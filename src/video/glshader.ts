@@ -1,19 +1,11 @@
+import { IDestoryable } from "../interface"
 import { getMaxShaderPrecision, setPrecision } from "./utils/precision"
 import { compileProgram } from "./utils/program"
+import { AttributeInfo } from "../interface"
 
-export type AttributesLocation = Record<string, number>
-
-export interface AttributeInfo {
-    name: string
-    size: number
-    type: number
-    normalized?: boolean
-    offset: number
-}
-
-export default class GLShader {
+export default class GLShader implements IDestoryable {
     program: WebGLProgram
-    gl: WebGLRenderingContext
+    private gl: WebGLRenderingContext
 
     vertex: string
     fragment: string
@@ -33,7 +25,7 @@ export default class GLShader {
      * 获取 shader 中 attribute 的 location
      */
     getAttribLocation(name: string) {
-        let attr =  this.gl.getAttribLocation(this.program, name);
+        const attr = this.gl.getAttribLocation(this.program, name);
         if (typeof attr !== "undefined") {
             return attr;
         } else {
@@ -42,7 +34,7 @@ export default class GLShader {
     }
 
     getUnifromLocation(name: string): WebGLUniformLocation | null {
-        let uniform = this.gl.getUniformLocation(this.program, name);
+        const uniform = this.gl.getUniformLocation(this.program, name);
         if (typeof uniform !== "undefined") {
             return uniform;
         } else {
@@ -53,12 +45,19 @@ export default class GLShader {
     setVertexAttributes(gl: WebGLRenderingContext, attributes: AttributeInfo[], vertexByteSize: number) {
         // set the vertex attributes
         for (let index = 0; index < attributes.length; ++index) {
-            let element = attributes[index];
-            let location = this.getAttribLocation(element.name);
+            const element = attributes[index];
+            const location = this.getAttribLocation(element.name);
 
             if (location !== -1) {
                 gl.enableVertexAttribArray(location);
-                gl.vertexAttribPointer(location, element.size, element.type, element.normalized ?? false, vertexByteSize, element.offset);
+                gl.vertexAttribPointer(
+                    location,
+                    element.size,
+                    element.type,
+                    element.normalized ?? false,
+                    vertexByteSize,
+                    element.offset
+                );
             } else {
                 gl.disableVertexAttribArray(index);
             }

@@ -10,14 +10,15 @@
 <body>
     <canvas id="canvas" width="800" height="800"></canvas>
     <script type="module">
-        import { Renderer, Texture, BaseTexture } from "../../src/main.ts"
+        import { SparkleEngine, Renderer, Texture, BaseTexture } from "../../src/main.ts"
 
+        let sparkle = new SparkleEngine({
+            canvas: document.getElementById("canvas")
+        })
         let image = new Image
 
         image.onload = () => {
-            let renderer = new Renderer({
-                canvas: document.getElementById('canvas')
-            })
+            let renderer = sparkle.renderer
 
             let texture = Texture.Form(renderer, image)
 
@@ -28,8 +29,12 @@
                 50, 50
             )
             renderer.modelMatrix.rotate(
-               0.5
-            )            
+                0.5
+            )
+            renderer.modelMatrix.scale(
+                3
+            )
+
             renderer.currentCompositors.addQuad(
                 texture.baseTexture,
                 0,
@@ -38,7 +43,9 @@
                 50,
             )
             renderer.restore()
-
+            renderer.modelMatrix.skew(
+                0, 0
+            )
             renderer.currentCompositors.addQuad(
                 texture.baseTexture,
                 0,
