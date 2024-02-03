@@ -1,6 +1,6 @@
 import { ICopyable } from "../interface";
 import { IPoolable } from "../interface";
-import { ObjectPool } from "../pool";
+import pool from "../system/pool";
 
 /**
  * 矩阵
@@ -64,16 +64,16 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
     skew(x: number, y = x) {
         const tanX = Math.tan(x);
         const tanY = Math.tan(y);
-    
+
         const a = this.element[0];
         const b = this.element[1];
         const c = this.element[2];
         const d = this.element[3];
-    
+
         // 应用沿Y轴斜切，影响第一列
         this.element[0] += tanY * b;
         this.element[2] += tanY * d;
-    
+
         // 应用沿X轴斜切，影响第二列
         this.element[1] += tanX * a;
         this.element[3] += tanX * c;
@@ -96,7 +96,34 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
             martix.element
         )
     }
-    clone(pool: ObjectPool) {
-        return pool.pull(this.className, this.element) as Matrix;
+    clone() {
+        return pool.Matrix.pull(this.element);
+    }
+    invert() {
+        const det = this.element[0] * this.element[3] - this.element[1] * this.element[2];
+        if (det === 0) {
+            console.error("Matrix is not invertible.");
+            return null;
+        }
+
+        const invertedElements = new Float32Array(6);
+        invertedElements[0] = this.element[3] / det;
+        invertedElements[1] = -this.element[1] / det;
+        invertedElements[2] = -this.element[2] / det;
+        invertedElements[3] = this.element[0] / det;
+        invertedElements[4] = (this.element[2] * this.element[5] - this.element[3] * this.element[4]) / det;
+        invertedElements[5] = (this.element[1] * this.element[4] - this.element[0] * this.element[5]) / det;
+
+        return pool.Matrix.pull(invertedElements)
+    }
+    getRotation() {
+        // 由于a = this.element[0], b = this.element[1]
+        // 可以使用Math.atan2(b, a)来获得旋转角度，它会返回一个介于 -π 到 π 之间的值
+        return Math.atan2(this.element[1], this.element[0]);
+    }
+    getScale() {
+        const scaleX = Math.sqrt(this.element[0] * this.element[0] + this.element[1] * this.element[1]);
+        const scaleY = Math.sqrt(this.element[2] * this.element[2] + this.element[3] * this.element[3]);
+        return { scaleX, scaleY };
     }
 }

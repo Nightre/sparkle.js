@@ -1,6 +1,6 @@
 import { ICopyable } from "../interface"
 import { IPoolable } from "../interface"
-import { ObjectPool } from "../pool"
+import pool from "../system/pool"
 
 /**
  * 2D向量
@@ -15,6 +15,23 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
         this.poolReset(x, y)
     }
 
+    get magnitude(): number {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+    set magnitude(value: number) {
+        const dir = this.direction;
+        this.x = Math.cos(dir) * value;
+        this.y = Math.sin(dir) * value;
+    }
+    get direction(): number {
+        return Math.atan2(this.y, this.x);
+    }
+    set direction(value: number) {
+        const mag = this.magnitude;
+        this.x = Math.cos(value) * mag;
+        this.y = Math.sin(value) * mag;
+    }
+
     poolReset(x: number, y = x): void {
         this.set(x, y)
     }
@@ -22,6 +39,7 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
     set(x: number, y = x) {
         this.x = x
         this.y = y
+        return this
     }
     copy(obj: Vector2) {
         this.set(
@@ -29,8 +47,24 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
             obj.y
         )
     }
-    clone(pool: ObjectPool) {
-        return pool.pull(this.className, this.x, this.y) as Vector2
+    clone() {
+        return pool.Vector2.pull(this.x, this.y)
+    }
+    dot(v: Vector2): number {
+        return this.x * v.x + this.y * v.y;
+    }
+    cross(v: Vector2): number {
+        return this.x * v.y - this.y * v.x;
+    }
+    sub(v: Vector2){
+        this.x -= v.x
+        this.y -= v.y
+        return this
+    }
+    add(v :Vector2){
+        this.x += v.x
+        this.y += v.y
+        return this
     }
 }
 

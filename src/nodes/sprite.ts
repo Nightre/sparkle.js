@@ -17,7 +17,6 @@ class Sprite extends Drawable {
         if (!this.texture || !this.visible) {
             return;
         }
-
         super.draw();
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;

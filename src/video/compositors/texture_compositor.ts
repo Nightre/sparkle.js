@@ -27,7 +27,7 @@ class TextureCompositors extends Compositor {
             fragmentShader
         })
         this.buffer = createBuffer(gl)
-        this.color = this.pool.pull("Color", 1, 1, 1, 1)
+        this.color = this.pool.Color.pull( 1, 1, 1, 1)
         this.bufferArray = new VertexArray(this.vertexFloatSize, 6)
     }
 

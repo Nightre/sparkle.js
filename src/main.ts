@@ -11,8 +11,13 @@ import { BaseTexture, Texture } from "./video/texture/texture"
 import GLShader from "./video/glshader"
 import VertexArrayBuffer from "./video/vertex_array"
 import { SparkleEngine } from "./engine"
-import { ObjectPool } from "./pool"
+import { ObjectPool } from "./system/pool"
 import { Renderer } from "./video/renderer"
+import EventEmitter from "./system/event"
+import Loader from "./loader/loader"
+import AudioManager from "./audio/audio"
+import { TextureManager } from "./video/texture/texture"
+
 export {
     Color,
     Vector2,
@@ -25,7 +30,8 @@ export {
 
     Compositor,
     TextureCompositors,
-
+    
+    TextureManager,
     Texture,
     BaseTexture,
 
@@ -34,6 +40,10 @@ export {
     VertexArrayBuffer,
     ObjectPool,
     SparkleEngine,
+
+    EventEmitter,
+    Loader,
+    AudioManager,
 }
 
 export * from "./interface"

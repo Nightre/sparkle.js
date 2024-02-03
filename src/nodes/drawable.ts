@@ -11,7 +11,7 @@ class Drawable extends Transform2D {
     visible: boolean = true
     constructor(options: IDrawableOptions) {
         super(options)
-        this.color = options.color ?? this.pool.pull("Color", 1, 1, 1, 1)
+        this.color = options.color ?? this.pool.Color.pull(1, 1, 1, 1)
     }
     show() {
         this.visible = true
@@ -20,7 +20,7 @@ class Drawable extends Transform2D {
         this.visible = false
     }
     destory() {
-        this.pool.push(this.color)
+        this.pool.Color.push(this.color)
     }
 }
 

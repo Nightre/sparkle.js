@@ -1,6 +1,6 @@
 import { ICopyable } from "../interface";
 import { IPoolable } from "../interface";
-import { ObjectPool } from "../pool";
+import pool from "../system/pool";
 
 /**
  * 颜色
@@ -22,7 +22,7 @@ class Color implements IPoolable, ICopyable<Color> {
             r, g, b, alpha
         )
     }
-    setColor(r: number, g: number, b: number, alpha = 1) {
+    setColor(r: number, g: number, b: number, alpha: number = 1) {
         this.r = r
         this.g = g
         this.b = b
@@ -33,8 +33,8 @@ class Color implements IPoolable, ICopyable<Color> {
             c.r, c.g, c.b, c.alpha
         )
     }
-    clone(pool: ObjectPool) {
-        return pool.pull(this.className, this.r, this.g, this.b, this.alpha) as Color
+    clone() {
+        return pool.Color.pull(this.r, this.g, this.b, this.alpha)
     }
     equals(color: Color) {
         return color.r == this.r &&

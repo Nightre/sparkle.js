@@ -1,13 +1,13 @@
 import { SparkleEngine } from "./engine"
 import Vector2 from "./math/vector"
-import { ObjectPool } from "./pool"
+import { PoolManager } from "./system/pool"
 import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 
 export interface ICopyable<T> {
     copy: (obj: T) => void
-    clone: (pool: ObjectPool) => T
+    clone: (pool: PoolManager) => T
 }
 export interface IDestoryable {
     destory: () => void
@@ -16,21 +16,27 @@ export interface IDestoryable {
 // engine //
 export interface ISparkleEngineOption {
     canvas: HTMLCanvasElement,
-    antialias?: boolean
+    antialias?: boolean,
+    maxFPS?: number,
+    pixelDensity?: number
+    width?: number
+    height?: number
+    scaleMode: SCALE_MODE
 }
 
 // Pool //
-export interface IPoolable {
-    className?: string;
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    poolReset(...args: any[]): void;
-}
-export type Class<T> = new (...args: any[]) => T;
-export interface IObjectClassRecord<T> {
-    class: Class<T>;
-    pool: T[] | undefined;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+export interface PoolTypes {
+    [key: string]: IPoolable
 }
 
+export type Constructor<T> = new (...args: any[]) => T;
+export interface IPoolable {
+    className: string;
+    poolReset(...args: any[]): void;
+}
 
 // Node //
 export interface IDrawableOptions extends ITransform2DOptions {
@@ -38,12 +44,14 @@ export interface IDrawableOptions extends ITransform2DOptions {
 }
 export interface IContainerOptions {
     engine: SparkleEngine
+    resident?: boolean
 }
 export interface ITransform2DOptions extends IContainerOptions {
     position?: Vector2;
     scale?: Vector2;
     rotation?: number;
     skew?: Vector2;
+    offset?: Vector2;
 }
 export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;
@@ -58,6 +66,18 @@ export interface ICompositorOptions {
 }
 
 // Render Attribute //
+export enum SCALE_MODE {
+    /**
+     * 在这种模式下，NativeSize会根据canvas
+     * 的实际大小变化而动态调整，以保持内容与canvas大小的一致性。
+     */
+    ADAPTIVE,
+    /**
+     * 在这种模式下，无论canvas的实际大小如何变化，NativeSize保持
+     * 不变。这意味着内容可能会被拉伸或压缩以适应canvas的大小，但其原始比例不会改变。
+     */
+    FIXED,
+}
 export type AttributesLocation = Record<string, number>
 export interface AttributeInfo {
     name: string
@@ -66,10 +86,23 @@ export interface AttributeInfo {
     normalized?: boolean
     offset: number
 }
+export type TextureUniId = string | TexImageSource
 // Render  //
 export interface IRenderOptions {
     /** canvas */
     canvas: HTMLCanvasElement
     /** 是否启用抗锯齿 */
     antialias?: boolean
+    pixelDensity?: number
+    width?: number
+    height?: number,
+    scaleMode: SCALE_MODE
+}
+
+// Input //
+export interface IInputEvents {
+    onKeyDown: (key: string) => void
+    onKeyPress: (key: string) => void
+    onKeyPressRepeat: (key: string) => void
+    onKeyRelease: (key: string) => void
 }

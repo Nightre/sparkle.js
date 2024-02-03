@@ -1,8 +1,9 @@
 import { SparkleEngine } from "../engine";
 import { IRenderOptions } from "../interface";
+import { SCALE_MODE, Vector2 } from "../main";
 import Matrix from "../math/martix";
 import Container from "../nodes/container";
-import { ObjectPool } from "../pool";
+import pool from "../system/pool";
 import Compositor from "./compositors/compositors";
 import TextureCompositors from "./compositors/texture_compositor";
 import GLShader from "./glshader";
@@ -20,18 +21,24 @@ class Renderer {
     currentCompositors!: Compositor
     currentShader!: GLShader
 
-    projectionMatrix: Float32Array
+    projectionMatrix!: Float32Array
 
     private matrixStack: Matrix[] = []
-    modelMatrix: Matrix = new Matrix()
+    modelMatrix: Matrix
 
     engine: SparkleEngine
-    pool: ObjectPool
+    antialias: boolean
     private root: Container
 
+    NativeSize: Vector2
+    devicePixelRatio: number
+    /**
+     * 当canvas大小改变时的缩放策略
+     * @default {@link SCALE_MODE.ADAPTIVE}
+     */
+    scaleMode: SCALE_MODE
     constructor(engine: SparkleEngine, options: IRenderOptions) {
         this.engine = engine
-        this.pool = engine.pool
         this.root = this.engine.root
         this.canvas = options.canvas
         this.gl = getContext(this.canvas, {
@@ -39,19 +46,32 @@ class Renderer {
             antialias: options.antialias ?? false,
             stencil: true,
         })
-        this.gl.enable(this.gl.SCISSOR_TEST)
-
-        this.projectionMatrix = this.createOrthographicProjectionMatrix(
-            0,
-            this.width,
-            this.height,
-            0
+        this.antialias = options.antialias ?? false
+        this.devicePixelRatio = options.pixelDensity ?? window.devicePixelRatio ?? 1
+        this.NativeSize = pool.Vector2.pull(
+            options.width ?? 300
+            ,
+            options.height ?? 300
         )
-
+        this.scaleMode = options.scaleMode ?? SCALE_MODE.ADAPTIVE;
+        this.setNativeSize()
+        this.resize()
+        this.modelMatrix = pool.Matrix.pull()
         this.addCompositors("texture", new TextureCompositors(this))
         this.setCompositors("texture")
 
-        this.pool.register("Matrix", Matrix)
+
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const { width, height } = entry.contentRect;
+                if (this.scaleMode == SCALE_MODE.ADAPTIVE) {
+                    this.updateNativeSize(width, height);
+                }
+                this.resize()
+            }
+        });
+        resizeObserver.observe(this.canvas);
+
     }
 
     private createOrthographicProjectionMatrix(left: number, right: number, bottom: number, top: number): Float32Array {
@@ -62,26 +82,9 @@ class Renderer {
             -(right + left) / (right - left), -(top + bottom) / (top - bottom), 0, 1
         ]);
     }
-
-    get height() {
-        return this.canvas.height;
-    }
-
-    set height(value) {
-        this.resize(this.width, value);
-    }
-
-    get width() {
-        return this.canvas.width;
-    }
-
-    set width(value) {
-        this.resize(value, this.height);
-    }
-
     reset() {
         this.matrixStack.forEach((matrix) => {
-            this.pool.push(matrix);
+            pool.Matrix.push(matrix);
         });
         this.clear();
     }
@@ -90,7 +93,7 @@ class Renderer {
      * 存储状态（入栈）
      */
     save() {
-        this.matrixStack.push(this.modelMatrix.clone(this.pool))
+        this.matrixStack.push(this.modelMatrix.clone())
     }
     /**
      * 退回上个保存的状态（出栈）
@@ -99,7 +102,7 @@ class Renderer {
         if (this.matrixStack.length > 0) {
             const matrix = this.matrixStack.pop()!;
             this.modelMatrix.copy(matrix)
-            this.pool.push(matrix)
+            pool.Matrix.push(matrix)
         }
     }
 
@@ -128,12 +131,30 @@ class Renderer {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     }
 
-    resize(width: number, height: number) {
+    updateNativeSize(width: number, height: number) {
+        // 更新NativeSize为新的尺寸
+        this.NativeSize.x = width / this.devicePixelRatio;
+        this.NativeSize.y = height / this.devicePixelRatio;
+
+        // 可能还需要重新计算投影矩阵
+        this.setNativeSize();
+    }
+
+    setNativeSize() {
+        const { x, y } = this.NativeSize
+
+        this.projectionMatrix = this.createOrthographicProjectionMatrix(
+            0, x, y, 0
+        )
+    }
+
+    resize() {
         const canvas = this.canvas
-        if (width !== canvas.width || height !== canvas.height) {
-            canvas.width = width;
-            canvas.height = height;
-        }
+        const { x, y } = this.NativeSize
+        const pixelRatio = this.devicePixelRatio
+        canvas.width = x * pixelRatio;
+        canvas.height = y * pixelRatio;
+        this.gl.viewport(0, 0, canvas.width, canvas.height)
     }
 
     draw() {

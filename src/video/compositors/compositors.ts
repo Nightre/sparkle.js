@@ -1,4 +1,4 @@
-import { ObjectPool } from "../../pool"
+import { PoolManager } from "../../system/pool"
 import GLShader from "../glshader"
 import { Renderer } from "../renderer"
 import { AttributeInfo, ICompositorOptions } from "../../interface"
@@ -19,7 +19,7 @@ abstract class Compositor {
     protected vertexByteSize: number = 0
     /** 一个顶点有几个 float32 */
     protected vertexFloatSize: number = 0
-    protected pool: ObjectPool
+    protected pool: PoolManager
 
     currentShader: GLShader
 

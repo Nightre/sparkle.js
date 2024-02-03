@@ -1,17 +1,20 @@
 import Container from "./nodes/container"
-import { ObjectPool } from "./pool"
 import { Renderer } from "./video/renderer"
-import Color from "./math/color";
-import Matrix from "./math/martix";
-import Vector2 from "./math/vector";
 import { ISparkleEngineOption } from "./interface";
+import { Loader } from "./main";
+import { TextureManager } from "./video/texture/texture";
+import pool from "./system/pool";
 
+//TODO:按键
 class SparkleEngine {
     renderer: Renderer
-    pool: ObjectPool
 
-    root: Container
+    root!: Container
+    residents: Set<Container> = new Set
+    loader: Loader
+    texture: TextureManager
 
+    lastTime: number = 0
     /**
      * SparkleEngine 是一个轻量的游戏，易于上手
      * @example 
@@ -29,21 +32,40 @@ class SparkleEngine {
      * @param options
      */
     constructor(options: ISparkleEngineOption) {
-        this.pool = new ObjectPool();
-        this.initPool();
-        this.root = new Container({ engine: this });
+        pool.init()
+        this.loader = new Loader(this)
+        this.texture = new TextureManager(this)
+        this.changeSenceTo(new Container({ engine: this }))
         this.renderer = new Renderer(this, { ...options });
+        requestAnimationFrame(this.loop.bind(this))
     }
-
+    changeSenceTo(sence: Container) {
+        this.residents.forEach((c) => {
+            c.setParent(sence)
+        })
+        if (this.root) {
+            this.root.destory()
+            this.root.postDestory()
+        }
+        this.root = sence
+    }
+    removeResident(child: Container) {
+        this.residents.delete(child)
+    }
+    addResident(child: Container) {
+        child.setParent(this.root)
+        this.residents.add(child)
+    }
     update(dt: number) {
         this.root.update(dt);
         this.root.postUpdate(dt);
     }
-
-    initPool() {
-        this.pool.register("Matrix", Matrix);
-        this.pool.register("Color", Color);
-        this.pool.register("Vector2", Vector2);
+    loop(currentTime: number) {
+        const dt = (currentTime - this.lastTime) / 1000
+        this.lastTime = currentTime
+        this.update(dt)
+        this.renderer.draw()
+        requestAnimationFrame(this.loop.bind(this))
     }
 }
 

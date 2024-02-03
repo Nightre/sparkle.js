@@ -1,17 +1,57 @@
-import { Renderer } from "../renderer"
+import { SparkleEngine, TextureUniId } from "../../main"
 import { createTexture } from "../utils/texture"
+
+
+
+export class TextureManager {
+    engine: SparkleEngine
+    baseTexture: Map<TextureUniId, BaseTexture> = new Map
+    constructor(engine: SparkleEngine) {
+        this.engine = engine
+    }
+
+    textureFromImage(image: TexImageSource) {
+        return new Texture(this.createBaseTexture(image, image))
+    }
+
+    async textureFromUrl(url: string) {
+        const image = await this.engine.loader.loadImage(url)
+
+        return new Texture(this.createBaseTexture(image, url))
+    }
+
+    /**
+     * 通常不会用到该方法，用于创建一个基础纹理: {@link BaseTexture}
+     * @param image 
+     * @returns 
+     */
+    createBaseTexture(image: TexImageSource, id: TextureUniId) {
+        const oldBaseTexture = this.baseTexture.get(id)
+
+        if (oldBaseTexture) {
+            return oldBaseTexture
+        } else {
+            const newOldBaseTexture = new BaseTexture(this.engine, image)
+            this.baseTexture.set(id, newOldBaseTexture)
+            return newOldBaseTexture
+        }
+    }
+}
 
 /**
  * 基础纹理，包含一个 WebGLTexture， 由 {@link Texture} 使用
+ * 通常情况下不会用到该类型，但请勿直接实例化该类，可使用 {@link SparkleEngine.texture} 使用
  * @category Texture
  */
 export class BaseTexture {
     texture: WebGLTexture
     width: number
     height: number
+    source: TexImageSource
 
-    constructor(renderer: Renderer, image: TexImageSource) {
-        this.texture = createTexture(renderer.gl, image)
+    constructor(engine: SparkleEngine, image: TexImageSource) {
+        this.source = image
+        this.texture = createTexture(engine.renderer.gl, image, engine.renderer.antialias)
         if (image instanceof VideoFrame) {
             throw new Error("VideoFrame is currently not supported");
         } else {
@@ -28,9 +68,6 @@ export class Texture {
     baseTexture: BaseTexture | null
     constructor(baseTexture: BaseTexture) {
         this.baseTexture = baseTexture
-    }
-    static Form(renderer: Renderer, image: TexImageSource) {
-        return new Texture(new BaseTexture(renderer, image))
     }
 }
 /**
