@@ -4,6 +4,7 @@ import { PoolManager } from "./system/pool"
 import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
+import Collision from "./nodes/collision"
 
 export interface ICopyable<T> {
     copy: (obj: T) => void
@@ -56,7 +57,9 @@ export interface ITransform2DOptions extends IContainerOptions {
 export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;
 }
-
+export interface ICollisionOptions extends ITransform2DOptions {
+    shape: IRect
+}
 // Compositor //
 export interface ICompositorOptions {
     renderer: Renderer
@@ -125,4 +128,12 @@ export interface IRect {
     y: number,
     w: number,
     h: number
+}
+export enum PRIMITIVE_MODE {
+    FILL,
+    LINE
+}
+export interface ICollisionResult {
+    body: Collision,
+    overlap: Vector2
 }

@@ -6,6 +6,9 @@ import { TextureManager } from "./video/texture/texture";
 import { InputManager } from "./input/input"
 import pool from "./system/pool";
 import MouseManager from "./input/mouse"
+
+import PhysicsManager from "./physics/physics"
+
 class SparkleEngine {
     renderer: Renderer
 
@@ -15,7 +18,7 @@ class SparkleEngine {
     mouse: MouseManager
     loader: Loader
     texture: TextureManager
-
+    physics: PhysicsManager
     lastTime: number = 0
     /**
      * SparkleEngine 是一个轻量的游戏，易于上手
@@ -39,8 +42,9 @@ class SparkleEngine {
         this.mouse = new MouseManager(this, options.canvas)
         this.loader = new Loader(this)
         this.texture = new TextureManager(this)
+        this.physics = new PhysicsManager(this)
         this.changeSenceTo(new Container({ engine: this }))
-        
+
         this.renderer = new Renderer(this, { ...options });
 
         requestAnimationFrame(this.loop.bind(this))

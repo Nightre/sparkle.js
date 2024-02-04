@@ -34,7 +34,7 @@ class Transform2D extends Container {
         this.rotation = r + invert!.getRotation()
     }
     getMouseLocalPositon() {
-        return this.global_position.sub(this.engine.mouse.mousePosition)
+        return this.global_position.sub(this.engine.mouse.mousePosition, false)
     }
     modelMatrix: Matrix
 

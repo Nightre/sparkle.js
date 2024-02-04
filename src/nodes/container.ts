@@ -29,6 +29,7 @@ class Container extends EventEmitter<{}> {
      * 注意：常驻节点必须是根节点的一级子节点
      */
     tag: Set<string> = new Set
+
     pool: PoolManager
     readonly resident: boolean
 
@@ -70,16 +71,19 @@ class Container extends EventEmitter<{}> {
      * 如果当前节点已经有父节点，则先从原来的父节点中移除
      * @param parent 
      */
-    setParent(parent: Container | null) {
+    setParent(parent: Container) {
         // 如果当前节点已经有父节点，则先从原来的父节点中移除
         if (this.parent) {
             this.parent.removeChild(this);
+        } else {
+            this.enterTree()
         }
-
         // 将当前节点添加到新的父节点中
         this.parent = parent
         if (parent) {
             parent.children.push(this);
+        } else {
+            throw new Error("can't set parent to null");
         }
     }
 
@@ -99,6 +103,7 @@ class Container extends EventEmitter<{}> {
     removeChild(child: Container) {
         const index = this.children.indexOf(child)
         if (index >= 0) {
+            child.exitTree()
             child.parent = undefined;
             this.children.splice(index, 1);
         }
@@ -177,16 +182,31 @@ class Container extends EventEmitter<{}> {
         this.engine.input.off("onKeyPress", this.onKeyPress)
         this.engine.input.off("onKeyPressRepeat", this.onKeyPressRepeat)
         this.engine.input.off("onKeyRelease", this.onKeyRelease)
+        this.enterTree()
         if (this.resident) {
             this.engine.removeResident(this)
         }
     }
+    /**
+     * @ignore
+     */
+    enterTree() {
+        this.onEnterTree()
+    }
+    /**
+     * @ignore
+     */
+    exitTree() {
+        this.onExitTree()
+    }
+    onEnterTree() { }
+    onExitTree() { }
 
-    onMouseDown(data: IMouseData) { }
-    onMouseMove(data: IMouseData) { }
-    onMouseUp(data: IMouseData) { }
+    onMouseDown(_data: IMouseData) { }
+    onMouseMove(_data: IMouseData) { }
+    onMouseUp(_data: IMouseData) { }
 
-    getMouseGlobalPositon(){
+    getMouseGlobalPositon() {
         return this.engine.mouse.mousePosition
     }
 
@@ -237,7 +257,29 @@ class Container extends EventEmitter<{}> {
         });
         return result;
     }
+    /**
+     * 遍历所有子节点
+     * @param fn 应用到每个子节点的函数。如果函数返回非false值，则停止遍历。
+     * @returns 如果任何fn调用返回了非false值，则返回该值；否则返回false。
+     */
+    traverseChildren(fn: (child: Container) => any): any {
+        // 首先应用函数到自己
+        let result = fn(this);
+        if (result !== false) {
+            return result;
+        }
 
+        // 递归遍历每个子节点
+        for (let child of this.children) {
+            result = child.traverseChildren(fn); // 递归调用
+            if (result !== false) {
+                return result; // 如果找到了满足条件的子节点，提前返回结果
+            }
+        }
+
+        // 如果所有子节点都没有满足条件，返回false
+        return false;
+    }
 }
 
 export default Container

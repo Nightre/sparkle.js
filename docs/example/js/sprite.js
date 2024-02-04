@@ -17,7 +17,7 @@ let cat2 = new Sprite({
 })
 cat.position.set(200, 200)
 cat.offset.set(320 / 2, 320 / 2)
-cat.addChild(cat2)
+//cat.addChild(cat2)
 
 cat2.position.set(50, 50)
 

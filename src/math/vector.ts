@@ -56,19 +56,54 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
     cross(v: Vector2): number {
         return this.x * v.y - this.y * v.x;
     }
-    sub(v: Vector2) {
-        return pool.Vector2.pull(this.x - v.x, this.y - v.y)
+    sub(v: Vector2, self: boolean = true) {
+        const [x, y] = [this.x - v.x, this.y - v.y]
+        if (self) {
+            this.set(x, y)
+            return this
+        }
+        return pool.Vector2.pull(x, y)
     }
-    add(v: Vector2) {
-        return pool.Vector2.pull(this.x + v.x, this.y + v.y)
+    add(v: Vector2, self: boolean = true) {
+        const [x, y] = [this.x + v.x, this.y + v.y]
+        if (self) {
+            this.set(x, y)
+            return this
+        }
+        return pool.Vector2.pull(x, y)
     }
-    mul (scalar: number): Vector2 {
-        return pool.Vector2.pull(this.x * scalar, this.y * scalar);
+    mul(scalar: number, self: boolean = true): Vector2 {
+        const [x, y] = [this.x * scalar, this.y * scalar]
+        if (self) {
+            this.set(x, y)
+            return this
+        }
+        return pool.Vector2.pull(x, y)
     }
-
-    div(scalar: number): Vector2 {
+    div(scalar: number, self: boolean = true): Vector2 {
         if (scalar === 0) throw new Error("Cannot divide by zero");
-        return pool.Vector2.pull(this.x / scalar, this.y / scalar);
+        const [x, y] = [this.x / scalar, this.y / scalar]
+        if (self) {
+            this.set(x, y)
+            return this
+        }
+        return pool.Vector2.pull(x, y)
+    }
+    unit(self: boolean = true): Vector2 {
+        const mag = this.magnitude;
+        if (mag === 0) throw new Error("Cannot normalize a zero vector");
+        return this.div(mag, self);
+    }
+    normal(self: boolean = true): Vector2 {
+        const [x, y] = [-this.y, this.x]
+        if (self) {
+            this.set(x, y)
+            return this
+        }
+        return pool.Vector2.pull(x, y)
+    }
+    scale(scalar: number, self: boolean = true): Vector2 {
+        return this.mul(scalar, self);
     }
 }
 

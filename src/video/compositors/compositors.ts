@@ -1,6 +1,11 @@
 import GLShader from "../glshader"
 import { Renderer } from "../renderer"
 import { AttributeInfo, ICompositorOptions } from "../../interface"
+import VertexArrayBuffer from "../vertex_array"
+import { createBuffer } from "../utils/program"
+import pool from "../../system/pool"
+import { Color } from "../../main"
+import Path from "../../math/path"
 
 /**
  * Compositor 管理 webgl 状态，每个Compositor有个Shader
@@ -18,6 +23,15 @@ abstract class Compositor {
     protected vertexByteSize: number = 0
     /** 一个顶点有几个 float32 */
     protected vertexFloatSize: number = 0
+
+    protected bufferArray: VertexArrayBuffer
+    protected buffer: WebGLBuffer
+
+    protected color: Color
+    protected colorDirty: boolean = true
+    public path: Path
+    protected abstract drawcallMode: number
+
     currentShader: GLShader
 
     constructor(options: ICompositorOptions) {
@@ -29,7 +43,31 @@ abstract class Compositor {
         this.renderer = options.renderer
         this.shader = new GLShader(this.gl, options.vertexShader, options.fragmentShader)
         this.currentShader = this.shader
+        this.buffer = createBuffer(this.gl)
+        this.bufferArray = new VertexArrayBuffer(this.vertexFloatSize, 6)
+        this.color = pool.Color.pull(1, 1, 1, 1)
+        this.path = this.renderer.path
     }
+    setColor(color: Color) {
+        if (!this.color.equals(color)) {
+            this.colorDirty = true
+            this.color.copy(color)
+        }
+    }
+
+    protected setUnifrom() {
+        if (this.colorDirty) {
+            const gl = this.gl
+            gl.uniform4f(
+                this.currentShader.getUnifromLocation("uColor"),
+                this.color.r,
+                this.color.g,
+                this.color.b,
+                this.color.alpha,
+            )
+        }
+    }
+
     /**
      * 添加一个顶点信息
      * @param info 信息
@@ -84,11 +122,26 @@ abstract class Compositor {
             false,
             this.renderer.projectionMatrix
         )
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
+        this.currentShader.setVertexAttributes(this.gl, this.attributes, this.vertexByteSize)
+        this.colorDirty = true
     }
     /**
      * 绘制到屏幕
      */
-    abstract flush(): void
+
+    flush() {
+        const gl = this.renderer.gl
+
+        const vertexCount = this.bufferArray.vertexCount
+        const vertexSize = this.bufferArray.vertexSize
+        this.setUnifrom()
+        gl.bufferData(gl.ARRAY_BUFFER, this.bufferArray.toFloat32(0, vertexCount * vertexSize), gl.STATIC_DRAW)
+        gl.drawArrays(this.drawcallMode, 0, vertexCount)
+
+        this.colorDirty = false
+        this.bufferArray.clear()
+    }
 }
 
 export default Compositor

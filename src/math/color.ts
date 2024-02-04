@@ -42,6 +42,13 @@ class Color implements IPoolable, ICopyable<Color> {
             color.b == this.b &&
             color.alpha == this.alpha
     }
+    toUint32() {
+        const ur = (this.r  * 255) >> 0;
+        const ug = (this.g  * 255) >> 0;
+        const ub = (this.b  * 255) >> 0;
+
+        return (((this.alpha * 255) >> 0) << 24) | (ur << 16) | (ug << 8) | ub;
+    }
 }
 
 export default Color

@@ -1,21 +1,12 @@
 import { Renderer } from "../renderer";
 import Compositor from "./compositors";
-
 import vertexShader from "../shader/quad.vert?raw"
 import fragmentShader from "../shader/quad.frag?raw"
-import VertexArray from "../vertex_array";
-import { createBuffer } from "../utils/program";
 import { BaseTexture } from "../texture/texture";
-import Color from "../../math/color";
-import GLShader from "../glshader";
-import pool from "../../system/pool";
+import { IRect } from "../../main";
 
 class TextureCompositors extends Compositor {
-    private bufferArray: VertexArray
-    private buffer: WebGLBuffer
-    private color: Color
-    private colorDirty: boolean = true
-
+    protected drawcallMode: number;
     constructor(renderer: Renderer) {
         const gl = renderer.gl
         super({
@@ -27,16 +18,7 @@ class TextureCompositors extends Compositor {
             vertexShader,
             fragmentShader
         })
-        this.buffer = createBuffer(gl)
-        this.color = pool.Color.pull( 1, 1, 1, 1)
-        this.bufferArray = new VertexArray(this.vertexFloatSize, 6)
-    }
-
-    setColor(color: Color) {
-        if (!this.color.equals(color)) {
-            this.colorDirty = true
-            this.color.copy(color)
-        }
+        this.drawcallMode = gl.TRIANGLES
     }
 
     private addVertex(x: number, y: number, u: number, v: number) {
@@ -45,69 +27,42 @@ class TextureCompositors extends Compositor {
         )
     }
 
-    bind(customShader?: GLShader) {
-        super.bind(customShader)
-        this.colorDirty = true
-        const gl = this.renderer.gl
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
-        this.currentShader.setVertexAttributes(this.gl, this.attributes, this.vertexByteSize)
-    }
-
     addQuad(
         texture: BaseTexture,
-        width: number,
-        height: number
+        enableRegion: boolean,
+        region?: IRect
     ) {
         const gl = this.gl
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 
-        this.addVertex(
-            0, 0, 0, 0
-        )
-        this.addVertex(
-            width, 0, 1, 0
-        )
-        this.addVertex(
-            width, height, 1, 1
-        )
+        const u0 = enableRegion ? region!.x / texture.width : 0
+        const v0 = enableRegion ? region!.y / texture.height : 0
+
+        const u1 = enableRegion ? u0 + region!.w / texture.width : 1
+        const v1 = enableRegion ? v0 + region!.h / texture.height : 1
+
+        const w = enableRegion ? region!.w : texture.width
+        const h = enableRegion ? region!.h : texture.height
 
         this.addVertex(
-            0, 0, 0, 0
+            0, 0, u0, v0
         )
         this.addVertex(
-            width, height, 1, 1
+            w, 0, u1, v0
         )
         this.addVertex(
-            0, height, 0, 1
+            w, h, u1, v1
         )
-
-    }
-
-    private setUnifrom() {
-        if (this.colorDirty) {
-            const gl = this.gl
-            gl.uniform4f(
-                this.currentShader.getUnifromLocation("uColor"),
-                this.color.r,
-                this.color.g,
-                this.color.b,
-                this.color.alpha,
-            )
-        }
-    }
-
-    flush() {
-        const gl = this.renderer.gl
-
-        const vertexCount = this.bufferArray.vertexCount
-        const vertexSize = this.bufferArray.vertexSize
-        this.setUnifrom()
-        gl.bufferData(gl.ARRAY_BUFFER, this.bufferArray.toFloat32(0, vertexCount * vertexSize), gl.STATIC_DRAW)
-        gl.drawArrays(gl.TRIANGLES, 0, vertexCount)
-
-        this.colorDirty = false
-        this.bufferArray.clear()
+        this.addVertex(
+            0, 0, u0, v0
+        )
+        this.addVertex(
+            w, h, u1, v1
+        )
+        this.addVertex(
+            0, h, u0, v1
+        )
     }
 }
 

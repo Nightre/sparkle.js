@@ -8,6 +8,8 @@ import Compositor from "./compositors/compositors";
 import TextureCompositors from "./compositors/texture_compositor";
 import GLShader from "./glshader";
 import getContext from "./utils/get_context";
+import PrimitiveCompositors from "./compositors/primitive_compositor";
+import Path from "../math/path";
 
 
 class Renderer {
@@ -37,6 +39,7 @@ class Renderer {
      * @default {@link SCALE_MODE.ADAPTIVE}
      */
     scaleMode: SCALE_MODE
+    path: Path = new Path
     constructor(engine: SparkleEngine, options: IRenderOptions) {
         this.engine = engine
         this.root = this.engine.root
@@ -46,6 +49,7 @@ class Renderer {
             antialias: options.antialias ?? false,
             stencil: true,
         })
+        const gl = this.gl
         this.antialias = options.antialias ?? false
         this.devicePixelRatio = options.pixelDensity ?? window.devicePixelRatio ?? 1
         this.NativeSize = pool.Vector2.pull(
@@ -58,8 +62,12 @@ class Renderer {
         this.resize()
         this.modelMatrix = pool.Matrix.pull()
         this.addCompositors("texture", new TextureCompositors(this))
-        this.setCompositors("texture")
+        this.addCompositors("primitive", new PrimitiveCompositors(this))
 
+        this.setCompositors("texture")
+        
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         const resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
