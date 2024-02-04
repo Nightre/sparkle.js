@@ -82,7 +82,7 @@ class PhysicsManager {
         }
 
         // 没有找到分离轴，所以矩形必须相交
-        // 返回true和重叠向量
+        // 重叠向量
         const overlapV = smallestAxis.mul(overlap);
         return overlapV;
     }

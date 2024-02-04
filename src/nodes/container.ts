@@ -1,6 +1,6 @@
 import { Renderer } from "../video/renderer";
 
-import { IContainerOptions, IMouseData } from "../interface"
+import { IContainerOptions, IListened, IMouseData } from "../interface"
 import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import pool, { PoolManager } from "../system/pool";
@@ -29,7 +29,7 @@ class Container extends EventEmitter<{}> {
      * 注意：常驻节点必须是根节点的一级子节点
      */
     tag: Set<string> = new Set
-
+    listened: IListened[] = []
     pool: PoolManager
     readonly resident: boolean
 
@@ -182,11 +182,15 @@ class Container extends EventEmitter<{}> {
         this.engine.input.off("onKeyPress", this.onKeyPress)
         this.engine.input.off("onKeyPressRepeat", this.onKeyPressRepeat)
         this.engine.input.off("onKeyRelease", this.onKeyRelease)
+        this.listened.forEach((v) => {
+            v.emitter.off(v.eventName, v.func)
+        })
         this.enterTree()
         if (this.resident) {
             this.engine.removeResident(this)
         }
     }
+
     /**
      * @ignore
      */

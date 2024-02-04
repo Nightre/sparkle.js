@@ -5,6 +5,7 @@ import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 import Collision from "./nodes/collision"
+import { EventEmitter } from "./main"
 
 export interface ICopyable<T> {
     copy: (obj: T) => void
@@ -136,4 +137,9 @@ export enum PRIMITIVE_MODE {
 export interface ICollisionResult {
     body: Collision,
     overlap: Vector2
+}
+export interface IListened {
+    emitter: EventEmitter<any>
+    eventName: string
+    func: Function
 }
