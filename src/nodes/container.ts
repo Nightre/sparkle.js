@@ -46,24 +46,26 @@ class Container extends EventEmitter<{}> {
         }
         this.renderer = this.engine.renderer;
         this.pool = pool
-        this.registerInput()
     }
-    private registerInput() {
-        this.engine.input.on("onKeyDown", this.onKeyDown)
-        this.engine.input.on("onKeyPress", this.onKeyPress)
-        this.engine.input.on("onKeyPressRepeat", this.onKeyPressRepeat)
-        this.engine.input.on("onKeyRelease", this.onKeyRelease)
 
-        this.engine.mouse.on("onMouseDown", this.onMouseDown)
-        this.engine.mouse.on("onMouseMove", this.onMouseMove)
-        this.engine.mouse.on("onMouseUp", this.onMouseUp)
-    }
     /**
      * 添加一个子节点
      * @param child 
      */
     addChild(child: Container) {
         child.setParent(this);
+    }
+    onEvent<T extends Record<string, any>>(emitter: EventEmitter<T>, eventName: keyof T, func: T[keyof T]) {
+        emitter.on(eventName, func)
+        this.listened.push({
+            emitter,
+            eventName: (eventName as string),
+            func
+        })
+    }
+    offEvent<T extends Record<string, any>>(emitter: EventEmitter<T>, eventName: keyof T, func: T[keyof T]) {
+        emitter.off(eventName, func);
+        this.listened = this.listened.filter(v => !(v.emitter == emitter && v.eventName == eventName));
     }
 
     /**
@@ -178,10 +180,6 @@ class Container extends EventEmitter<{}> {
     }
 
     destory() {
-        this.engine.input.off("onKeyDown", this.onKeyDown)
-        this.engine.input.off("onKeyPress", this.onKeyPress)
-        this.engine.input.off("onKeyPressRepeat", this.onKeyPressRepeat)
-        this.engine.input.off("onKeyRelease", this.onKeyRelease)
         this.listened.forEach((v) => {
             v.emitter.off(v.eventName, v.func)
         })
@@ -205,10 +203,6 @@ class Container extends EventEmitter<{}> {
     }
     onEnterTree() { }
     onExitTree() { }
-
-    onMouseDown(_data: IMouseData) { }
-    onMouseMove(_data: IMouseData) { }
-    onMouseUp(_data: IMouseData) { }
 
     getMouseGlobalPositon() {
         return this.engine.mouse.mousePosition
