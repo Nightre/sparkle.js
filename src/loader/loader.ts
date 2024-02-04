@@ -20,11 +20,10 @@ class Loader {
             case 'jpeg':
             case 'gif':
                 return this.loadImage(path)
-            // TODO:完善音频
-            // case 'mp3':
-            // case 'wav':
-            // case 'ogg':
-            //     return this.loadAudio(path)
+            case 'mp3':
+            case 'wav':
+            case 'ogg':
+                return this.loadAudio(path)
             default:
                 throw new Error(`Unsupported file type: ${extension}`)
         }
@@ -37,15 +36,15 @@ class Loader {
         }
         return await response.json()
     }
-    // TODO:完善音频
-    // async loadAudio(path: string): Promise<AudioBuffer> {
-    //     const response = await fetch(this.baseUrl ? `${this.baseUrl}/${path}` : path)
-    //     if (!response.ok) {
-    //         throw new Error(`An error occurred while loading the audio: ${response.statusText}`)
-    //     }
-    //     const arrayBuffer = await response.arrayBuffer()
-    //     return await this.engine.audioContext.decodeAudioData(arrayBuffer)
-    // }
+
+    async loadAudio(path: string): Promise<AudioBuffer> {
+        const response = await fetch(this.baseUrl ? `${this.baseUrl}/${path}` : path)
+        if (!response.ok) {
+            throw new Error(`An error occurred while loading the audio: ${response.statusText}`)
+        }
+        const arrayBuffer = await response.arrayBuffer()
+        return await this.engine.audio.decode(arrayBuffer)
+    }
 
     async loadImage(path: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {

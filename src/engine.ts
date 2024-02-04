@@ -1,7 +1,7 @@
 import Container from "./nodes/container"
 import { Renderer } from "./video/renderer"
 import { ISparkleEngineOption } from "./interface";
-import { Loader } from "./main";
+import { AudioManager, Loader } from "./main";
 import { TextureManager } from "./video/texture/texture";
 import { InputManager } from "./input/input"
 import pool from "./system/pool";
@@ -19,6 +19,7 @@ class SparkleEngine {
     loader: Loader
     texture: TextureManager
     physics: PhysicsManager
+    audio: AudioManager
     lastTime: number = 0
     /**
      * SparkleEngine 是一个轻量的游戏，易于上手
@@ -43,6 +44,7 @@ class SparkleEngine {
         this.loader = new Loader(this)
         this.texture = new TextureManager(this)
         this.physics = new PhysicsManager(this)
+        this.audio = new AudioManager(this)
         this.changeSenceTo(new Container({ engine: this }))
 
         this.renderer = new Renderer(this, { ...options });

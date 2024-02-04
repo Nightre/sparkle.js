@@ -143,3 +143,6 @@ export interface IListened {
     eventName: string
     func: Function
 }
+export interface IAudioEvent {
+    onEnd: () => void
+}
