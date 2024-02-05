@@ -17,20 +17,33 @@ import EventEmitter from "./system/event"
 import Loader from "./loader/loader"
 import AudioManager from "./audio/audio"
 import { TextureManager } from "./video/texture/texture"
+import Text from "./nodes/text"
+import TextManager from "./video/text_manager"
+import Collision from "./nodes/collision"
+
+import Path from "./math/path"
+import { InputManager } from "./input/input"
+import Sence from "./system/sence"
+import MouseManager from "./input/mouse"
+import PhysicsManager from "./physics/physics"
+import { Audio } from "./audio/audio"
 
 export {
     Color,
     Vector2,
     Matrix,
+    Path,
 
     Container,
     Drawable,
     Transform2D,
     Sprite,
+    Text,
+    Collision,
 
     Compositor,
     TextureCompositors,
-    
+
     TextureManager,
     Texture,
     BaseTexture,
@@ -44,6 +57,14 @@ export {
     EventEmitter,
     Loader,
     AudioManager,
+    Audio,
+
+    Sence,
+
+    TextManager,
+    InputManager,
+    MouseManager,
+    PhysicsManager,
 }
 
 export * from "./interface"

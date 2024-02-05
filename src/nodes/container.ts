@@ -1,6 +1,6 @@
 import { Renderer } from "../video/renderer";
 
-import { IContainerOptions, IListened, IMouseData } from "../interface"
+import { IContainerOptions, IListened } from "../interface"
 import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import pool, { PoolManager } from "../system/pool";
@@ -207,27 +207,6 @@ class Container extends EventEmitter<{}> {
     getMouseGlobalPositon() {
         return this.engine.mouse.mousePosition
     }
-
-    /**
-     * 当按键按下
-     * @param _key 
-     */
-    onKeyDown(_key: string) { }
-    /**
-     * 当按键点击
-     * @param _key 
-     */
-    onKeyPress(_key: string) { }
-    /**
-     * 当按键双击
-     * @param _key 
-     */
-    onKeyPressRepeat(_key: string) { }
-    /**
-     * 当按键释放
-     * @param _key 
-     */
-    onKeyRelease(_key: string) { }
 
     postDestory() {
         this.forEachChildren((child) => {

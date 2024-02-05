@@ -2,7 +2,9 @@ import { SparkleEngine } from "../engine";
 import { EventEmitter, IMouseEvents, IMouseData, Vector2 } from "../main";
 import pool from "../system/pool";
 
-
+/**
+ * @category Input
+ */
 class MouseManager extends EventEmitter<IMouseEvents> {
     engine: SparkleEngine;
     canvas: HTMLCanvasElement;

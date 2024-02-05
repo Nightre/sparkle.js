@@ -2,6 +2,9 @@ import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import { IInputEvents } from "../interface";
 
+/**
+ * @category Input
+ */
 class InputManager extends EventEmitter<IInputEvents> {
     engine: SparkleEngine;
     pressedKeys: Set<string> = new Set();

@@ -60,7 +60,12 @@ export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;
 }
 export interface ICollisionOptions extends ITransform2DOptions {
-    shape: IRect
+    shape: Vector2[]
+}
+export interface ITextOptions extends IDrawableOptions {
+    text?: string,
+    font?: string,
+    color?: Color
 }
 // Compositor //
 export interface ICompositorOptions {

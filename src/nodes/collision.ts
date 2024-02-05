@@ -1,14 +1,26 @@
-import { ICollisionOptions, IRect, Transform2D } from "../main";
+import { ICollisionOptions, Transform2D, Vector2 } from "../main";
 import PhysicsManager from "../physics/physics";
 
+/**
+ * @category GameNode
+ * @category Physics
+ */
 class Collision extends Transform2D {
-    shape: IRect
+    shape!: Vector2[]
+    ShapePosition: Vector2[] = []
     physics: PhysicsManager
     constructor(options: ICollisionOptions) {
         super(options)
-        this.shape = options.shape
+        this.setShape(options.shape)
         this.physics = this.engine.physics
         // 获取所有 Collision this.physics.getCollision(this)
+    }
+    setShape(shape: Vector2[]) {
+        this.clearShape()
+        shape.forEach((v) => {
+            this.shape.push(v.clone())
+            this.ShapePosition.push(v.clone())
+        })
     }
     collisionDetection() {
         // TODO: 重要：矩阵
@@ -25,14 +37,29 @@ class Collision extends Transform2D {
     }
     draw(): void {
         super.draw()
+        const model = this.modelMatrix
+        this.shape.forEach((v, index) => {
+            const [x, y] = model.apply(v.x, v.y)
+            this.ShapePosition[index].set(
+                x, y
+            )
+        });
         if (this.engine.debugger) {
-            const { x, y } = this.position!
-            const [sx, sy] = this.renderer.modelMatrix.apply(x + this.shape.x, y + this.shape.y)
-            const [ex, ey] = this.renderer.modelMatrix.apply(x + this.shape.x + this.shape.w, y + this.shape.y + this.shape.h)
-            this.engine.debugger?.addDebugCollisionFrame({
-                x: sx, y: sy, w: ex - sx, h: ey - sy
-            })
+
         }
+    }
+    clearShape() {
+        this.ShapePosition.forEach((v) => {
+            this.pool.Vector2.push(v)
+        })
+        this.shape.forEach((v) => {
+            this.pool.Vector2.push(v)
+        })
+        this.shape = []
+        this.ShapePosition = []
+    }
+    destory(): void {
+        this.clearShape()
     }
 }
 

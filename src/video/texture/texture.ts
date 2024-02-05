@@ -2,7 +2,9 @@ import { SparkleEngine, TextureUniId } from "../../main"
 import { createTexture } from "../utils/texture"
 
 
-
+/**
+ * @category Texture
+ */
 export class TextureManager {
     engine: SparkleEngine
     baseTexture: Map<TextureUniId, BaseTexture> = new Map
@@ -44,13 +46,18 @@ export class TextureManager {
  * @category Texture
  */
 export class BaseTexture {
-    texture: WebGLTexture
-    width: number
-    height: number
+    texture!: WebGLTexture
+    width!: number
+    height!: number
     source: TexImageSource
-
+    engine: SparkleEngine
     constructor(engine: SparkleEngine, image: TexImageSource) {
         this.source = image
+        this.engine = engine
+        this.setImage(image)
+    }
+    setImage(image: TexImageSource) {
+        const engine = this.engine
         this.texture = createTexture(engine.renderer.gl, image, engine.renderer.antialias)
         if (image instanceof VideoFrame) {
             throw new Error("VideoFrame is currently not supported");

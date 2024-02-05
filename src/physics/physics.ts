@@ -1,7 +1,13 @@
 import { SparkleEngine } from "../engine";
-import { ICollisionResult, IRect, Vector2 } from "../main";
+import { ICollisionResult, Vector2 } from "../main";
 import Collision from "../nodes/collision"
-import pool from "../system/pool";
+
+/**
+ * TODO: 使用四叉树，BVH 等优化
+ */
+/**
+ * @category Physics
+ */
 class PhysicsManager {
     engine: SparkleEngine
     private physicsObjects: Set<Collision> = new Set
@@ -14,10 +20,11 @@ class PhysicsManager {
     remove(c: Collision) {
         this.physicsObjects.delete(c)
     }
+
     collisionDetection(c: Collision): ICollisionResult[] {
         const res: ICollisionResult[] = []
         this.physicsObjects.forEach((collision) => {
-            let r = this.SATCollision(collision.shape, c.shape)
+            let r = this.SATCollision(collision.ShapePosition, c.ShapePosition)
             if (r) {
                 res.push({
                     overlap: r,
@@ -27,77 +34,60 @@ class PhysicsManager {
         })
         return res
     }
-    SATCollision(rect1: IRect, rect2: IRect): Vector2 | false {
-        // 将IRect转换为Vector2的四个角
-        const rectToVectors = (rect: IRect) => {
-            const { x, y, w, h } = rect;
-            return [
-                pool.Vector2.pull(x, y),
-                pool.Vector2.pull(x + w, y),
-                pool.Vector2.pull(x, y + h),
-                pool.Vector2.pull(x + w, y + h)
-            ];
-        };
 
-        const vectors1 = rectToVectors(rect1);
-        const vectors2 = rectToVectors(rect2);
+    SATCollision(poly1: Vector2[], poly2: Vector2[]): Vector2 | null {
+        let overlapMagnitude = Infinity;
+        let smallestAxis: Vector2 | null = null;
 
-        let overlap = Infinity;
-        let smallestAxis = pool.Vector2.pull(0, 0);
+        let axes = this.getAxes(poly1).concat(this.getAxes(poly2));
 
-        // 检查所有可能的分离轴
-        for (let i = 0; i < 4; i++) {
-            const axis = vectors1[i].sub(vectors1[(i + 1) % 4]).normal();
-            let minA = Infinity, maxA = -Infinity;
-            let minB = Infinity, maxB = -Infinity;
+        for (let axis of axes) {
+            let projection1 = this.project(poly1, axis);
+            let projection2 = this.project(poly2, axis);
 
-            // 对于每个矩形的所有角，投影到轴并更新最小和最大值
-            [vectors1, vectors2].forEach((vectors, index) => {
-                vectors.forEach(vector => {
-                    const projection = vector.dot(axis);
-                    if (index === 0) {
-                        minA = Math.min(minA, projection);
-                        maxA = Math.max(maxA, projection);
-                    } else {
-                        minB = Math.min(minB, projection);
-                        maxB = Math.max(maxB, projection);
-                    }
-                });
-            });
-
-            // 如果存在分离轴，则返回false
-            if (maxA < minB || maxB < minA) {
-                return false;
-            }
-
-            // 计算重叠量，并检查是否比之前的轴小
-            const overlapA = maxA - minB;
-            const overlapB = maxB - minA;
-            const currentOverlap = Math.min(overlapA, overlapB);
-
-            if (currentOverlap < overlap) {
-                overlap = currentOverlap;
-                smallestAxis = axis;
+            if (!this.overlap(projection1, projection2)) {
+                return null;
+            } else {
+                let o = this.overlapMagnitude(projection1, projection2);
+                if (o < overlapMagnitude) {
+                    overlapMagnitude = o;
+                    smallestAxis = axis;
+                }
             }
         }
 
-        // 没有找到分离轴，所以矩形必须相交
-        // 重叠向量
-        const overlapV = smallestAxis.mul(overlap);
-        return overlapV;
+        return smallestAxis!.mul(overlapMagnitude);
+    }
+    overlapMagnitude([min1, max1]: [number, number], [min2, max2]: [number, number]): number {
+        return Math.min(max1, max2) - Math.max(min1, min2);
+    }
+    getAxes(poly: Vector2[]): Vector2[] {
+        let axes = [];
+        for (let i = 0; i < poly.length; i++) {
+            let p1 = poly[i];
+            let p2 = poly[i + 1 == poly.length ? 0 : i + 1];
+            let edge = p1.sub(p2);
+            axes.push(edge.normal());
+        }
+        return axes;
     }
 
-    getCollisions(_c: Collision) {
-        return this.physicsObjects
+    project(poly: Vector2[], axis: Vector2): [number, number] {
+        let min = axis.dot(poly[0]);
+        let max = min;
+        for (let i = 1; i < poly.length; i++) {
+            let p = axis.dot(poly[i]);
+            if (p < min) {
+                min = p;
+            } else if (p > max) {
+                max = p;
+            }
+        }
+        return [min, max];
     }
 
-    rectContainsPoint(rect: IRect, point: Vector2): boolean {
-        return (
-            point.x >= rect.x &&
-            point.x <= rect.x + rect.w &&
-            point.y >= rect.y &&
-            point.y <= rect.y + rect.h
-        );
+    overlap([min1, max1]: [number, number], [min2, max2]: [number, number]): boolean {
+        return !(min1 > max2 || max1 < min2);
     }
 }
 

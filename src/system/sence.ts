@@ -4,7 +4,9 @@ import { SparkleEngine } from "../engine"
 abstract class Sence {
     abstract create(engine: SparkleEngine): Container
     abstract createOnce(engine: SparkleEngine): void
-    // TODO:添加实例化方法
+    instantiate(engine: SparkleEngine) {
+        return engine.instantiateSence(this)
+    }
 }
 
 export default Sence

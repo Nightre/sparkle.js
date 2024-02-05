@@ -6,7 +6,7 @@ export default {
     "out": "./docs/public/api/",
     "categorizeByGroup": false,
     "defaultCategory": "Others",
-    "categoryOrder": ["Math", "GameNode", "Texture", "*"],
+    "categoryOrder": ["Math", "GameNode", "Texture", "Input", "Physics", "Audio", "*"],
     "plugin": ['typedoc-theme-category-nav'],
     "theme": 'navigation',
     "readme": "./README.md",

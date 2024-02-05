@@ -52,7 +52,7 @@ class Transform2D extends Container {
     draw() {
         super.draw()
         this.renderer.save()
-        this.modelMatrix.copy(this.renderer.modelMatrix)
+        
         this.renderer.modelMatrix.translate(
             this.position!.x, this.position!.y
         );
@@ -69,6 +69,7 @@ class Transform2D extends Container {
         this.renderer.modelMatrix.translate(
             -this.offset!.x, -this.offset!.y
         );
+        this.modelMatrix.copy(this.renderer.modelMatrix)
     }
 
     postDraw(): void {

@@ -2,6 +2,9 @@ import { IRect } from "../main";
 import pool from "../system/pool";
 import Vector2 from "./vector";
 
+/**
+ * @category Math
+ */
 class Path {
     private startPoint: Vector2 = pool.Vector2.pull(0)
     path: Vector2[] = []

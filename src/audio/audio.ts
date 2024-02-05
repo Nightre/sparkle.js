@@ -1,5 +1,8 @@
 import { EventEmitter, IAudioEvent, SparkleEngine } from "../main";
 
+/**
+ * @category Audio
+ */
 class Audio extends EventEmitter<IAudioEvent> {
     private buffer: AudioBuffer;
     private source: AudioBufferSourceNode;
@@ -27,7 +30,9 @@ class Audio extends EventEmitter<IAudioEvent> {
     }
 }
 
-
+/**
+ * @category Audio
+ */
 class AudioManager {
     context: AudioContext
     engine: SparkleEngine

@@ -9,7 +9,7 @@ import MouseManager from "./input/mouse"
 import Debugger from "./debugger/debugger"
 import PhysicsManager from "./physics/physics"
 import Sence from "./system/sence"
-
+import TextManager from "./video/text_manager"
 class SparkleEngine {
     renderer: Renderer
 
@@ -22,6 +22,7 @@ class SparkleEngine {
     physics: PhysicsManager
     debugger?: Debugger
     audio: AudioManager
+    text: TextManager
     lastTime: number = 0
 
     loadedSence: Set<Sence> = new Set
@@ -49,9 +50,11 @@ class SparkleEngine {
         this.texture = new TextureManager(this)
         this.physics = new PhysicsManager(this)
         this.audio = new AudioManager(this)
+        this.text = new TextManager(this)
         this.changeSenceToNode(new Container({ engine: this }))
         this.renderer = new Renderer(this, { ...options });
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
+       
         requestAnimationFrame(this.loop.bind(this))
     }
 
