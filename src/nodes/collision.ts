@@ -59,6 +59,7 @@ class Collision extends Transform2D {
         this.ShapePosition = []
     }
     destory(): void {
+        super.destory()
         this.clearShape()
     }
 }

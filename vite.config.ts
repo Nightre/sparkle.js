@@ -9,6 +9,6 @@ export default defineConfig({
     }
   },
   server: {
-    open: './test/browser/render.test.html'
+    open: './test/index.html'
   }
 })

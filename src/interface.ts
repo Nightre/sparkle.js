@@ -24,7 +24,7 @@ export interface ISparkleEngineOption {
     width?: number
     height?: number
     scaleMode?: SCALE_MODE
-    disableDebugger: boolean
+    disableDebugger?: boolean
 }
 
 // Pool //
@@ -153,11 +153,16 @@ export interface IAudioEvent {
     onEnd: () => void
 }
 
-export enum DebuggerRectType {
+export enum DebuggerDrawType {
     NORMAL,
-    COLLISION
+    COLLISION,
+    CROSS
 }
 
-export interface IDebuggerRect extends IRect {
-    type: DebuggerRectType
+export interface IDebuggerDraw {
+    type: DebuggerDrawType,
+    x: number,
+    y: number,
+    w?: number,
+    h?: number
 }

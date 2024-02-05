@@ -153,7 +153,7 @@ class Container extends EventEmitter<{}> {
     isChild(child: Container) {
         return child.isParent(this);
     }
-
+    drawDebug(){}
     draw() {
         // 子类实现
     }
@@ -161,6 +161,9 @@ class Container extends EventEmitter<{}> {
         this.forEachChildren((child) => {
             if (!child.sleep) {
                 child.draw();
+            }
+            if (this.engine.debugger?.debugger) {
+                child.drawDebug()
             }
             if (!child.sleep || child.onlySelfSleep) {
                 child.postDraw();
@@ -183,12 +186,17 @@ class Container extends EventEmitter<{}> {
         this.listened.forEach((v) => {
             v.emitter.off(v.eventName, v.func)
         })
-        this.enterTree()
         if (this.resident) {
             this.engine.removeResident(this)
         }
+        this.removeFromParent()
     }
-
+    postDestory() { 
+        this.forEachChildren((child) => {
+            child.destory()
+            child.postDestory()
+        })
+    }
     /**
      * @ignore
      */
@@ -208,12 +216,7 @@ class Container extends EventEmitter<{}> {
         return this.engine.mouse.mousePosition
     }
 
-    postDestory() {
-        this.forEachChildren((child) => {
-            child.destory()
-            child.postDestory()
-        })
-    }
+
 
     forEachChildren(fn: (child: Container) => void) {
         this.children.forEach(fn);

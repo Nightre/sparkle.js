@@ -26,6 +26,7 @@ class SparkleEngine {
     lastTime: number = 0
 
     loadedSence: Set<Sence> = new Set
+    whenFinish?: () => void
     /**
      * SparkleEngine 是一个轻量的游戏，易于上手
      * @example 
@@ -44,6 +45,12 @@ class SparkleEngine {
      */
     constructor(options: ISparkleEngineOption) {
         pool.register()
+
+        if (!options.canvas) {
+            throw new Error("Please provide a canvas");
+        }
+        this.changeSenceToNode(new Container({ engine: this }))
+
         this.input = new InputManager(this)
         this.mouse = new MouseManager(this, options.canvas)
         this.loader = new Loader(this)
@@ -51,11 +58,16 @@ class SparkleEngine {
         this.physics = new PhysicsManager(this)
         this.audio = new AudioManager(this)
         this.text = new TextManager(this)
-        this.changeSenceToNode(new Container({ engine: this }))
+
         this.renderer = new Renderer(this, { ...options });
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
-       
-        requestAnimationFrame(this.loop.bind(this))
+
+        this.loop(0)
+    }
+
+    reset() {
+        const sence = new Container({ engine: this })
+        this.changeSenceToNode(sence)
     }
 
     instantiateSence(sence: Sence) {
@@ -80,6 +92,7 @@ class SparkleEngine {
             this.root.destory()
             this.root.postDestory()
         }
+        
         this.root = sence
     }
     removeResident(child: Container) {
@@ -98,6 +111,7 @@ class SparkleEngine {
     loop(currentTime: number) {
         const dt = (currentTime - this.lastTime) / 1000
         this.lastTime = currentTime
+
         if (this.debugger) {
             this.debugger.update()
         }
@@ -106,6 +120,7 @@ class SparkleEngine {
         if (this.debugger) {
             this.debugger.draw()
         }
+
         requestAnimationFrame(this.loop.bind(this))
     }
 }

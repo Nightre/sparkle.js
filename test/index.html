@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparkle Engine Test</title>
+    <style>
+        canvas{
+            width: 500px;
+            height: calc(100vh - 20px);
+            border: 1px solid #000;
+        }
+        .log{
+            border: 1px solid #000;
+            flex-grow: 1;
+        }
+        body{
+            display: flex;
+            gap: 10px;
+            height: 100%;
+        }
+        .sucees{
+            color: rgb(136, 255, 127);
+        }
+        .fail{
+            color: red;
+        }
+        p{
+            margin: 0;
+            margin-left: 10px;
+        }
+        button{
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="log">
+        <p>TESTS </p>
+        <div id="test">
+        </div>
+        <hr>
+        <p>INFO</p>
+        <hr>
+        <div id="info"></div>
+    </div>
+    <script type="module" src="./test.ts"></script>
+</body>
+</html>

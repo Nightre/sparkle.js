@@ -1,0 +1,7 @@
+import { SparkleEngine, Sprite } from "../../src/main";
+import { ITool } from "../test";
+
+export default async function (sparkle: SparkleEngine, tool: ITool) {
+    sparkle.loader.baseUrl = "/test/static"
+
+}

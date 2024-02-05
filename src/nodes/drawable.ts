@@ -19,7 +19,13 @@ class Drawable extends Transform2D {
     hide() {
         this.visible = false
     }
+    draw(): void {
+        super.draw()
+        this.visible = this.visible && this.renderer.visable
+        this.renderer.visable = this.visible
+    }
     destory() {
+        super.destory()
         this.pool.Color.push(this.color)
     }
 }

@@ -32,6 +32,8 @@ abstract class Compositor {
     public path: Path
     protected abstract drawcallMode: number
 
+    lastVert: number[] = []
+
     currentShader: GLShader
 
     constructor(options: ICompositorOptions) {

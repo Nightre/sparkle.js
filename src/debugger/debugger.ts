@@ -1,5 +1,5 @@
 import { InputManager } from "../input/input"
-import { Color, DebuggerRectType, IDebuggerRect as IDebuggerFrame, IRect, PRIMITIVE_MODE, SparkleEngine } from "../main"
+import { Color, IDebuggerDraw as IDebuggerFrame, PRIMITIVE_MODE, SparkleEngine } from "../main"
 import pool from "../system/pool"
 import PrimitiveCompositors from "../video/compositors/primitive_compositor"
 
@@ -32,55 +32,45 @@ class Debugger {
         }
     }
 
-    addDebugFrame(r: IRect) {
-        this.frames.push({
-            ...r,
-            type: DebuggerRectType.COLLISION,
-        })
+    drawDebugFrame(w: number, h: number) {
+        const renderer = this.engine.renderer
+        renderer.setCompositors("primitive");
+        const compositors = renderer.currentCompositors as PrimitiveCompositors;
+        const path = renderer.path
+        this.color.setColor(0, 0, 1)
+        compositors.setColor(this.color)
+        compositors.setMode(PRIMITIVE_MODE.LINE)
+        compositors.lineWidth = 3
+        path.beginPath()
+        path.moveTo(0, 0)
+        path.lineTo(0 + w, 0)
+        path.lineTo(0 + w, 0 + h)
+        path.lineTo(0, 0 + h)
+        path.lineTo(0, 0)
+        compositors.flush()
     }
-    addDebugCollisionFrame(r: IRect) {
-        this.frames.push({
-            ...r,
-            type: DebuggerRectType.COLLISION,
-        })
+
+    addDebugCross() {
+        this.debugger
+        const renderer = this.engine.renderer
+        renderer.setCompositors("primitive");
+        const compositors = renderer.currentCompositors as PrimitiveCompositors;
+        const path = renderer.path
+        compositors.setMode(PRIMITIVE_MODE.LINE)
+        compositors.lineWidth = 4
+        this.color.setColor(1, 0, 0)
+        compositors.setColor(this.color)
+        path.beginPath()
+        path.moveTo(- 10, 0)
+        path.lineTo(10, 0)
+
+        path.moveTo(0, - 10)
+        path.lineTo(0, 10)
+        compositors.flush()
     }
 
     draw() {
-        if (this.debugger) {
-            const renderer = this.engine.renderer
-            renderer.setCompositors("primitive")
-            const compositors = renderer.currentCompositors as PrimitiveCompositors
 
-            compositors.lineWidth = 3
-            this.frames.forEach((rect) => {
-                switch (rect.type) {
-                    case DebuggerRectType.NORMAL:
-                        this.color.setColor(0, 0, 1, 1)
-                        compositors.setMode(PRIMITIVE_MODE.LINE)
-                        break;
-                    case DebuggerRectType.COLLISION:
-                        this.color.setColor(0, 1, 0, 0.5)
-                        compositors.setMode(PRIMITIVE_MODE.FILL)
-                        break;
-                }
-                compositors.setColor(this.color)
-                // TODO: 在render 中直接搞个draw rect
-                renderer.path.beginPath()
-                renderer.path.rectPath(rect)
-                renderer.currentCompositors.flush()
-
-                if (rect.type == DebuggerRectType.COLLISION) {
-                    this.color.setColor(0.3, 0.4, .3, 1)
-                    compositors.setColor(this.color)
-                    compositors.lineWidth = 4
-                    compositors.setMode(PRIMITIVE_MODE.LINE)
-
-                    renderer.path.beginPath()
-                    renderer.path.rectPath(rect)
-                    renderer.currentCompositors.flush()
-                }
-            })
-        }
     }
 }
 

@@ -47,7 +47,7 @@ class TextureCompositors extends Compositor {
         const w = enableRegion ? region!.w : texture.width
         const h = enableRegion ? region!.h : texture.height
 
-        const [sx, sy] = this.addVertex(
+        this.addVertex(
             0, 0, u0, v0
         )
         this.addVertex(
@@ -60,15 +60,14 @@ class TextureCompositors extends Compositor {
         this.addVertex(
             0, 0, u0, v0
         )
-        const [ex, ey] = this.addVertex(
+        this.addVertex(
             w, h, u1, v1
         )
         this.addVertex(
             0, h, u0, v1
         )
-
         return {
-            sx, sy, ex, ey
+            w, h
         }
     }
 }

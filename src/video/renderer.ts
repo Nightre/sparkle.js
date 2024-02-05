@@ -26,11 +26,13 @@ class Renderer {
     projectionMatrix!: Float32Array
 
     private matrixStack: Matrix[] = []
+    private visableStack: boolean[] = []
+
     modelMatrix: Matrix
+    visable: boolean = true
 
     engine: SparkleEngine
     antialias: boolean
-    private root: Container
 
     NativeSize: Vector2
     devicePixelRatio: number
@@ -42,7 +44,6 @@ class Renderer {
     path: Path = new Path
     constructor(engine: SparkleEngine, options: IRenderOptions) {
         this.engine = engine
-        this.root = this.engine.root
         this.canvas = options.canvas
         this.gl = getContext(this.canvas, {
             alpha: true,
@@ -65,7 +66,7 @@ class Renderer {
         this.addCompositors("primitive", new PrimitiveCompositors(this))
 
         this.setCompositors("texture")
-        
+
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -82,6 +83,11 @@ class Renderer {
 
     }
 
+    private get root(): Container {
+        return this.engine.root
+    }
+
+
     private createOrthographicProjectionMatrix(left: number, right: number, bottom: number, top: number): Float32Array {
         return new Float32Array([
             2 / (right - left), 0, 0, 0,
@@ -94,6 +100,7 @@ class Renderer {
         this.matrixStack.forEach((matrix) => {
             pool.Matrix.push(matrix);
         });
+        this.visableStack = []
         this.clear();
     }
 
@@ -102,6 +109,7 @@ class Renderer {
      */
     save() {
         this.matrixStack.push(this.modelMatrix.clone())
+        this.visableStack.push(this.visable)
     }
     /**
      * 退回上个保存的状态（出栈）
@@ -111,6 +119,7 @@ class Renderer {
             const matrix = this.matrixStack.pop()!;
             this.modelMatrix.copy(matrix)
             pool.Matrix.push(matrix)
+            this.visable = this.visableStack.pop()!;
         }
     }
 

@@ -2,6 +2,7 @@ import { Texture } from "../video/texture/texture";
 import TextureCompositors from "../video/compositors/texture_compositor";
 import Drawable from "./drawable";
 import { ISpriteOptions, IRect } from "../interface"
+import { Vector2 } from "../main";
 
 /**
  * 精灵
@@ -14,26 +15,34 @@ class Sprite extends Drawable {
      */
     textureRegion: IRect = { x: 0, y: 0, w: 5, h: 5 }
     enableRegion: boolean = false
+
+    drawSize: Vector2 = this.pool.Vector2.pull(0, 0)
     constructor(options: ISpriteOptions) {
         super(options);
         this.texture = options.texture;
+
     }
     draw(): void {
+        super.draw();
         if (!this.texture || !this.visible) {
             return;
         }
-        super.draw();
         const baseTexture = this.texture.baseTexture!;
 
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;
-        const { sx, sy, ex, ey } = compositors.addQuad(baseTexture, this.enableRegion, this.textureRegion);
+        const { w, h } = compositors.addQuad(baseTexture, this.enableRegion, this.textureRegion);
+        this.drawSize.set(w, h)
+        compositors.setColor(this.color)
         compositors.flush();
-        if (this.engine.debugger) {
-            this.engine.debugger.addDebugFrame({
-                x: sx, y: sy, w: ex - sx, h: ey - sy
-            })            
-        }
+    }
+    drawDebug() {
+        this.engine.debugger?.drawDebugFrame(this.drawSize.x, this.drawSize.y)
+        super.drawDebug()
+    }
+    destory(): void {
+        super.destory()
+        this.pool.Vector2.push(this.drawSize)
     }
 }
 
