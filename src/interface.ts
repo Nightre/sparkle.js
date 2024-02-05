@@ -23,7 +23,8 @@ export interface ISparkleEngineOption {
     pixelDensity?: number
     width?: number
     height?: number
-    scaleMode: SCALE_MODE
+    scaleMode?: SCALE_MODE
+    disableDebugger: boolean
 }
 
 // Pool //
@@ -100,7 +101,7 @@ export interface IRenderOptions {
     pixelDensity?: number
     width?: number
     height?: number,
-    scaleMode: SCALE_MODE
+    scaleMode?: SCALE_MODE
 }
 
 // Input //
@@ -145,4 +146,13 @@ export interface IListened {
 }
 export interface IAudioEvent {
     onEnd: () => void
+}
+
+export enum DebuggerRectType {
+    NORMAL,
+    COLLISION
+}
+
+export interface IDebuggerRect extends IRect {
+    type: DebuggerRectType
 }

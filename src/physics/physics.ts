@@ -90,6 +90,15 @@ class PhysicsManager {
     getCollisions(_c: Collision) {
         return this.physicsObjects
     }
+
+    rectContainsPoint(rect: IRect, point: Vector2): boolean {
+        return (
+            point.x >= rect.x &&
+            point.x <= rect.x + rect.w &&
+            point.y >= rect.y &&
+            point.y <= rect.y + rect.h
+        );
+    }
 }
 
 

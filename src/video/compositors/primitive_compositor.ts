@@ -75,8 +75,10 @@ class PrimitiveCompositors extends Compositor {
         })
     }
     pointPathToVertex() {
-        this.path.forEachPoint((p) => {
-            this.addVertex(p)
+        this.path.forEachPoint((p, index) => {
+            if (index % 2 == 0) {
+                this.addVertex(p)
+            }
         })
     }
     private pathToVertex() {
@@ -90,7 +92,6 @@ class PrimitiveCompositors extends Compositor {
             default:
                 break;
         }
-
     }
 
     flush(): void {

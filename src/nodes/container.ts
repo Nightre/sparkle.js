@@ -31,7 +31,7 @@ class Container extends EventEmitter<{}> {
     tag: Set<string> = new Set
     listened: IListened[] = []
     pool: PoolManager
-    readonly resident: boolean
+    resident: boolean
 
     get root() {
         return this.engine.root

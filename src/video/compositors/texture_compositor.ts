@@ -22,15 +22,17 @@ class TextureCompositors extends Compositor {
     }
 
     private addVertex(x: number, y: number, u: number, v: number) {
+        const pos = this.renderer.modelMatrix.apply(x, y)
         this.bufferArray.pushVertex(
-            ...this.renderer.modelMatrix.apply(x, y), u, v
+            ...pos, u, v
         )
+        return pos
     }
 
     addQuad(
         texture: BaseTexture,
         enableRegion: boolean,
-        region?: IRect
+        region?: IRect,
     ) {
         const gl = this.gl
         gl.activeTexture(gl.TEXTURE0);
@@ -45,7 +47,7 @@ class TextureCompositors extends Compositor {
         const w = enableRegion ? region!.w : texture.width
         const h = enableRegion ? region!.h : texture.height
 
-        this.addVertex(
+        const [sx, sy] = this.addVertex(
             0, 0, u0, v0
         )
         this.addVertex(
@@ -54,15 +56,20 @@ class TextureCompositors extends Compositor {
         this.addVertex(
             w, h, u1, v1
         )
+
         this.addVertex(
             0, 0, u0, v0
         )
-        this.addVertex(
+        const [ex, ey] = this.addVertex(
             w, h, u1, v1
         )
         this.addVertex(
             0, h, u0, v1
         )
+
+        return {
+            sx, sy, ex, ey
+        }
     }
 }
 

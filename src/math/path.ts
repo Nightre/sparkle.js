@@ -1,3 +1,4 @@
+import { IRect } from "../main";
 import pool from "../system/pool";
 import Vector2 from "./vector";
 
@@ -20,6 +21,13 @@ class Path {
         this.fistStack.push(false)
         this.firstPoint = false
         this.startPoint.set(x, y)
+    }
+    rectPath(r: IRect) {
+        this.moveTo(r.x, r.y)
+        this.lineTo(r.x + r.w, r.y)
+        this.lineTo(r.x + r.w, r.y + r.h)
+        this.lineTo(r.x, r.y + r.h)
+        this.lineTo(r.x, r.y)
     }
 
     beginPath() {
@@ -54,7 +62,7 @@ class Path {
             )
         }
     }
-    forEachPoint(fn: (point: Vector2) => void) {
+    forEachPoint(fn: (point: Vector2, i: number) => void) {
         this.path.forEach(fn)
     }
 }
