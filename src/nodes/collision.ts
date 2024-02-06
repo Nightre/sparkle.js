@@ -6,12 +6,12 @@ import PhysicsManager from "../physics/physics";
  * @category Physics
  */
 class Collision extends Transform2D {
-    shape!: Vector2[]
+    shape: Vector2[] = []
     ShapePosition: Vector2[] = []
     physics: PhysicsManager
     constructor(options: ICollisionOptions) {
         super(options)
-        this.setShape(options.shape)
+        this.setShape(options.shape ?? [])
         this.physics = this.engine.physics
         // 获取所有 Collision this.physics.getCollision(this)
     }
@@ -23,7 +23,6 @@ class Collision extends Transform2D {
         })
     }
     collisionDetection() {
-        // TODO: 重要：矩阵
         return this.physics.collisionDetection(this)
     }
 
@@ -40,13 +39,17 @@ class Collision extends Transform2D {
         const model = this.modelMatrix
         this.shape.forEach((v, index) => {
             const [x, y] = model.apply(v.x, v.y)
+
             this.ShapePosition[index].set(
                 x, y
             )
         });
-        if (this.engine.debugger) {
-
-        }
+    }
+    drawDebug(): void {
+        this.engine.debugger?.drawDebugPolygonFrame(
+            this.shape
+        )
+        super.drawDebug()
     }
     clearShape() {
         this.ShapePosition.forEach((v) => {

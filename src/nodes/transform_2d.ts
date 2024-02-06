@@ -14,24 +14,22 @@ class Transform2D extends Container {
     rotation: number;
     skew: Vector2;
     offset: Vector2;
-    // TODO: 现在Global Position 都是上一帧的
-
-    get globalPosition() {
-        const [x, y] =
-            this.modelMatrix.apply(0, 0)
-        return this.pool.Vector2.pull(x, y)
-    }
+    globalPosition: Vector2 = this.pool.Vector2.pull(0, 0)
+    globalRotation: number = 0
     setGlobalPosition(v: Vector2) {
         const invert = this.beforeModelMatrix.invert()
+        console.log(
+            this.beforeModelMatrix,
+            this.renderer.lastMartix
+        )
+
         const [x, y] = invert!.apply(v.x, v.y)
+        this.globalPosition.set(x, y)
         this.position?.set(x, y)
     }
-
-    get globalRotation() {
-        return this.modelMatrix.getRotation()
-    }
     setGlobalRotation(r: number) {
-        const invert = this.modelMatrix.invert()
+        const invert = this.beforeModelMatrix.invert()
+        this.globalRotation = r
         this.rotation = r + invert!.getRotation()
     }
     getMouseLocalPositon() {
@@ -39,7 +37,7 @@ class Transform2D extends Container {
     }
     modelMatrix: Matrix
     beforeModelMatrix: Matrix
-
+    modelMatrixDirty: boolean = false
     constructor(options: ITransform2DOptions) {
         super(options)
         this.modelMatrix = this.pool.Matrix.pull()
@@ -64,6 +62,8 @@ class Transform2D extends Container {
         this.renderer.modelMatrix.rotate(
             this.rotation!
         );
+        this.globalRotation = this.renderer.modelMatrix.getRotation()
+
         this.renderer.modelMatrix.scale(
             this.scale!.x, this.scale!.y
         );
@@ -72,12 +72,16 @@ class Transform2D extends Container {
             this.skew!.x, this.skew!.y
         );
 
-        this.modelMatrix.copy(this.renderer.modelMatrix)
+        
+        const [x, y] = this.renderer.modelMatrix.apply(0, 0)
+        this.globalPosition.set(x, y)
+
         this.renderer.modelMatrix.translate(
             -this.offset!.x, -this.offset!.y
         );
+        this.modelMatrix.copy(this.renderer.modelMatrix)
     }
-    drawDebug(){
+    drawDebug() {
         super.drawDebug()
         this.renderer.save()
         this.renderer.modelMatrix.copy(this.modelMatrix)

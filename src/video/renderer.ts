@@ -83,6 +83,17 @@ class Renderer {
 
     }
 
+
+    public get lastMartix() {
+        const l = this.matrixStack.length
+        if (l == 0) {
+            return this.modelMatrix
+        } else {
+            return this.matrixStack[l]
+        }
+    }
+
+
     private get root(): Container {
         return this.engine.root
     }

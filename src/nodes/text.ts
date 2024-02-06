@@ -1,7 +1,7 @@
 import { BaseTexture } from "../video/texture/texture";
 import Drawable from "./drawable";
 import { ITextOptions } from "../interface"
-import { Color } from "../main";
+import { Color, TextureCompositors } from "../main";
 
 /**
  * 精灵
@@ -9,7 +9,7 @@ import { Color } from "../main";
  */
 class Text extends Drawable {
     private texture!: BaseTexture;
-    color: Color = this.pool.Color.pull(0, 0, 0, 1);
+    color: Color
     font: string
     private _text!: string;
     public get text(): string {
@@ -22,21 +22,40 @@ class Text extends Drawable {
 
     constructor(options: ITextOptions) {
         super(options);
-        this.text = options.text ?? " "
+        this.color = options.color ?? this.pool.Color.pull(1, 1, 1, 1)
+        console.log(
+            options.color
+        )
         this.font = options.font ?? "16px Arial"
-        this.setText(this.text)
+        this.text = options.text ?? " "        
     }
     draw(): void {
         super.draw();
+        if (!this.visible) {
+            return
+        }
+        this.renderer.setCompositors("texture");
+        const compositors = this.renderer.currentCompositors as TextureCompositors;
+        compositors.addQuad(this.texture, false);
+        compositors.setColorByRGBA(1,1,1,1)
+
+        compositors.flush();
     }
     setText(text: string) {
-        this.texture.setImage(
-            this.engine.text.drawText(
-                text,
-                this.font,
-                this.color
-            )
+        const texImageSource = this.engine.text.drawText(
+            text,
+            this.font,
+            this.color
         )
+        if (this.texture) {
+            this.texture.setImage(
+                texImageSource
+            )
+        } else {
+            this.texture = this.engine.texture.createBaseTexture(
+                texImageSource, texImageSource
+            )
+        }
     }
 }
 

@@ -76,7 +76,7 @@ class PrimitiveCompositors extends Compositor {
     }
     pointPathToVertex() {
         this.path.forEachPoint((p, index) => {
-            if (index % 2 == 0) {
+            if (index % 2 == 1) {
                 this.addVertex(p)
             }
         })

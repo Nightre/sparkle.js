@@ -55,8 +55,17 @@ abstract class Compositor {
             this.colorDirty = true
             this.color.copy(color)
         }
+
     }
 
+    setColorByRGBA(r = 1, g = 1, b = 1, a = 1) {
+        const newColor = pool.Color.pull(r, g, b, a)
+        if (!this.color.equals(newColor)) {
+            this.colorDirty = true
+            this.color.copy(newColor)
+        }
+        pool.Color.push(newColor)
+    }
     protected setUnifrom() {
         if (this.colorDirty) {
             const gl = this.gl

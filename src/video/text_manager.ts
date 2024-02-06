@@ -15,7 +15,7 @@ class TextManager {
         }
         return c
     }
-    drawText(text: string, font: string = '16px Arial', color: Color) {
+    drawText(text: string, font: string = '64px Arial', color: Color) {
         this.canvas.font = font;
         // 计算文本的宽度和高度
         let metrics = this.canvas.measureText(text);
@@ -31,13 +31,13 @@ class TextManager {
 
         // 设置字体和颜色
         this.canvas.font = font;
-        this.canvas.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.alpha})`;
+        this.canvas.fillStyle = `rgba(${color.r * 255},${color.g * 255},${color.b * 255},${color.alpha * 255})`;
 
         // 绘制文本
-        this.canvas.fillText(text, 0, 0);
+        this.canvas.fillText(text, 0, textHeight);
+
         return this.canvas.canvas
     }
-
 }
 
 export default TextManager

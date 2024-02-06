@@ -81,7 +81,7 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
         return pool.Vector2.pull(x, y)
     }
     div(scalar: number, self: boolean = true): Vector2 {
-        if (scalar === 0) throw new Error("Cannot divide by zero");
+
         const [x, y] = [this.x / scalar, this.y / scalar]
         if (self) {
             this.set(x, y)
@@ -91,7 +91,6 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
     }
     unit(self: boolean = true): Vector2 {
         const mag = this.magnitude;
-        if (mag === 0) throw new Error("Cannot normalize a zero vector");
         return this.div(mag, self);
     }
     normal(self: boolean = true): Vector2 {

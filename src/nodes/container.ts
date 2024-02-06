@@ -32,7 +32,7 @@ class Container extends EventEmitter<{}> {
     listened: IListened[] = []
     pool: PoolManager
     resident: boolean
-
+    private isReady: boolean = false
     get root() {
         return this.engine.root
     }
@@ -153,7 +153,7 @@ class Container extends EventEmitter<{}> {
     isChild(child: Container) {
         return child.isParent(this);
     }
-    drawDebug(){}
+    drawDebug() { }
     draw() {
         // 子类实现
     }
@@ -171,10 +171,15 @@ class Container extends EventEmitter<{}> {
         })
     }
 
-    update(_dt: number) {
-
+    update(dt: number) {
+        // ready 是下一帧时调用，这个时候节点都被draw过了一次
+        if (!this.isReady) {
+            this.ready()
+        }
+        this.onUpdate(dt)
         // 子类实现
     }
+
     postUpdate(dt: number) {
         this.forEachChildren((child) => {
             child.update(dt);
@@ -191,7 +196,7 @@ class Container extends EventEmitter<{}> {
         }
         this.removeFromParent()
     }
-    postDestory() { 
+    postDestory() {
         this.forEachChildren((child) => {
             child.destory()
             child.postDestory()
@@ -209,8 +214,18 @@ class Container extends EventEmitter<{}> {
     exitTree() {
         this.onExitTree()
     }
+    /**
+     * @ignore
+     */
+    ready(){
+        this.isReady = true
+        this.onReady()
+    }
+
     onEnterTree() { }
     onExitTree() { }
+    onReady() { }
+    onUpdate(_dt: number){}
 
     getMouseGlobalPositon() {
         return this.engine.mouse.mousePosition

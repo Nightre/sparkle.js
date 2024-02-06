@@ -1,5 +1,5 @@
 import { InputManager } from "../input/input"
-import { Color, IDebuggerDraw as IDebuggerFrame, PRIMITIVE_MODE, SparkleEngine } from "../main"
+import { Color, IDebuggerDraw as IDebuggerFrame, PRIMITIVE_MODE, SparkleEngine, Vector2 } from "../main"
 import pool from "../system/pool"
 import PrimitiveCompositors from "../video/compositors/primitive_compositor"
 
@@ -32,13 +32,10 @@ class Debugger {
         }
     }
 
-    drawDebugFrame(w: number, h: number) {
-        const renderer = this.engine.renderer
-        renderer.setCompositors("primitive");
-        const compositors = renderer.currentCompositors as PrimitiveCompositors;
-        const path = renderer.path
+    drawDebugFrame(w: number, h: number, color?: Color) {
+        const { path, compositors } = this.init()
         this.color.setColor(0, 0, 1)
-        compositors.setColor(this.color)
+        compositors.setColor(color ?? this.color)
         compositors.setMode(PRIMITIVE_MODE.LINE)
         compositors.lineWidth = 3
         path.beginPath()
@@ -49,13 +46,38 @@ class Debugger {
         path.lineTo(0, 0)
         compositors.flush()
     }
+    drawDebugPolygonFrame(vs: Vector2[]) {
+        if (vs.length == 0) {
+            return
+        }
+        const { path, compositors } = this.init()
+        this.color.setColor(0, 1, 0, 0.5)
+        compositors.setColor(this.color)
+        compositors.setMode(PRIMITIVE_MODE.LINE)
+        compositors.lineWidth = 3
+        path.beginPath()
+        path.moveTo(vs[0].x, vs[0].y)
+        for (let index = 1; index < vs.length; index++) {
+            const v = vs[index]
+            path.lineTo(v.x, v.y)
+        }
+        path.lineTo(vs[0].x, vs[0].y)
 
-    addDebugCross() {
-        this.debugger
+        compositors.flush()
+    }
+    init() {
         const renderer = this.engine.renderer
         renderer.setCompositors("primitive");
         const compositors = renderer.currentCompositors as PrimitiveCompositors;
         const path = renderer.path
+        return {
+            compositors,
+            path
+        }
+    }
+
+    addDebugCross() {
+        const { path, compositors } = this.init()
         compositors.setMode(PRIMITIVE_MODE.LINE)
         compositors.lineWidth = 4
         this.color.setColor(1, 0, 0)
