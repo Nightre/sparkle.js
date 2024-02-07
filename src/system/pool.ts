@@ -1,16 +1,17 @@
 import { IPoolable, Constructor } from "../interface";
-import { Color, Matrix, Vector2 } from "../main";
+import { Color, Matrix, Vector2, Rect } from "../main";
 
 // TODO: Register
 class PoolManager {
     Matrix!: ObjectPool<Matrix>
     Color!: ObjectPool<Color>
     Vector2!: ObjectPool<Vector2>
-
+    Rect!: ObjectPool<Rect>
     register() {
         this.Matrix = new ObjectPool(Matrix)
         this.Color = new ObjectPool(Color)
         this.Vector2 = new ObjectPool(Vector2);
+        this.Rect = new ObjectPool(Rect);
     }
 }
 /**

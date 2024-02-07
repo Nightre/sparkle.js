@@ -27,12 +27,13 @@ import Sence from "./system/sence"
 import MouseManager from "./input/mouse"
 import PhysicsManager from "./physics/physics"
 import { Audio } from "./audio/audio"
-
+import Rect from "./math/rect"
 export {
     Color,
     Vector2,
     Matrix,
     Path,
+    Rect,
 
     Container,
     Drawable,

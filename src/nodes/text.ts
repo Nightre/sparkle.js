@@ -56,6 +56,10 @@ class Text extends Drawable {
                 texImageSource, texImageSource
             )
         }
+        this.drawSize.set(
+            this.texture.width,
+            this.texture.height,
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-import { SparkleEngine, TextureUniId } from "../../main"
+import { IRect, SparkleEngine, TextureUniId } from "../../main"
 import { createTexture } from "../utils/texture"
 
 
@@ -86,5 +86,5 @@ export class Texture {
  * @category Texture
  */
 export class AltasTexture extends Texture {
-
+    region: IRect = { x: 0, y: 0, w: 0, h: 0 }
 }
