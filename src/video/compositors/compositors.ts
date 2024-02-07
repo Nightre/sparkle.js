@@ -115,8 +115,7 @@ abstract class Compositor {
             size: info.size,
             type: info.type,
             normalized: info.normalized,
-            // what ？
-            offset: info.offset * Float32Array.BYTES_PER_ELEMENT
+            offset: info.offset
         });
 
         this.vertexByteSize += bytesPerElement * info.size

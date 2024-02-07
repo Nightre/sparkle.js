@@ -13,7 +13,7 @@ class TextureCompositors extends Compositor {
             renderer,
             attributes: [
                 { name: 'aPosition', size: 2, type: gl.FLOAT, normalized: false, offset: 0 },
-                { name: 'aRegion', size: 2, type: gl.FLOAT, normalized: false, offset: 2 },
+                { name: 'aRegion', size: 2, type: gl.FLOAT, normalized: false, offset: 2 * Float32Array.BYTES_PER_ELEMENT },
             ],
             vertexShader,
             fragmentShader,
