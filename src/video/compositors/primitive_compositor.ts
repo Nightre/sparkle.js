@@ -17,7 +17,7 @@ class PrimitiveCompositors extends Compositor {
             ],
             vertexShader,
             fragmentShader,
-            vertexPerObj:6
+            vertexPerObj: 6
         })
         this.drawCallMode = gl.LINE_STRIP
     }
@@ -100,6 +100,7 @@ class PrimitiveCompositors extends Compositor {
         this.pathToVertex()
         super.flush()
         this.path.clearPath()
+        // 用 render path避免path太多
     }
 }
 

@@ -26,6 +26,10 @@ class Collision extends Transform2D {
         return this.physics.collisionDetection(this)
     }
 
+    mouseDetection(){
+        return this.physics.SATCollision(this.ShapePosition, [this.getMouseGlobalPositon()])
+    }
+
     exitTree(): void {
         super.exitTree()
         this.physics.remove(this)

@@ -1,8 +1,8 @@
 
-import { IPoolable, IRect } from "../interface"
+import { IPoolable } from "../interface"
 import pool from "../system/pool"
 
-class Rect implements IRect, IPoolable {
+class Rect implements IPoolable {
     x: number = 0
     y: number = 0
     w: number = 0

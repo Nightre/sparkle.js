@@ -38,13 +38,11 @@ class Debugger {
         compositors.setColor(color ?? this.color)
         compositors.setMode(PRIMITIVE_MODE.LINE)
         compositors.lineWidth = 3
-        path.beginPath()
-        path.moveTo(0, 0)
-        path.lineTo(0 + w, 0)
-        path.lineTo(0 + w, 0 + h)
-        path.lineTo(0, 0 + h)
-        path.lineTo(0, 0)
+
+        const rect = pool.Rect.pull(0,0,w,h)
+        path.rectPath(rect)
         compositors.flush()
+        pool.Rect.push(rect)
     }
     drawDebugPolygonFrame(vs: Vector2[]) {
         if (vs.length == 0) {

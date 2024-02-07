@@ -39,6 +39,9 @@ class Transform2D extends Container {
     getMouseLocalPositon() {
         return this.globalPosition.sub(this.engine.mouse.mousePosition, false)
     }
+    getMouseGlobalPositon() {
+        return this.engine.mouse.mousePosition
+    }
 
     constructor(options: ITransform2DOptions) {
         super(options)

@@ -1,6 +1,6 @@
 import { SparkleEngine } from "../engine";
 import { IRenderOptions } from "../interface";
-import { Color, SCALE_MODE, Vector2 } from "../main";
+import { Color, IDrawLineOptions, IDrawOptions, IDrawPolygonOptions, PRIMITIVE_MODE, SCALE_MODE, Vector2 } from "../main";
 import Matrix from "../math/martix";
 import Container from "../nodes/container";
 import pool from "../system/pool";
@@ -35,11 +35,11 @@ class Renderer {
      * 当canvas大小改变时的缩放策略
      * @default {@link SCALE_MODE.ADAPTIVE}
      */
-    scaleMode: SCALE_MODE   
+    scaleMode: SCALE_MODE
     /** 游戏的canvas */
     canvas: HTMLCanvasElement
     /** webgl 上下文 */
-    gl: WebGLRenderingContext 
+    gl: WebGLRenderingContext
 
     private engine: SparkleEngine
     /** 游戏有多少像素  */
@@ -51,7 +51,7 @@ class Renderer {
     private visableStack: boolean[] = []
     /** 合成器存储  */
     private compositors: Map<string, Compositor> = new Map
-    
+
     constructor(engine: SparkleEngine, options: IRenderOptions) {
         this.gl = getContext(options.canvas, {
             alpha: true,
@@ -62,7 +62,7 @@ class Renderer {
         // 初始化
         this.engine = engine
         this.canvas = options.canvas
-        this.backgroundColor = options.backgroundColor ?? pool.Color.pull(0.6,0.6,0.6,1)
+        this.backgroundColor = options.backgroundColor ?? pool.Color.pull(0.6, 0.6, 0.6, 1)
         this.antialias = options.antialias ?? false
         this.devicePixelRatio = options.pixelDensity ?? window.devicePixelRatio ?? 1
         this.nativeSize = pool.Vector2.pull(
@@ -249,6 +249,31 @@ class Renderer {
         this.clear()
         this.root.draw()
         this.root.postDraw()
+    }
+
+    initCostumDraw(options:IDrawOptions){
+        this.setCompositors("primitive", options.shader)
+        if (options.color) {
+            this.currentCompositors.setColor(options.color)
+        } else {
+            this.currentCompositors.setColorByRGBA(0,0,0,1)
+        }
+    }
+    
+    drawLine(options: IDrawLineOptions) {
+        this.initCostumDraw(options);
+        const compositors = (this.currentCompositors as PrimitiveCompositors)
+        compositors.setMode(PRIMITIVE_MODE.LINE)
+
+        compositors.lineWidth = options.lineWdith
+        this.currentCompositors.flush()
+    }
+
+    drawPolygon(options: IDrawPolygonOptions) {
+        this.initCostumDraw(options)
+        const compositors = (this.currentCompositors as PrimitiveCompositors)
+        compositors.setMode(PRIMITIVE_MODE.FILL)
+        this.currentCompositors.flush()
     }
 }
 

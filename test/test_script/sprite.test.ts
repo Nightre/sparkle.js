@@ -18,9 +18,9 @@ export default async function (sparkle: SparkleEngine, tool: ITool) {
         cat.position.set(150, 150)
         cat.offset.set(50, 50)
         cat.rotation = 0.5
-        cat.textureRegion = {
-            x: 50, y: 50, w: 250, h: 250
-        }
+        cat.textureRegion.setRect(
+            50,50,250,250
+        )
         cat.color.setColor(1, 1, 1, 0.5)
     }, 1000);
 

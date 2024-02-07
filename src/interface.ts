@@ -5,7 +5,7 @@ import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 import Collision from "./nodes/collision"
-import { EventEmitter } from "./main"
+import { EventEmitter, GLShader, Rect } from "./main"
 
 export interface ICopyable<T> {
     copy: (obj: T) => void
@@ -126,12 +126,6 @@ export interface IMouseData {
 
 // 
 
-export interface IRect {
-    x: number,
-    y: number,
-    w: number,
-    h: number
-}
 export enum PRIMITIVE_MODE {
     FILL,
     LINE
@@ -161,4 +155,19 @@ export interface IDebuggerDraw {
     y: number,
     w?: number,
     h?: number
+}
+
+export interface IDrawOptions {
+    position: Vector2
+    color?: Color
+    shader?: GLShader
+}
+
+export interface IDrawLineOptions extends IDrawOptions {
+    lineWdith: number
+    path?: Path2D
+}
+
+export interface IDrawPolygonOptions extends IDrawOptions {
+    path?: Path2D
 }
