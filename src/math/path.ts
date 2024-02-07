@@ -1,4 +1,4 @@
-import { IRect } from "../main";
+import { Rect } from "../main";
 import pool from "../system/pool";
 import Vector2 from "./vector";
 
@@ -25,7 +25,7 @@ class Path {
         this.firstPoint = false
         this.startPoint.set(x, y)
     }
-    rectPath(r: IRect) {
+    rectPath(r: Rect) {
         this.moveTo(r.x, r.y)
         this.lineTo(r.x + r.w, r.y)
         this.lineTo(r.x + r.w, r.y + r.h)

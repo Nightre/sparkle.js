@@ -1,4 +1,5 @@
-import { IRect, SparkleEngine, TextureUniId } from "../../main"
+import { Rect, SparkleEngine, TextureUniId } from "../../main"
+import pool from "../../system/pool"
 import { createTexture } from "../utils/texture"
 
 
@@ -86,5 +87,11 @@ export class Texture {
  * @category Texture
  */
 export class AltasTexture extends Texture {
-    region: IRect = { x: 0, y: 0, w: 0, h: 0 }
+    region: Rect = pool.Rect.pull()
+    constructor(baseTexture: BaseTexture,region?: Rect){
+        super(baseTexture)
+        if (this.region) {
+            this.region.copy(region!)
+        }
+    }
 }

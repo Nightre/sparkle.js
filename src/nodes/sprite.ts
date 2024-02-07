@@ -1,7 +1,8 @@
-import { Texture } from "../video/texture/texture";
+import { AltasTexture, Texture } from "../video/texture/texture";
 import TextureCompositors from "../video/compositors/texture_compositor";
 import Drawable from "./drawable";
-import { ISpriteOptions, IRect } from "../interface"
+import { ISpriteOptions } from "../interface"
+import { Rect } from "../main";
 
 /**
  * 精灵
@@ -12,7 +13,7 @@ class Sprite extends Drawable {
     /**
      * 纹理裁剪区域
      */
-    textureRegion: IRect = { x: 0, y: 0, w: 5, h: 5 }
+    textureRegion: Rect = this.pool.Rect.pull()
     enableRegion: boolean = false
 
     hFrames: number = 1
@@ -33,7 +34,14 @@ class Sprite extends Drawable {
 
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;
-        const { w, h } = compositors.addQuad(baseTexture, this.enableRegion, this.textureRegion);
+        const region = this.textureRegion.clone()
+        // TODO: 或许需要移动到合成器或是 AltasTexture
+        let enableRegion = this.enableRegion
+        if (this.texture instanceof AltasTexture) {
+            region.add(this.texture.region)
+            enableRegion = true
+        }
+        const { w, h } = compositors.addQuad(baseTexture, enableRegion, region);
         this.drawSize.set(w, h)
         compositors.setColor(this.color)
         compositors.flush();
@@ -57,12 +65,12 @@ class Sprite extends Drawable {
             const fsw = (this.texture.baseTexture.width / this.hFrames) + this.gapSize; // Add gapSize for horizontal gap
             const fsh = (this.texture.baseTexture.height / this.vFrames) + this.gapSize; // Add gapSize for vertical gap
     
-            this.textureRegion = {
-                x: cordx * fsw,
-                y: cordy * fsh,
-                w: fsw - this.gapSize, // Subtract gapSize to maintain frame size
-                h: fsh - this.gapSize // Subtract gapSize to maintain frame size
-            };
+            this.textureRegion.setRect(
+                cordx * fsw,
+                cordy * fsh,
+                fsw - this.gapSize, // Subtract gapSize to maintain frame size
+                fsh - this.gapSize  // Subtract gapSize to maintain frame size
+            )
         } else {
             throw new Error("vFrames and hFrames should be greater than 0");
         }

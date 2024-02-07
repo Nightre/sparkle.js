@@ -3,7 +3,7 @@ import Compositor from "./compositors";
 import vertexShader from "../shader/quad.vert?raw"
 import fragmentShader from "../shader/quad.frag?raw"
 import { BaseTexture } from "../texture/texture";
-import { IRect } from "../../main";
+import { Rect } from "../../main";
 
 class TextureCompositors extends Compositor {
     protected drawCallMode: number;
@@ -32,7 +32,7 @@ class TextureCompositors extends Compositor {
     addQuad(
         texture: BaseTexture,
         enableRegion: boolean,
-        region?: IRect,
+        region?: Rect,
     ) {
         const gl = this.gl
         gl.activeTexture(gl.TEXTURE0);
