@@ -2,7 +2,12 @@ class EventEmitter<T extends Record<string | symbol, any>> {
     private eventMap: Record<keyof T, Array<(...args: any[]) => void>> =
         {} as any;
 
-    // 添加对应事件的监听函数
+    /**
+     * 监听事件
+     * @param eventName 
+     * @param listener 
+     * @returns 
+     */
     on<K extends keyof T>(eventName: K, listener: T[K]) {
         if (!this.eventMap[eventName]) {
             this.eventMap[eventName] = [];
@@ -11,7 +16,12 @@ class EventEmitter<T extends Record<string | symbol, any>> {
         return this;
     }
 
-    // 触发事件
+    /**
+     * 触发事件
+     * @param eventName 
+     * @param args 
+     * @returns 
+     */
     emit<K extends keyof T>(eventName: K, ...args: Parameters<T[K]>) {
         const listeners = this.eventMap[eventName];
         if (!listeners || listeners.length === 0) return false;
@@ -21,7 +31,12 @@ class EventEmitter<T extends Record<string | symbol, any>> {
         return true;
     }
 
-    // 取消对应事件的监听
+    /**
+     * 取消监听事件
+     * @param eventName 
+     * @param listener 
+     * @returns 
+     */
     off<K extends keyof T>(eventName: K, listener: T[K]) {
         const listeners = this.eventMap[eventName];
         if (listeners && listeners.length > 0) {

@@ -1,3 +1,4 @@
+// this file is from melon.js https://melonjs.github.io/
 class VertexArrayBuffer {
     vertexSize: number
     objSize: number
@@ -6,7 +7,7 @@ class VertexArrayBuffer {
     buffer: ArrayBuffer
     bufferF32: Float32Array
     bufferU32: Uint32Array
-
+    // this file is from melon.js https://melonjs.github.io/
     constructor(vertex_size: number, vertex_per_obj: number) {
         // the size of one vertex in float
         this.vertexSize = vertex_size;

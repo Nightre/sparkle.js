@@ -56,6 +56,10 @@ export class BaseTexture {
         this.engine = engine
         this.setImage(image)
     }
+    /**
+     * 重新设置纹理
+     * @param image 
+     */
     setImage(image: TexImageSource) {
         const engine = this.engine
         this.texture = createTexture(engine.renderer.gl, image, engine.renderer.antialias)

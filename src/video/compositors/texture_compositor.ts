@@ -6,7 +6,7 @@ import { BaseTexture } from "../texture/texture";
 import { IRect } from "../../main";
 
 class TextureCompositors extends Compositor {
-    protected drawcallMode: number;
+    protected drawCallMode: number;
     constructor(renderer: Renderer) {
         const gl = renderer.gl
         super({
@@ -16,9 +16,9 @@ class TextureCompositors extends Compositor {
                 { name: 'aRegion', size: 2, type: gl.FLOAT, normalized: false, offset: 2 },
             ],
             vertexShader,
-            fragmentShader
+            fragmentShader,
         })
-        this.drawcallMode = gl.TRIANGLES
+        this.drawCallMode = gl.TRIANGLES
     }
 
     private addVertex(x: number, y: number, u: number, v: number) {

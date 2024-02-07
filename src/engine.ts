@@ -10,23 +10,32 @@ import Debugger from "./debugger/debugger"
 import PhysicsManager from "./physics/physics"
 import Sence from "./system/sence"
 import TextManager from "./video/text_manager"
+
 class SparkleEngine {
-    renderer: Renderer
+    /** 渲染器 */
+    public renderer: Renderer
+    /** 场景的根节点 */
+    public root!: Container
+    /** 管理键盘输入  */
+    public input: InputManager
+    /** 管理鼠标输入  */
+    public mouse: MouseManager
+    /** 资源加载器  */
+    public loader: Loader
+    /** 纹理管理  */
+    public texture: TextureManager
+    /** 物理管理  */
+    public physics: PhysicsManager
+    /** debugger管理  */
+    public debugger?: Debugger
+    /** 音频管理  */
+    public audio: AudioManager
+    /** 文字管理  */
+    public text: TextManager
 
-    root!: Container
-    residents: Set<Container> = new Set
-    input: InputManager
-    mouse: MouseManager
-    loader: Loader
-    texture: TextureManager
-    physics: PhysicsManager
-    debugger?: Debugger
-    audio: AudioManager
-    text: TextManager
-    lastTime: number = 0
-
-    loadedSence: Set<Sence> = new Set
-    whenFinish?: () => void
+    private lastTime: number = 0
+    private loadedSence: Set<Sence> = new Set
+    private residents: Set<Container> = new Set
     /**
      * SparkleEngine 是一个轻量的游戏，易于上手
      * @example 
@@ -44,13 +53,14 @@ class SparkleEngine {
      * @param options
      */
     constructor(options: ISparkleEngineOption) {
-        pool.register()
+
 
         if (!options.canvas) {
             throw new Error("Please provide a canvas");
         }
+        pool.register()
         this.changeSenceToNode(new Container({ engine: this }))
-
+        // 初始化管理类
         this.input = new InputManager(this)
         this.mouse = new MouseManager(this, options.canvas)
         this.loader = new Loader(this)
@@ -58,18 +68,27 @@ class SparkleEngine {
         this.physics = new PhysicsManager(this)
         this.audio = new AudioManager(this)
         this.text = new TextManager(this)
-
         this.renderer = new Renderer(this, { ...options });
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
 
-        this.loop(0)
+        this.loop(0) // 开始游戏循环
     }
 
     reset() {
+        // 重置场景
         const sence = new Container({ engine: this })
         this.changeSenceToNode(sence)
     }
 
+    /**
+     * 实例化一个场景
+     * @example
+     * ```js
+     * engine.instantiateSence(Sence)
+     * ```
+     * @param sence 
+     * @returns 场景
+     */
     instantiateSence(sence: Sence) {
         const container = sence.create(this)
         if (!this.loadedSence.has(sence)) {
@@ -79,11 +98,24 @@ class SparkleEngine {
         return container
     }
 
+    /**
+     * 转换到某个场景
+     * @example
+     * ```js
+     * engine.changeSenceTo(Sence)
+     * ```
+     */
     changeSenceTo(sence: Sence) {
         const container = this.instantiateSence(sence)
         this.changeSenceToNode(container)
     }
-
+    /**
+     * 转换到某个Container
+     * @example
+     * ```js
+     * engine.changeSenceToNode(Container)
+     * ```
+     */
     changeSenceToNode(sence: Container) {
         this.residents.forEach((c) => {
             c.setParent(sence)
@@ -92,22 +124,39 @@ class SparkleEngine {
             this.root.destory()
             this.root.postDestory()
         }
-        
         this.root = sence
     }
+    /**
+     * 添加一个常驻节点
+     * @ignore
+     */
     removeResident(child: Container) {
         child.resident = false
         this.residents.delete(child)
     }
+    /**
+     * 删除一个常驻节点
+     * @ignore
+     */
     addResident(child: Container) {
         child.resident = true
         child.setParent(this.root)
         this.residents.add(child)
     }
+    /**
+     * @ignore
+     * 游戏更新
+     * @param dt 
+     */
     update(dt: number) {
         this.root.update(dt);
         this.root.postUpdate(dt);
     }
+    /**
+     * @ignore
+     * 循环
+     * @param currentTime 
+     */
     loop(currentTime: number) {
         const dt = (currentTime - this.lastTime) / 1000
         this.lastTime = currentTime

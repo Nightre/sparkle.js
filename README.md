@@ -1,6 +1,7 @@
-# ![](./sparkle_icon.svg) SPARKLE GAME ENGINE
+# SPARKLE GAME ENGINE
 
 Sparkle, an easy-to-use game engine based on webgl
 
+还在制作中... coming soon！
 
-# 矩阵堆叠，drawsize中心
+计划：2月之内完成

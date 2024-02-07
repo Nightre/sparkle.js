@@ -3,13 +3,23 @@ import { getMaxShaderPrecision, setPrecision } from "./utils/precision"
 import { compileProgram } from "./utils/program"
 import { AttributeInfo } from "../interface"
 
+/**
+ * webgl shader
+ * 封装了一些方法
+ */
 export default class GLShader implements IDestoryable {
-    program: WebGLProgram
     private gl: WebGLRenderingContext
-
+    program: WebGLProgram
     vertex: string
     fragment: string
 
+    /**
+     * 
+     * @param gl 
+     * @param vertex 顶点 shader
+     * @param fragment 片元 shader
+     * @param precision 质量，为空则自动使用最高支持
+     */
     constructor(gl: WebGLRenderingContext, vertex: string, fragment: string, precision?: string) {
         this.gl = gl
         this.vertex = setPrecision(vertex, precision || getMaxShaderPrecision(gl))
@@ -17,6 +27,9 @@ export default class GLShader implements IDestoryable {
         this.program = compileProgram(gl, this.vertex, this.fragment);
     }
 
+    /**
+     * 使用当前 shader
+     */
     bind() {
         this.gl.useProgram(this.program);
     }
@@ -25,23 +38,25 @@ export default class GLShader implements IDestoryable {
      * 获取 shader 中 attribute 的 location
      */
     getAttribLocation(name: string) {
-        const attr = this.gl.getAttribLocation(this.program, name);
-        if (typeof attr !== "undefined") {
-            return attr;
-        } else {
-            return -1;
-        }
+        // TODO:将location缓存在cpu，可能提高性能
+        return this.gl.getAttribLocation(this.program, name);
     }
-
+    /**
+     * 获取 uniform 的 Location
+     * @param name 
+     * @returns 
+     */
     getUnifromLocation(name: string): WebGLUniformLocation | null {
-        const uniform = this.gl.getUniformLocation(this.program, name);
-        if (typeof uniform !== "undefined") {
-            return uniform;
-        } else {
-            return null;
-        }
+        // TODO:将location缓存在cpu，可能提高性能
+        return this.gl.getUniformLocation(this.program, name);
     }
 
+    /**
+     * 设置一个顶点属性 的信息
+     * @param gl 
+     * @param attributes 顶点属性信息 
+     * @param vertexByteSize 一个顶点有多少byte，用于 stride
+     */
     setVertexAttributes(gl: WebGLRenderingContext, attributes: AttributeInfo[], vertexByteSize: number) {
         // set the vertex attributes
         for (let index = 0; index < attributes.length; ++index) {
@@ -64,6 +79,9 @@ export default class GLShader implements IDestoryable {
         }
     }
 
+    /**
+     * 销毁该shader
+     */
     destory() {
         this.gl.deleteProgram(this.program)
     }

@@ -19,9 +19,9 @@ abstract class Compositor {
     protected shader: GLShader
     /** 顶点缓冲区信息 */
     protected attributes: AttributeInfo[] = []
-    /** 一个顶点有几个 byte */
+    /** 一个顶点有几个 byte 用于 stride */
     protected vertexByteSize: number = 0
-    /** 一个顶点有几个 float32 */
+    /** 一个顶点有几个 float32 用于 VertexArrayBuffer 设置大小 */
     protected vertexFloatSize: number = 0
 
     protected bufferArray: VertexArrayBuffer
@@ -30,7 +30,7 @@ abstract class Compositor {
     protected color: Color
     protected colorDirty: boolean = true
     public path: Path
-    protected abstract drawcallMode: number
+    protected abstract drawCallMode: number
 
     lastVert: number[] = []
 
@@ -46,7 +46,7 @@ abstract class Compositor {
         this.shader = new GLShader(this.gl, options.vertexShader, options.fragmentShader)
         this.currentShader = this.shader
         this.buffer = createBuffer(this.gl)
-        this.bufferArray = new VertexArrayBuffer(this.vertexFloatSize, 6)
+        this.bufferArray = new VertexArrayBuffer(this.vertexFloatSize, options.vertexPerObj ?? 6)
         this.color = pool.Color.pull(1, 1, 1, 1)
         this.path = this.renderer.path
     }
@@ -115,7 +115,8 @@ abstract class Compositor {
             size: info.size,
             type: info.type,
             normalized: info.normalized,
-            offset: info.offset * bytesPerElement
+            // what ？
+            offset: info.offset * Float32Array.BYTES_PER_ELEMENT
         });
 
         this.vertexByteSize += bytesPerElement * info.size
@@ -148,7 +149,7 @@ abstract class Compositor {
         const vertexSize = this.bufferArray.vertexSize
         this.setUnifrom()
         gl.bufferData(gl.ARRAY_BUFFER, this.bufferArray.toFloat32(0, vertexCount * vertexSize), gl.STATIC_DRAW)
-        gl.drawArrays(this.drawcallMode, 0, vertexCount)
+        gl.drawArrays(this.drawCallMode, 0, vertexCount)
 
         this.colorDirty = false
         this.bufferArray.clear()

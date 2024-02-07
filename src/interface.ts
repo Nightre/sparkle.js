@@ -16,14 +16,8 @@ export interface IDestoryable {
 }
 
 // engine //
-export interface ISparkleEngineOption {
-    canvas: HTMLCanvasElement,
-    antialias?: boolean,
+export interface ISparkleEngineOption extends IRenderOptions {
     maxFPS?: number,
-    pixelDensity?: number
-    width?: number
-    height?: number
-    scaleMode?: SCALE_MODE
     disableDebugger?: boolean
 }
 
@@ -73,6 +67,7 @@ export interface ICompositorOptions {
     attributes: AttributeInfo[]
     vertexShader: string
     fragmentShader: string
+    vertexPerObj?: number
 }
 
 // Render Attribute //
@@ -107,6 +102,7 @@ export interface IRenderOptions {
     width?: number
     height?: number,
     scaleMode?: SCALE_MODE
+    backgroundColor?: Color
 }
 
 // Input //

@@ -13,7 +13,13 @@ class Container extends EventEmitter<{}> {
     protected engine: SparkleEngine
     protected renderer: Renderer
 
+    /**
+     * 父节点
+     */
     parent?: Container | null
+    /**
+     * 子节点列表
+     */
     children: Container[] = []
     /**
      * 休眠，若sleep为真则不会调用{@link update}等函数
@@ -23,16 +29,23 @@ class Container extends EventEmitter<{}> {
      * 仅休眠我自己，不影响其子节点
      */
     onlySelfSleep: boolean = false
+
+    /**
+     * Tag 用于节点查找，可以有多个tag
+     */
+    tag: Set<string> = new Set
+    /**
+     * 对于对象池的引用
+     */
+    pool: PoolManager
     /**
      * 是否为常驻节点，如果是常驻节点的话
      * 在切换场景时不会被销毁（其子节点同样不会被销毁）
      * 注意：常驻节点必须是根节点的一级子节点
      */
-    tag: Set<string> = new Set
-    listened: IListened[] = []
-    pool: PoolManager
     resident: boolean
     private isReady: boolean = false
+    private listened: IListened[] = []
     get root() {
         return this.engine.root
     }
@@ -49,12 +62,11 @@ class Container extends EventEmitter<{}> {
     }
 
     /**
-     * 添加一个子节点
-     * @param child 
+     * 使用该种方法监听事件，当节点被销毁时自动取消监听
+     * @param emitter 
+     * @param eventName 
+     * @param func 
      */
-    addChild(child: Container) {
-        child.setParent(this);
-    }
     onEvent<T extends Record<string, any>>(emitter: EventEmitter<T>, eventName: keyof T, func: T[keyof T]) {
         emitter.on(eventName, func)
         this.listened.push({
@@ -63,11 +75,23 @@ class Container extends EventEmitter<{}> {
             func
         })
     }
+    /**
+     * 使用该方法取消 {@link onEvent} 监听的事件
+     * @param emitter 
+     * @param eventName 
+     * @param func 
+     */
     offEvent<T extends Record<string, any>>(emitter: EventEmitter<T>, eventName: keyof T, func: T[keyof T]) {
         emitter.off(eventName, func);
         this.listened = this.listened.filter(v => !(v.emitter == emitter && v.eventName == eventName));
     }
-
+    /**
+     * 添加一个子节点
+     * @param child 
+     */
+    addChild(child: Container) {
+        child.setParent(this);
+    }
     /**
      * 设置父节点
      * 如果当前节点已经有父节点，则先从原来的父节点中移除
@@ -153,9 +177,10 @@ class Container extends EventEmitter<{}> {
     isChild(child: Container) {
         return child.isParent(this);
     }
+
     drawDebug() { }
     draw() {
-        // 子类实现
+
     }
     postDraw() {
         this.forEachChildren((child) => {
@@ -168,15 +193,17 @@ class Container extends EventEmitter<{}> {
             if (!child.sleep || child.onlySelfSleep) {
                 child.postDraw();
             }
+            if (!child.isReady) {
+                child.ready()
+            }
         })
     }
 
     update(dt: number) {
         // ready 是下一帧时调用，这个时候节点都被draw过了一次
-        if (!this.isReady) {
-            this.ready()
+        if (this.isReady) {
+            this.onUpdate(dt)
         }
-        this.onUpdate(dt)
         // 子类实现
     }
 

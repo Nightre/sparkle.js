@@ -5,7 +5,7 @@ import fragmentShader from "../shader/primitive.frag?raw"
 import { GLShader, PRIMITIVE_MODE, Vector2 } from "../../main";
 
 class PrimitiveCompositors extends Compositor {
-    protected drawcallMode: number;
+    protected drawCallMode: number;
     lineWidth: number = 1;
     drawMode: number = PRIMITIVE_MODE.LINE
     constructor(renderer: Renderer) {
@@ -16,19 +16,20 @@ class PrimitiveCompositors extends Compositor {
                 { name: 'aPosition', size: 2, type: gl.FLOAT, normalized: false, offset: 0 },
             ],
             vertexShader,
-            fragmentShader
+            fragmentShader,
+            vertexPerObj:6
         })
-        this.drawcallMode = gl.LINE_STRIP
+        this.drawCallMode = gl.LINE_STRIP
     }
 
     setMode(mode: PRIMITIVE_MODE) {
         this.drawMode = mode
         switch (mode) {
             case PRIMITIVE_MODE.FILL:
-                this.drawcallMode = this.gl.TRIANGLE_FAN
+                this.drawCallMode = this.gl.TRIANGLE_FAN
                 break;
             case PRIMITIVE_MODE.LINE:
-                this.drawcallMode = this.gl.TRIANGLES
+                this.drawCallMode = this.gl.TRIANGLES
                 break;
             default:
                 break;

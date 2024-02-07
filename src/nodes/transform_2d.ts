@@ -16,6 +16,10 @@ class Transform2D extends Container {
     offset: Vector2;
     globalPosition: Vector2 = this.pool.Vector2.pull(0, 0)
     globalRotation: number = 0
+    
+    modelMatrix: Matrix
+    beforeModelMatrix: Matrix
+
     setGlobalPosition(v: Vector2) {
         const invert = this.beforeModelMatrix.invert()
         console.log(
@@ -35,9 +39,7 @@ class Transform2D extends Container {
     getMouseLocalPositon() {
         return this.globalPosition.sub(this.engine.mouse.mousePosition, false)
     }
-    modelMatrix: Matrix
-    beforeModelMatrix: Matrix
-    modelMatrixDirty: boolean = false
+
     constructor(options: ITransform2DOptions) {
         super(options)
         this.modelMatrix = this.pool.Matrix.pull()
@@ -75,11 +77,10 @@ class Transform2D extends Container {
         
         const [x, y] = this.renderer.modelMatrix.apply(0, 0)
         this.globalPosition.set(x, y)
-
+        this.modelMatrix.copy(this.renderer.modelMatrix)
         this.renderer.modelMatrix.translate(
             -this.offset!.x, -this.offset!.y
         );
-        this.modelMatrix.copy(this.renderer.modelMatrix)
     }
     drawDebug() {
         super.drawDebug()

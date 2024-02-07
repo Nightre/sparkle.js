@@ -2,19 +2,30 @@ import { SparkleEngine } from "../engine";
 import { Color } from "../main";
 
 class TextManager {
-    engine: SparkleEngine
-    canvas: CanvasRenderingContext2D
+    private engine: SparkleEngine
+    private canvas: CanvasRenderingContext2D
     constructor(engine: SparkleEngine) {
         this.engine = engine
         this.canvas = this.getContext();
     }
-    getContext() {
+    /**
+     * @ignore
+     * @returns canvas
+     */
+    private getContext() {
         const c = document.createElement("canvas").getContext("2d")
         if (!c) {
             throw new Error("unable to create canvas");
         }
         return c
     }
+    /**
+     * 返回 canvas 而不是绘制一个文字，若要绘制文字请使用 Text
+     * @param text 文字
+     * @param font 字体
+     * @param color 颜色
+     * @returns 返回 canvas 而不是绘制一个文字
+     */
     drawText(text: string, font: string = '64px Arial', color: Color) {
         this.canvas.font = font;
         // 计算文本的宽度和高度

@@ -36,10 +36,9 @@ class Collision extends Transform2D {
     }
     draw(): void {
         super.draw()
-        const model = this.modelMatrix
+        const model = this.renderer.modelMatrix
         this.shape.forEach((v, index) => {
             const [x, y] = model.apply(v.x, v.y)
-
             this.ShapePosition[index].set(
                 x, y
             )
