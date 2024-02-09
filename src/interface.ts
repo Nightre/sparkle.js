@@ -42,6 +42,7 @@ export interface IDrawableOptions extends ITransform2DOptions {
 export interface IContainerOptions {
     engine: SparkleEngine
     resident?: boolean
+    tags?: string[]
 }
 export interface ITransform2DOptions extends IContainerOptions {
     position?: Vector2;
@@ -52,9 +53,10 @@ export interface ITransform2DOptions extends IContainerOptions {
 }
 export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;
-    hFrames?:number;
-    vFrames?:number;
+    hFrames?: number;
+    vFrames?: number;
     gapSize?: number;
+    animation?: number;
 }
 export interface ICollisionOptions extends ITransform2DOptions {
     shape?: Vector2[]

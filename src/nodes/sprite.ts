@@ -29,6 +29,9 @@ class Sprite extends Drawable {
         this.hFrames = options.hFrames ?? 0
         this.vFrames = options.vFrames ?? 0
         this.gapSize = options.gapSize ?? 0
+        if (this.gapSize > 0) {
+            this.setAnimation(options.animation ?? 0)
+        }
     }
     draw(): void {
         super.draw();

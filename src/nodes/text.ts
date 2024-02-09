@@ -34,7 +34,7 @@ class Text extends Drawable {
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;
         compositors.addQuad(this.texture, false);
-        compositors.setColorByRGBA(1,1,1,1)
+        compositors.setColor(this.color)
 
         compositors.flush();
     }

@@ -79,7 +79,14 @@ class Collision extends Transform2D {
     destory(): void {
         super.destory()
         this.clearShape()
-        this.physics.remove(this)
+    }
+    static rectShape(x: number, y: number, width: number, height: number) {
+        return [
+            new Vector2(x, y),
+            new Vector2(x + width, y),
+            new Vector2(x + width, y + height),
+            new Vector2(x, y + height),
+        ]
     }
 }
 

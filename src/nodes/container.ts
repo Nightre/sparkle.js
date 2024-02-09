@@ -33,7 +33,7 @@ class Container extends EventEmitter<{}> {
     /**
      * Tag 用于节点查找，可以有多个tag
      */
-    tag: Set<string> = new Set
+    tag: Set<string>
     /**
      * 对于对象池的引用
      */
@@ -59,6 +59,7 @@ class Container extends EventEmitter<{}> {
         }
         this.renderer = this.engine.renderer;
         this.pool = pool
+        this.tag = options.tags ? new Set(options.tags) : new Set
     }
 
     /**
@@ -72,7 +73,7 @@ class Container extends EventEmitter<{}> {
         this.listened.push({
             emitter,
             eventName: (eventName as string),
-            func:func.bind(this)
+            func: func.bind(this)
         })
     }
     /**
@@ -101,13 +102,12 @@ class Container extends EventEmitter<{}> {
         // 如果当前节点已经有父节点，则先从原来的父节点中移除
         if (this.parent) {
             this.parent.removeChild(this);
-        } else {
-            this.enterTree()
         }
         // 将当前节点添加到新的父节点中
         this.parent = parent
         if (parent) {
             parent.children.push(this);
+            this.enterTree()
         } else {
             throw new Error("can't set parent to null");
         }
@@ -179,9 +179,7 @@ class Container extends EventEmitter<{}> {
     }
 
     drawDebug() { }
-    draw() {
-
-    }
+    draw() { }
     postDraw() {
         this.forEachChildren((child) => {
             if (!child.sleep) {
@@ -222,11 +220,8 @@ class Container extends EventEmitter<{}> {
             this.engine.removeResident(this)
         }
         this.removeFromParent()
-    }
-    postDestory() {
         this.forEachChildren((child) => {
             child.destory()
-            child.postDestory()
         })
     }
     /**
@@ -244,7 +239,7 @@ class Container extends EventEmitter<{}> {
     /**
      * @ignore
      */
-    ready(){
+    ready() {
         this.isReady = true
         this.onReady()
     }
@@ -252,13 +247,11 @@ class Container extends EventEmitter<{}> {
     onEnterTree() { }
     onExitTree() { }
     onReady() { }
-    onUpdate(_dt: number){}
+    onUpdate(_dt: number) { }
 
     getMouseGlobalPositon() {
         return this.engine.mouse.mousePosition
     }
-
-
 
     forEachChildren(fn: (child: Container) => void) {
         this.children.forEach(fn);
@@ -268,14 +261,16 @@ class Container extends EventEmitter<{}> {
      * @param tag 要查找的tag
      * @returns 找到的子节点数组
      */
-    findByTag(tag: string): Container[] {
+    findByTag(tag: string, deep: boolean=true): Container[] {
         const result: Container[] = [];
         this.forEachChildren((child) => {
             if (child.tag.has(tag)) {
                 result.push(child);
             }
-            const foundChildren = child.findByTag(tag);
-            result.push(...foundChildren);
+            if (deep) {
+                const foundChildren = child.findByTag(tag, deep);
+                result.push(...foundChildren);
+            }
         });
         return result;
     }

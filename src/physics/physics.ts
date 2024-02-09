@@ -2,9 +2,7 @@ import { SparkleEngine } from "../engine";
 import { ICollisionResult, Vector2 } from "../main";
 import Collision from "../nodes/collision"
 
-/**
- * TODO: 使用四叉树，BVH 等优化
- */
+//TODO: 使用四叉树，BVH 等优化
 /**
  * @category Physics
  */

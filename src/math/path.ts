@@ -32,7 +32,6 @@ class Path {
         this.lineTo(r.x, r.y + r.h)
         this.lineTo(r.x, r.y)
     }
-
     beginPath() {
         this.startPoint.set(0)
         this.firstPoint = true

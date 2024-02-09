@@ -1,4 +1,4 @@
-import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text } from "../../src/main"
+import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture } from "../../src/main"
 
 // 创建
 const engine = new SparkleEngine({
@@ -17,6 +17,7 @@ const bgTexture = engine.texture.altasFromTexture(staticTexture, new Rect(12, 11
 const groundTexture = engine.texture.altasFromTexture(staticTexture, new Rect(10, 0, 74, 37))
 const playerTexture = engine.texture.altasFromTexture(entityTexture, new Rect(0, 0, 50, 15))
 const obstacleTexture = engine.texture.altasFromTexture(staticTexture, new Rect(0, 0, 10, 35))
+const coinTexture = engine.texture.altasFromTexture(entityTexture, new Rect(51, 0, 8, 8))
 
 
 // 可以使用状态函数（闭包函数）或者是继承 Sprite，两种都行
@@ -25,7 +26,7 @@ const Player = () => {
     let velocityY = 0 // 加速度，用于跳跃
     let step = 0 // 未来将会加入 Timer 就不需要这样了
     let touch_ground = false // 是否触碰到地面
-
+    
     const player = new Sprite({
         engine: engine,
         texture: playerTexture,
@@ -35,19 +36,16 @@ const Player = () => {
         vFrames: 1,
         gapSize: 1
     })
+    let gameManager = player.root.findByTag("game_manager")[0] as GameManager
     const collision = new Collision({
-        engine, shape: [
-            new Vector2(0, 0),
-            new Vector2(10, 0),
-            new Vector2(10, 10),
-            new Vector2(0, 10),
-        ]
+        engine, shape: Collision.rectShape(0, 0, 10, 15)
     })
     player.addChild(
         collision
     )
     player.onReady = () => {
         player.setAnimation(0)
+        gameManager = player.root.findByTag("game_manager")[0] as GameManager
     }
 
     // 添加标签，标签可以拥有多个，标签可以用于检测到碰撞时识别
@@ -55,7 +53,6 @@ const Player = () => {
     // 就应该给每个怪都加一个“zombie”标签，然后玩家碰撞到一个物体
     // 时，就检测这个物体有没有 zombie 标签
     player.tag.add("player")
-
     player.onUpdate = (dt) => {
         player.setAnimation(Math.ceil(step / 5) % 4)
         velocityY += 800 * dt
@@ -66,12 +63,20 @@ const Player = () => {
         } else {
             touch_ground = false
         }
+        console.log(
+            collision.collisionDetection()
+        )
         collision.collisionDetection().forEach((result) => {
             // 碰撞是基于SAT碰撞，result返回两个参数，一个是overlap向量，一个是碰撞到的collision
             if (result.body.tag.has("obstacle")) {
                 engine.changeSenceToNode(loseSence())
+            }else if(result.body.tag.has("coin")){
+                gameManager.getCoin();
+                (result.body.parent as Coin).pick()
+                
             }
         })
+        
         step++ // 未来将会加入 Timer 就不需要这样了
     }
     // 使用这种方法监听，可以在player被摧毁的时候自动取消监听
@@ -91,45 +96,58 @@ const Player = () => {
 // 状态函数方式来写
 class GameManager extends Container { // Container 是所有节点的基类，他能有多个子节点，一个父节点
     step: number = 0 // 未来将会加入 Timer 就不需要这样了
+    coin: number = 0
+
+    score_text:Text
+
     onReady(): void {
         // onReady 在其所有子节点被加载完毕并准备好后被引擎调用
-
+        this.tag.add("game_manager")
+        this.score_text = this.root.findByTag("score_text")[0] as Text
     }
     onUpdate(_dt: number): void {
         // onUpdate 会在每一帧被引擎调用
         // 未来将会加入 Timer 就不需要这样了
-        if (this.step % 80 == 0 && Math.random() > 0.2) {
+        if (this.step % 80 == 0) {
             this.createObstacle()
         }
         this.step++
     }
     createObstacle() {
         const obstacle = new Obstacle(engine)
-        obstacle.position.set(740, Math.random() > 0.5 ? 250 : 200)
+        const coin = new Coin(engine)
+
+        obstacle.position.set(740, Math.random() * 100 + 180)
+        coin.position.set(744, obstacle.position.y - 100)
         this.root.addChild(
             obstacle
         )
+        this.root.addChild(
+            coin
+        )
+    }
+    getCoin(){
+        this.coin++
+        this.score_text.setText("分数："+this.coin)
     }
 }
 
 // 若你不喜欢这样写，可以查看Player的另外一种的写法
-class Obstacle extends Sprite {
+class MovingObject extends Sprite {
     collision: Collision
-    constructor(engine: SparkleEngine) {
+    constructor(
+        texture: Texture,
+        shape: Vector2[],
+        engine: SparkleEngine
+    ) {
         super({
-            texture: obstacleTexture,
+            texture: texture,
             scale: new Vector2(5),
             engine
         })
         this.collision = new Collision({
-            engine, shape: [
-                new Vector2(0, 0),
-                new Vector2(10, 0),
-                new Vector2(10, 35),
-                new Vector2(0, 35),
-            ]
+            engine, shape
         })
-        this.collision.tag.add("obstacle")
         this.addChild(
             this.collision
         )
@@ -139,6 +157,22 @@ class Obstacle extends Sprite {
         if (this.position.x < -50) {
             this.destory()
         }
+    }
+}
+class Obstacle extends MovingObject {
+    constructor(engine: SparkleEngine) {
+        super(obstacleTexture, Collision.rectShape(0, 0, 10, 35), engine)
+        this.collision.tag.add("obstacle")
+    }
+}
+class Coin extends MovingObject {
+    constructor(engine: SparkleEngine) {
+        super(coinTexture, Collision.rectShape(0, 0, 10, 10), engine)
+        this.collision.tag.add("coin")
+    }
+    pick(){
+        this.destory()
+        console.log("我死了")
     }
 }
 
@@ -166,38 +200,39 @@ const mainSence = () => {
     root.addChild(bg)
     root.addChild(new GameManager({ engine }))
     root.addChild(Player())
-
+    root.addChild(new Text({
+        engine,
+        text: "分数：0",
+        font: "30px Arial",
+        position: new Vector2(5, 5),
+        tags:["score_text"]
+    }))
     return root
 }
 
 const PlayAgin = () => {
     const collision = new Collision({
         engine,
-        shape: [
-            new Vector2(0, 0),
-            new Vector2(130, 0),
-            new Vector2(130, 50),
-            new Vector2(0, 50),
-        ]
+        shape: Collision.rectShape(0, 0, 130, 50)
     })
 
     const playAgin = new Text({
         engine,
         text: "[重新开始]",
         font: "40px Arial",
-        position:new Vector2(0,150)
+        position: new Vector2(0, 150)
     })
     playAgin.addChild(
         collision
     )
-    collision.onUpdate=()=>{
+    collision.onUpdate = () => {
         if (collision.mouseDetection()) {
             playAgin.scale.set(1.5)
-        }else{
+        } else {
             playAgin.scale.set(1)
         }
     }
-    collision.onClick=()=>{
+    collision.onClick = () => {
         console.log("change")
         playAgin.position.x += 50
         engine.changeSenceToNode(mainSence())
@@ -215,6 +250,13 @@ const loseSence = () => {
         text: "你输了",
         font: "40px Arial"
     }))
+    root.addChild(new Text({
+        engine,
+        text: "分数：" + (engine.root.findByTag("game_manager")[0] as GameManager).coin,
+        font: "40px Arial",
+        position: new Vector2(200, 0)
+    }))
+
     root.addChild(
         PlayAgin()
     )

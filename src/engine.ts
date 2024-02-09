@@ -94,13 +94,12 @@ class SparkleEngine {
         })
         if (this.root) {
             this.root.destory()
-            this.root.postDestory()
         }
         this.physics.reset()
         this.root = sence
     }
     /**
-     * 添加一个常驻节点
+     * 删除一个常驻节点
      * @ignore
      */
     removeResident(child: Container) {
@@ -108,7 +107,7 @@ class SparkleEngine {
         this.residents.delete(child)
     }
     /**
-     * 删除一个常驻节点
+     * 添加一个常驻节点
      * @ignore
      */
     addResident(child: Container) {
@@ -133,7 +132,6 @@ class SparkleEngine {
     loop(currentTime: number) {
         const dt = (currentTime - this.lastTime) / 1000
         this.lastTime = currentTime
-
         if (this.debugger) {
             this.debugger.update()
         }
@@ -142,7 +140,6 @@ class SparkleEngine {
         if (this.debugger) {
             this.debugger.draw()
         }
-
         requestAnimationFrame(this.loop.bind(this))
     }
 }
