@@ -44,7 +44,7 @@ class Renderer {
     private engine: SparkleEngine
     /** 游戏有多少像素  */
     private nativeSize: Vector2
-    private devicePixelRatio: number
+    devicePixelRatio: number
     /** 矩阵堆栈，用于记录状态 */
     private matrixStack: Matrix[] = []
     /** 显示堆栈，用于记录状态 */
@@ -251,7 +251,7 @@ class Renderer {
         this.root.postDraw()
     }
 
-    initCostumDraw(options:IDrawOptions){
+    private initCostumDraw(options:IDrawOptions){
         this.setCompositors("primitive", options.shader)
         if (options.color) {
             this.currentCompositors.setColor(options.color)

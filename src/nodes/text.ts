@@ -23,9 +23,6 @@ class Text extends Drawable {
     constructor(options: ITextOptions) {
         super(options);
         this.color = options.color ?? this.pool.Color.pull(1, 1, 1, 1)
-        console.log(
-            options.color
-        )
         this.font = options.font ?? "16px Arial"
         this.text = options.text ?? " "        
     }
@@ -53,7 +50,7 @@ class Text extends Drawable {
             )
         } else {
             this.texture = this.engine.texture.createBaseTexture(
-                texImageSource, texImageSource
+                texImageSource
             )
         }
         this.drawSize.set(

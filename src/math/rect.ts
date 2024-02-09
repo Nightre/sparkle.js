@@ -23,18 +23,16 @@ class Rect implements IPoolable {
         this.w = w
         this.h = h
     }
-    add(r: Rect, self: boolean = true){
+    add(r: Rect){
         const d = [
             r.x + this.x,
             r.y + this.y,
             r.w,
             r.h
         ]
-        if (self) {
-            r.setRect(...d)
-        }else{
-            this.setRect(...d)
-        }
+        
+
+        this.setRect(...d)
     }
     copy(c: Rect) {
         this.setRect(

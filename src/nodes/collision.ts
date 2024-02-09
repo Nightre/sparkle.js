@@ -9,10 +9,12 @@ class Collision extends Transform2D {
     shape: Vector2[] = []
     ShapePosition: Vector2[] = []
     physics: PhysicsManager
+
     constructor(options: ICollisionOptions) {
         super(options)
         this.setShape(options.shape ?? [])
         this.physics = this.engine.physics
+        this.onEvent(this.engine.mouse, "onMouseUp", this.onMouseClick.bind(this))
         // 获取所有 Collision this.physics.getCollision(this)
     }
     setShape(shape: Vector2[]) {
@@ -26,8 +28,11 @@ class Collision extends Transform2D {
         return this.physics.collisionDetection(this)
     }
 
-    mouseDetection(){
-        return this.physics.SATCollision(this.ShapePosition, [this.getMouseGlobalPositon()])
+    mouseDetection() {
+        if (!this.isReady) {
+            return false
+        }
+        return this.physics.pointInPolygon(this.getMouseGlobalPositon(), this.ShapePosition)
     }
 
     exitTree(): void {
@@ -36,8 +41,15 @@ class Collision extends Transform2D {
     }
     enterTree(): void {
         super.enterTree()
+        //this.onEvent(this.engine.mouse, "onMouseUp", this.onMouseClick.bind(this))
         this.physics.add(this)
     }
+    private onMouseClick() {
+        if (this.mouseDetection()) {
+            this.onClick()
+        }
+    }
+    onClick() { }
     draw(): void {
         super.draw()
         const model = this.renderer.modelMatrix
@@ -67,6 +79,7 @@ class Collision extends Transform2D {
     destory(): void {
         super.destory()
         this.clearShape()
+        this.physics.remove(this)
     }
 }
 

@@ -20,18 +20,14 @@ class PhysicsManager {
     remove(c: Collision) {
         this.physicsObjects.delete(c)
     }
-
+    reset(){
+        this.physicsObjects.clear()
+    }
     collisionDetection(c: Collision): ICollisionResult[] {
         const res: ICollisionResult[] = []
 
         this.physicsObjects.forEach((collision) => {
             if (collision != c) {
-                console.log(
-
-                    "test",
-                    collision.ShapePosition,
-                    c.ShapePosition
-                )
                 let r = this.SATCollision(collision.ShapePosition, c.ShapePosition)
                 if (r) {
                     res.push({
@@ -97,7 +93,18 @@ class PhysicsManager {
         }
         return axes;
     }
+    pointInPolygon(point: Vector2, poly: Vector2[]): boolean {
+        let inside = false;
+        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+            const xi = poly[i].x, yi = poly[i].y;
+            const xj = poly[j].x, yj = poly[j].y;
     
+            const intersect = ((yi > point.y) !== (yj > point.y))
+                && (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+        return inside;
+    }
     project(poly: Vector2[], axis: Vector2): [number, number] {
         let min = Infinity;
         let max = -Infinity;

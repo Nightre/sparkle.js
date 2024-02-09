@@ -8,19 +8,21 @@ import { createTexture } from "../utils/texture"
  */
 export class TextureManager {
     engine: SparkleEngine
-    baseTexture: Map<TextureUniId, BaseTexture> = new Map
     constructor(engine: SparkleEngine) {
         this.engine = engine
     }
 
     textureFromImage(image: TexImageSource) {
-        return new Texture(this.createBaseTexture(image, image))
+        return new Texture(this.createBaseTexture(image))
+    }
+    altasFromTexture(texture: Texture, rect?: Rect) {
+        return new AltasTexture(texture.baseTexture!, rect)
     }
 
     async textureFromUrl(url: string) {
         const image = await this.engine.loader.loadImage(url)
 
-        return new Texture(this.createBaseTexture(image, url))
+        return new Texture(this.createBaseTexture(image))
     }
 
     /**
@@ -28,16 +30,9 @@ export class TextureManager {
      * @param image 
      * @returns 
      */
-    createBaseTexture(image: TexImageSource, id: TextureUniId) {
-        const oldBaseTexture = this.baseTexture.get(id)
-
-        if (oldBaseTexture) {
-            return oldBaseTexture
-        } else {
-            const newOldBaseTexture = new BaseTexture(this.engine, image)
-            this.baseTexture.set(id, newOldBaseTexture)
-            return newOldBaseTexture
-        }
+    createBaseTexture(image: TexImageSource) {
+        const newOldBaseTexture = new BaseTexture(this.engine, image)
+        return newOldBaseTexture
     }
 }
 
@@ -88,9 +83,9 @@ export class Texture {
  */
 export class AltasTexture extends Texture {
     region: Rect = pool.Rect.pull()
-    constructor(baseTexture: BaseTexture,region?: Rect){
+    constructor(baseTexture: BaseTexture, region?: Rect) {
         super(baseTexture)
-        if (this.region) {
+        if (region) {
             this.region.copy(region!)
         }
     }

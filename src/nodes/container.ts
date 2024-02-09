@@ -44,7 +44,7 @@ class Container extends EventEmitter<{}> {
      * 注意：常驻节点必须是根节点的一级子节点
      */
     resident: boolean
-    private isReady: boolean = false
+    protected isReady: boolean = false
     private listened: IListened[] = []
     get root() {
         return this.engine.root
@@ -72,7 +72,7 @@ class Container extends EventEmitter<{}> {
         this.listened.push({
             emitter,
             eventName: (eventName as string),
-            func
+            func:func.bind(this)
         })
     }
     /**

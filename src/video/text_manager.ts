@@ -35,7 +35,7 @@ class TextManager {
 
         // 设置canvas的大小
         this.canvas.canvas.width = textWidth;
-        this.canvas.canvas.height = textHeight;
+        this.canvas.canvas.height = textHeight * 1.25;
 
         // 清除canvas
         this.canvas.clearRect(0, 0, this.canvas.canvas.width, this.canvas.canvas.height);

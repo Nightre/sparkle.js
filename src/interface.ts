@@ -52,6 +52,9 @@ export interface ITransform2DOptions extends IContainerOptions {
 }
 export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;
+    hFrames?:number;
+    vFrames?:number;
+    gapSize?: number;
 }
 export interface ICollisionOptions extends ITransform2DOptions {
     shape?: Vector2[]

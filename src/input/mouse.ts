@@ -10,7 +10,7 @@ class MouseManager extends EventEmitter<IMouseEvents> {
     canvas: HTMLCanvasElement;
 
     mousePosition: Vector2 = pool.Vector2.pull(0)
-
+    isMouseDown: boolean = false
     constructor(engine: SparkleEngine, canvas: HTMLCanvasElement) {
         super();
         this.engine = engine;
@@ -21,10 +21,12 @@ class MouseManager extends EventEmitter<IMouseEvents> {
 
     private getMouseData(event: MouseEvent): IMouseData {
         const rect = this.canvas.getBoundingClientRect();
+        const devicePixelRatio = this.engine.renderer.devicePixelRatio
+
         const data = {
             position: pool.Vector2.pull(
-                event.clientX - rect.left,
-                event.clientY - rect.top
+                (event.clientX - rect.left) / devicePixelRatio,
+                (event.clientY - rect.top) / devicePixelRatio
             ),
             event
         }
@@ -41,6 +43,7 @@ class MouseManager extends EventEmitter<IMouseEvents> {
     private handleMouseDown(event: MouseEvent): void {
         const data = this.getMouseData(event);
         this.emit('onMouseDown', data);
+        this.isMouseDown = true
     }
 
     private handleMouseMove(event: MouseEvent): void {
@@ -51,6 +54,7 @@ class MouseManager extends EventEmitter<IMouseEvents> {
     private handleMouseUp(event: MouseEvent): void {
         const data = this.getMouseData(event);
         this.emit('onMouseUp', data);
+        this.isMouseDown = false
     }
 }
 

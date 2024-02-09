@@ -8,9 +8,11 @@ import pool from "./system/pool";
 import MouseManager from "./input/mouse"
 import Debugger from "./debugger/debugger"
 import PhysicsManager from "./physics/physics"
-import Sence from "./system/sence"
 import TextManager from "./video/text_manager"
 
+/**
+ * 引擎
+ */
 class SparkleEngine {
     /** 渲染器 */
     public renderer: Renderer
@@ -34,7 +36,6 @@ class SparkleEngine {
     public text: TextManager
 
     private lastTime: number = 0
-    private loadedSence: Set<Sence> = new Set
     private residents: Set<Container> = new Set
     /**
      * SparkleEngine 是一个轻量的游戏，易于上手
@@ -59,7 +60,7 @@ class SparkleEngine {
             throw new Error("Please provide a canvas");
         }
         pool.register()
-        this.changeSenceToNode(new Container({ engine: this }))
+        
         // 初始化管理类
         this.input = new InputManager(this)
         this.mouse = new MouseManager(this, options.canvas)
@@ -70,7 +71,7 @@ class SparkleEngine {
         this.text = new TextManager(this)
         this.renderer = new Renderer(this, { ...options });
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
-
+        this.changeSenceToNode(new Container({ engine: this }))
         this.loop(0) // 开始游戏循环
     }
 
@@ -80,35 +81,6 @@ class SparkleEngine {
         this.changeSenceToNode(sence)
     }
 
-    /**
-     * 实例化一个场景
-     * @example
-     * ```js
-     * engine.instantiateSence(Sence)
-     * ```
-     * @param sence 
-     * @returns 场景
-     */
-    instantiateSence(sence: Sence) {
-        const container = sence.create(this)
-        if (!this.loadedSence.has(sence)) {
-            sence.createOnce(this)
-        }
-        this.loadedSence.add(sence)
-        return container
-    }
-
-    /**
-     * 转换到某个场景
-     * @example
-     * ```js
-     * engine.changeSenceTo(Sence)
-     * ```
-     */
-    changeSenceTo(sence: Sence) {
-        const container = this.instantiateSence(sence)
-        this.changeSenceToNode(container)
-    }
     /**
      * 转换到某个Container
      * @example
@@ -124,6 +96,7 @@ class SparkleEngine {
             this.root.destory()
             this.root.postDestory()
         }
+        this.physics.reset()
         this.root = sence
     }
     /**
