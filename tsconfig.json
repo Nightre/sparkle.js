@@ -19,5 +19,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["./src/*", "src/system/pool.ts", "src/system/event.ts"]
+  "include": ["./src/*"]
 }

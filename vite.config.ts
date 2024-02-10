@@ -6,7 +6,7 @@ export default defineConfig({
       entry: './src/main.ts',
       name: 'sparkle-engine',
       fileName: 'sparkle'
-    }
+    },
   },
   server: {
     open: './test/index.html'

@@ -1,5 +1,4 @@
-import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor,Timer } from "../../src/main"
-
+import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer } from "../../src/main"
 
 // 创建
 const engine = new SparkleEngine({
@@ -13,6 +12,8 @@ const engine = new SparkleEngine({
 engine.loader.baseUrl = "."
 const staticTexture = await engine.texture.textureFromUrl("ground.png")
 const entityTexture = await engine.texture.textureFromUrl("img.png")
+const jumpMuisc = await engine.audio.audioFromUrl("jump.mp3")
+const dieMuisc = await engine.audio.audioFromUrl("die.mp3")
 
 const bgTexture = engine.texture.altasFromTexture(staticTexture, new Rect(12, 11, 74, 37))
 const groundTexture = engine.texture.altasFromTexture(staticTexture, new Rect(10, 0, 74, 37))
@@ -20,8 +21,6 @@ const playerTexture = engine.texture.altasFromTexture(entityTexture, new Rect(0,
 const obstacleTexture = engine.texture.altasFromTexture(staticTexture, new Rect(0, 0, 10, 47))
 const coinTexture = engine.texture.altasFromTexture(entityTexture, new Rect(51, 0, 8, 8))
 
-const jumpMuisc = await engine.audio.audioFromUrl("jump.mp3")
-const dieMuisc = await engine.audio.audioFromUrl("die.mp3")
 // 可以使用状态函数（闭包函数）或者是继承 Sprite，两种都行
 // playerSence 是状态函数
 const Player = () => {
@@ -67,7 +66,7 @@ const Player = () => {
     // 就应该给每个怪都加一个“zombie”标签，然后玩家碰撞到一个物体
     // 时，就检测这个物体有没有 zombie 标签
     player.tag.add("player")
-    
+
     player.onUpdate = (dt) => {
         velocityY += 800 * dt
         player.position.y += velocityY * dt
@@ -84,7 +83,7 @@ const Player = () => {
             // 碰撞是基于SAT碰撞，result返回两个参数，一个是overlap向量，一个是碰撞到的collision
             if (result.body.tag.has("obstacle")) {
                 dieMuisc.play()
-                engine.changeSenceToNode(loseSence())
+                engine.changeSenceToNode(LoseSence())
             } else if (result.body.tag.has("coin")) {
                 (result.body.parent as Coin).pick()
                 gameManager.getCoin();
@@ -99,7 +98,7 @@ const Player = () => {
         if (key == 'w' && touch_ground) { // jump key
             velocityY = -600
             jumpMuisc.play()
-        }else if(key == 's'){
+        } else if (key == 's') {
             velocityY += 250
         }
     })
@@ -152,7 +151,6 @@ class GameManager extends Container { // Container 是所有节点的基类，�
         this.score_text.setText("分数：" + this.coin)
     }
 }
-
 // 若你不喜欢这样写，可以查看Player的另外一种的写法
 class MovingObject extends Sprite {
     collision: Collision
@@ -200,9 +198,8 @@ class Coin extends MovingObject {
         this.rotation += dt * 1
     }
 }
-
 // 使用状态函数编写的方式，可以使用另外一中方式，请看Obstacle
-const mainSence = () => {
+const MainSence = () => {
     const root = new Container({
         engine: engine
     })
@@ -253,18 +250,18 @@ const PlayAgin = () => {
     )
     collision.onUpdate = () => {
         if (collision.mouseDetection()) {
-            playAgin.color.setColor(0,0,0,1)
+            playAgin.color.setColor(0, 0, 0, 1)
         } else {
-            playAgin.color.setColor(1,1,1,1)
+            playAgin.color.setColor(1, 1, 1, 1)
         }
     }
     collision.onClick = () => {
-        engine.changeSenceToNode(mainSence())
+        engine.changeSenceToNode(MainSence())
     }
     return playAgin
 }
 
-const loseSence = () => {
+const LoseSence = () => {
     const root = new Container({
         engine: engine
     })
@@ -291,4 +288,4 @@ const loseSence = () => {
     return root
 }
 
-engine.changeSenceToNode(mainSence())
+engine.changeSenceToNode(MainSence())

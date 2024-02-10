@@ -28,12 +28,15 @@ import PhysicsManager from "./physics/physics"
 import { Audio } from "./audio/audio"
 import Rect from "./math/rect"
 import Timer from "./nodes/timer"
+import Sence from "./sence/sence"
 export {
     Color,
     Vector2,
     Matrix,
     Path,
     Rect,
+
+    Sence,
 
     Timer,
     Container,
