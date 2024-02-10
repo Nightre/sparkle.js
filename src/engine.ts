@@ -53,6 +53,8 @@ class SparkleEngine {
      * ```
      * @param options
      */
+    maxFPS: number
+
     constructor(options: ISparkleEngineOption) {
 
 
@@ -60,7 +62,7 @@ class SparkleEngine {
             throw new Error("Please provide a canvas");
         }
         pool.register()
-        
+
         // 初始化管理类
         this.input = new InputManager(this)
         this.mouse = new MouseManager(this, options.canvas)
@@ -72,6 +74,7 @@ class SparkleEngine {
         this.renderer = new Renderer(this, { ...options });
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
         this.changeSenceToNode(new Container({ engine: this }))
+        this.maxFPS = options.maxFPS ?? 60
         this.loop(0) // 开始游戏循环
     }
 
@@ -138,7 +141,7 @@ class SparkleEngine {
         this.update(dt)
         this.renderer.draw()
   
-        requestAnimationFrame(this.loop.bind(this))
+        window.requestAnimationFrame(this.loop.bind(this))
     }
 }
 

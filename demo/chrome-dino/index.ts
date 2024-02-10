@@ -1,5 +1,5 @@
-import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor } from "../../src/main"
-import Timer from "../../src/nodes/timer"
+import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor,Timer } from "../../src/main"
+
 
 // 创建
 const engine = new SparkleEngine({
@@ -16,8 +16,8 @@ const entityTexture = await engine.texture.textureFromUrl("img.png")
 
 const bgTexture = engine.texture.altasFromTexture(staticTexture, new Rect(12, 11, 74, 37))
 const groundTexture = engine.texture.altasFromTexture(staticTexture, new Rect(10, 0, 74, 37))
-const playerTexture = engine.texture.altasFromTexture(entityTexture, new Rect(0, 0, 50, 15))
-const obstacleTexture = engine.texture.altasFromTexture(staticTexture, new Rect(0, 0, 10, 35))
+const playerTexture = engine.texture.altasFromTexture(entityTexture, new Rect(0, 0, 50, 30))
+const obstacleTexture = engine.texture.altasFromTexture(staticTexture, new Rect(0, 0, 10, 47))
 const coinTexture = engine.texture.altasFromTexture(entityTexture, new Rect(51, 0, 8, 8))
 
 const jumpMuisc = await engine.audio.audioFromUrl("jump.mp3")
@@ -36,19 +36,24 @@ const Player = () => {
         position: new Vector2(80, 240),
         scale: new Vector2(5),
         hFrames: 4,
-        vFrames: 1,
+        vFrames: 2,
         gapSize: 1,
         animations: {
             "run": {
                 fromFrames: 0,
                 toFrames: 3,
                 time: 0.1
+            },
+            "fly": {
+                fromFrames: 4,
+                toFrames: 7,
+                time: 0.1
             }
         }
     })
     let gameManager = player.root.findByTag("game_manager")[0] as GameManager
     const collision = new Collision({
-        engine, shape: Collision.rectShape(0, 0, 12, 15)
+        engine, shape: Collision.rectShape(0, 0, 12, 10)
     })
     player.addChild(
         collision
@@ -63,16 +68,17 @@ const Player = () => {
     // 就应该给每个怪都加一个“zombie”标签，然后玩家碰撞到一个物体
     // 时，就检测这个物体有没有 zombie 标签
     player.tag.add("player")
-    player.play("run", true)
-
+    
     player.onUpdate = (dt) => {
         velocityY += 800 * dt
         player.position.y += velocityY * dt
         if (player.position.y > 240) {
             player.position.y = 240
             touch_ground = true
+            player.play("run", true)
         } else {
             touch_ground = false
+            player.play("fly", true)
         }
 
         collision.collisionDetection().forEach((result) => {
@@ -81,9 +87,8 @@ const Player = () => {
                 dieMuisc.play()
                 engine.changeSenceToNode(loseSence())
             } else if (result.body.tag.has("coin")) {
-                gameManager.getCoin();
                 (result.body.parent as Coin).pick()
-
+                gameManager.getCoin();
             }
         })
 
@@ -96,6 +101,8 @@ const Player = () => {
             console.log("JUMP")
             velocityY = -600
             jumpMuisc.play()
+        }else if(key == 's'){
+            velocityY += 250
         }
     })
 
@@ -134,7 +141,7 @@ class GameManager extends Container { // Container 是所有节点的基类，�
         const coin = new Coin(engine)
 
         obstacle.position.set(740, Math.random() * 100 + 180)
-        coin.position.set(760, obstacle.position.y - 100)
+        coin.position.set(760, obstacle.position.y - 40)
         this.root.addChild(
             obstacle
         )
@@ -248,9 +255,9 @@ const PlayAgin = () => {
     )
     collision.onUpdate = () => {
         if (collision.mouseDetection()) {
-            playAgin.scale.set(1.5)
+            playAgin.color.setColor(0,0,0,1)
         } else {
-            playAgin.scale.set(1)
+            playAgin.color.setColor(1,1,1,1)
         }
     }
     collision.onClick = () => {

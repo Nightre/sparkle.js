@@ -28,6 +28,7 @@ import MouseManager from "./input/mouse"
 import PhysicsManager from "./physics/physics"
 import { Audio } from "./audio/audio"
 import Rect from "./math/rect"
+import Timer from "./nodes/timer"
 export {
     Color,
     Vector2,
@@ -35,6 +36,7 @@ export {
     Path,
     Rect,
 
+    Timer,
     Container,
     Drawable,
     Transform2D,

@@ -73,7 +73,7 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
         this.listened.push({
             emitter,
             eventName: (eventName as string),
-            func: func.bind(this)
+            func: func
         })
     }
     /**

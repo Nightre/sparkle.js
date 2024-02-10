@@ -55,7 +55,10 @@ class Sprite extends Drawable {
         return this.aniData[this.currentAniName]
     }
 
-    play(name: string, loop: boolean = false) {
+    play(name: string, loop: boolean = false, restart: boolean = false) {
+        if (name == this.currentAniName && !restart) {
+            return
+        }
         this.stop()
         this.aniLoop = loop
         this.currentAniName = name
@@ -77,9 +80,9 @@ class Sprite extends Drawable {
             return
         }
         this.animatiosFarme++
-        if (this.animatiosFarme > this.currentAni!.toFrames) {
+        if (this.currentAni!.fromFrames + this.animatiosFarme > this.currentAni!.toFrames) {
             if (this.aniLoop) {
-                this.play(this.currentAniName, true)
+                this.play(this.currentAniName, true,true)
             } else {
                 this.stop()
             }
