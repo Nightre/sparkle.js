@@ -137,9 +137,7 @@ class SparkleEngine {
         }
         this.update(dt)
         this.renderer.draw()
-        if (this.debugger) {
-            this.debugger.draw()
-        }
+  
         requestAnimationFrame(this.loop.bind(this))
     }
 }

@@ -15,19 +15,21 @@ import { ITimerEvents, ITimerOptions } from "../interface"
 class Timer extends Container<ITimerEvents> {
     waitTime: number
     oneShot: boolean
-    start: boolean
-
-    timeLeft:number
+    paused: boolean = false
+    timeLeft: number
+    private isStart: boolean = false
     constructor(options: ITimerOptions) {
         super(options)
         this.waitTime = options.waitTime
         this.oneShot = options.oneShot ?? false
-        this.start = options.start ?? true
+        if (options.start) {
+            this.start()
+        }
         this.timeLeft = options.initTimeLeft ?? 0
     }
     update(dt: number): void {
         super.update(dt)
-        if (this.start) {
+        if (this.isStart && !this.paused) {
             if (this.timeLeft > this.waitTime) {
                 this.timeout()
                 return
@@ -35,16 +37,20 @@ class Timer extends Container<ITimerEvents> {
             this.timeLeft += dt
         }
     }
-    private timeout(){
+    private timeout() {
         if (this.oneShot) {
-            this.start = false
+            this.isStart = false
         }
         this.emit("timeout")
         this.timeLeft = 0
     }
-    stop(){
+    stop() {
         this.timeLeft = 0
-        this.start = false
+        this.isStart = false
+    }
+    start() {
+        this.timeLeft = 0
+        this.isStart = true
     }
 }
 

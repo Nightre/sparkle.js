@@ -105,7 +105,7 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
             console.error("Matrix is not invertible.");
             return null;
         }
-    
+
         const invertedElements = new Float32Array(6);
         invertedElements[0] = this.element[3] / det;
         invertedElements[1] = -this.element[1] / det;
@@ -114,18 +114,24 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
 
         invertedElements[4] = (this.element[2] * this.element[5] - this.element[3] * this.element[4]) / det;
         invertedElements[5] = (this.element[1] * this.element[4] - this.element[0] * this.element[5]) / det;
-    
+
         return pool.Matrix.pull(invertedElements);
     }
-    
+
     getRotation() {
         // 由于a = this.element[0], b = this.element[1]
         // 可以使用Math.atan2(b, a)来获得旋转角度，它会返回一个介于 -π 到 π 之间的值
         return Math.atan2(this.element[1], this.element[0]);
     }
     getScale() {
-        const scaleX = Math.sqrt(this.element[0] * this.element[0] + this.element[1] * this.element[1]);
-        const scaleY = Math.sqrt(this.element[2] * this.element[2] + this.element[3] * this.element[3]);
-        return { scaleX, scaleY };
+        const x = Math.sqrt(this.element[0] * this.element[0] + this.element[1] * this.element[1]);
+        const y = Math.sqrt(this.element[2] * this.element[2] + this.element[3] * this.element[3]);
+        return [x, y];
+    }
+    setAbsoluteScale(x: number, y = x) {
+        const scaleX = x / this.getScale()[0];
+        const scaleY = y / this.getScale()[1];
+
+        this.scale(scaleX, scaleY);
     }
 }

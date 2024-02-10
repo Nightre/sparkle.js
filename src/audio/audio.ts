@@ -5,30 +5,28 @@ import { EventEmitter, IAudioEvent, SparkleEngine } from "../main";
  */
 class Audio extends EventEmitter<IAudioEvent> {
     private buffer: AudioBuffer;
-    private source: AudioBufferSourceNode;
     private context: AudioContext;
 
     constructor(audioManager: AudioManager, buffer: AudioBuffer) {
-        super()
+        super();
         this.context = audioManager.context;
         this.buffer = buffer;
-        this.source = this.context.createBufferSource();
-        this.source.buffer = this.buffer;
     }
 
     play() {
-        this.source.connect(this.context.destination);
-        this.source.start(0);
-        this.source.onended = () => {
+        const source = this.context.createBufferSource();
+        source.buffer = this.buffer;
+        source.connect(this.context.destination);
+        source.start(0);
+        
+        source.onended = () => {
             this.emit("onEnd");
+            source.disconnect(this.context.destination);
         };
     }
-
-    stop() {
-        this.source.disconnect(this.context.destination);
-        this.source.stop(0);
-    }
 }
+
+
 
 /**
  * @category Audio

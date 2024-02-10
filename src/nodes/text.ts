@@ -1,7 +1,7 @@
 import { BaseTexture } from "../video/texture/texture";
 import Drawable from "./drawable";
 import { ITextOptions } from "../interface"
-import { Color, TextureCompositors } from "../main";
+import { Color, TextAnchor, TextureCompositors } from "../main";
 
 /**
  * 精灵
@@ -11,6 +11,7 @@ class Text extends Drawable {
     private texture!: BaseTexture;
     color: Color
     font: string
+    anchor: TextAnchor
     private _text!: string;
     public get text(): string {
         return this._text;
@@ -24,10 +25,20 @@ class Text extends Drawable {
         super(options);
         this.color = options.color ?? this.pool.Color.pull(1, 1, 1, 1)
         this.font = options.font ?? "16px Arial"
-        this.text = options.text ?? " "        
+        this.text = options.text ?? ""
+        this.anchor = options.anchor ?? TextAnchor.LEFT
     }
     draw(): void {
         super.draw();
+        const m = this.renderer.modelMatrix
+        switch (this.anchor) {
+            case TextAnchor.CENTER:
+                m.translate(-this.drawSize.x/2, 0)
+                break;
+            case TextAnchor.RIGHT:
+                m.translate(-this.drawSize.x, 0)
+                break;
+        }
         if (!this.visible) {
             return
         }

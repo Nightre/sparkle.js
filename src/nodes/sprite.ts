@@ -25,9 +25,10 @@ class Sprite extends Drawable {
 
     private animationTimer: Timer
     private animatiosFarme: number = 0
-    animations: ISpriteAnimations
-    animationPaused: boolean = false
-    currentAnimationName?: string
+    aniData: ISpriteAnimations
+    aniPaused: boolean = false
+    aniLoop: boolean = false
+    currentAniName?: string
 
     constructor(options: ISpriteOptions) {
         super(options);
@@ -38,7 +39,7 @@ class Sprite extends Drawable {
         if (this.gapSize > 0) {
             this.setAnimation(options.frames ?? 0)
         }
-        this.animations = options.animations ?? {}
+        this.aniData = options.animations ?? {}
         this.animationTimer = new Timer({
             start: false,
             waitTime: 0,
@@ -47,40 +48,48 @@ class Sprite extends Drawable {
         this.animationTimer.on("timeout", this.animationsTimeOut.bind(this))
     }
 
-    public get currentAnimation(): IAnimations | null {
-        if (!this.currentAnimationName) {
+    public get currentAni(): IAnimations | null {
+        if (!this.currentAniName) {
             return null
         }
-        return this.animations[this.currentAnimationName]
+        return this.aniData[this.currentAniName]
     }
 
-    play(name: string) {
-        if (this.currentAnimationName == name) {
-            return
-        }
+    play(name: string, loop: boolean = false) {
         this.stop()
-        this.currentAnimationName = name
-        this.animationTimer.start = true
+        this.aniLoop = loop
+        this.currentAniName = name
+        if (this.currentAni!.fromFrames > this.currentAni!.toFrames) {
+            throw new Error("fromFrames must be less than toFrames");
+        }
+        this.animationTimer.waitTime = this.currentAni!.time
+        this.animationTimer.start()
         this.animatiosFarme = 0
-        this.setAnimation(this.currentAnimation!.fromFrames)
+        this.setAnimation(this.currentAni!.fromFrames)
     }
     stop() {
+        this.aniLoop = false
         this.animationTimer.stop()
-        this.currentAnimationName = undefined
+        this.currentAniName = undefined
     }
     private animationsTimeOut() {
-        if (!this.currentAnimationName) {
+        if (!this.currentAniName) {
             return
         }
         this.animatiosFarme++
-        this.setAnimation(this.currentAnimation!.fromFrames + this.animatiosFarme)
-        if (this.animatiosFarme > this.currentAnimation!.toFrames) {
-            this.stop()
+        if (this.animatiosFarme > this.currentAni!.toFrames) {
+            if (this.aniLoop) {
+                this.play(this.currentAniName, true)
+            } else {
+                this.stop()
+            }
+            return
         }
+        this.setAnimation(this.currentAni!.fromFrames + this.animatiosFarme)
     }
     update(dt: number): void {
         super.update(dt)
-        this.animationTimer.start = !this.animationPaused
+        this.animationTimer.paused = this.aniPaused
         this.animationTimer.update(dt)
     }
     draw(): void {

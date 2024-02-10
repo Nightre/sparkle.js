@@ -5,7 +5,7 @@ import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 import Collision from "./nodes/collision"
-import { EventEmitter, GLShader, Rect } from "./main"
+import { EventEmitter, GLShader } from "./main"
 
 export interface ICopyable<T> {
     copy: (obj: T) => void
@@ -73,9 +73,12 @@ export interface ICollisionOptions extends ITransform2DOptions {
 export interface ITextOptions extends IDrawableOptions {
     text?: string,
     font?: string,
-    color?: Color
+    color?: Color,
+    anchor?: TextAnchor
 }
-
+export enum TextAnchor {
+    CENTER, LEFT, RIGHT
+}
 export interface ITimerOptions extends IContainerOptions {
     waitTime: number,
     oneShot?: boolean,

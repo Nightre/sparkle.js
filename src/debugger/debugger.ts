@@ -10,6 +10,8 @@ class Debugger {
     private pressedDebugger: boolean = false
     debugger: boolean = false
     color: Color = pool.Color.pull()
+    scale: number[] = []
+
     constructor(engine: SparkleEngine) {
         this.engine = engine
         this.input = engine.input
@@ -39,45 +41,37 @@ class Debugger {
         compositors.setMode(PRIMITIVE_MODE.LINE)
         compositors.lineWidth = 3
 
-        const rect = pool.Rect.pull(0,0,w,h)
+
+        const rect = pool.Rect.pull(0, 0, w*this.scale[0], h*this.scale[1])
         path.rectPath(rect)
         compositors.flush()
         pool.Rect.push(rect)
+        this.engine.renderer.restore()
     }
-    drawDebugPolygonFrame(vs: Vector2[]) {
+    drawDebugCollision(vs: Vector2[]) {
         if (vs.length == 0) {
             return
         }
         const { path, compositors } = this.init()
-        this.color.setColor(0, 1, 0, 0.5)
+        this.color.setColor(0, 1, 0, 0.6)
         compositors.setColor(this.color)
-        compositors.setMode(PRIMITIVE_MODE.LINE)
-        compositors.lineWidth = 3
+        compositors.setMode(PRIMITIVE_MODE.FILL)
+        compositors.lineWidth = 2
         path.beginPath()
         path.moveTo(vs[0].x, vs[0].y)
         for (let index = 1; index < vs.length; index++) {
             const v = vs[index]
-            path.lineTo(v.x, v.y)
+            path.lineTo(v.x*this.scale[0], v.y*this.scale[1])
         }
         path.lineTo(vs[0].x, vs[0].y)
 
         compositors.flush()
+        this.engine.renderer.restore()
     }
-    init() {
-        const renderer = this.engine.renderer
-        renderer.setCompositors("primitive");
-        const compositors = renderer.currentCompositors as PrimitiveCompositors;
-        const path = renderer.path
-        return {
-            compositors,
-            path
-        }
-    }
-
     addDebugCross() {
         const { path, compositors } = this.init()
         compositors.setMode(PRIMITIVE_MODE.LINE)
-        compositors.lineWidth = 4
+        compositors.lineWidth = 2
         this.color.setColor(1, 0, 0)
         compositors.setColor(this.color)
         path.beginPath()
@@ -87,12 +81,23 @@ class Debugger {
         path.moveTo(0, - 10)
         path.lineTo(0, 10)
         compositors.flush()
+        this.engine.renderer.restore()
     }
+    init() {
+        const renderer = this.engine.renderer
 
-    draw() {
+        renderer.save()
+        this.scale = renderer.modelMatrix.getScale()
+        renderer.modelMatrix.setAbsoluteScale(1)
+        renderer.setCompositors("primitive");
+        const compositors = renderer.currentCompositors as PrimitiveCompositors;
+        const path = renderer.path
 
+        return {
+            compositors,
+            path
+        }
     }
 }
-
 
 export default Debugger

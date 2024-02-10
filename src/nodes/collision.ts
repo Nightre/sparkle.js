@@ -61,7 +61,7 @@ class Collision extends Transform2D {
         });
     }
     drawDebug(): void {
-        this.engine.debugger?.drawDebugPolygonFrame(
+        this.engine.debugger?.drawDebugCollision(
             this.shape
         )
         super.drawDebug()
