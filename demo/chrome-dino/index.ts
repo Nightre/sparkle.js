@@ -22,7 +22,6 @@ const coinTexture = engine.texture.altasFromTexture(entityTexture, new Rect(51, 
 
 const jumpMuisc = await engine.audio.audioFromUrl("jump.mp3")
 const dieMuisc = await engine.audio.audioFromUrl("die.mp3")
-
 // 可以使用状态函数（闭包函数）或者是继承 Sprite，两种都行
 // playerSence 是状态函数
 const Player = () => {
