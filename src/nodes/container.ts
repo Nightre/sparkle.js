@@ -9,7 +9,7 @@ import pool, { PoolManager } from "../system/pool";
  * 所有游戏对象的基类，可以容纳子节点
  * @category GameNode
  */
-class Container extends EventEmitter<{}> {
+class Container<T extends {} = {}> extends EventEmitter<T> {
     protected engine: SparkleEngine
     protected renderer: Renderer
 
@@ -90,8 +90,9 @@ class Container extends EventEmitter<{}> {
      * 添加一个子节点
      * @param child 
      */
-    addChild(child: Container) {
+    addChild<T extends Container>(child: T):T {
         child.setParent(this);
+        return child
     }
     /**
      * 设置父节点

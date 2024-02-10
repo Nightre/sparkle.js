@@ -1,4 +1,5 @@
-import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture } from "../../src/main"
+import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions } from "../../src/main"
+import Timer from "../../src/nodes/timer"
 
 // 创建
 const engine = new SparkleEngine({
@@ -26,7 +27,7 @@ const Player = () => {
     let velocityY = 0 // 加速度，用于跳跃
     let step = 0 // 未来将会加入 Timer 就不需要这样了
     let touch_ground = false // 是否触碰到地面
-    
+
     const player = new Sprite({
         engine: engine,
         texture: playerTexture,
@@ -63,20 +64,18 @@ const Player = () => {
         } else {
             touch_ground = false
         }
-        console.log(
-            collision.collisionDetection()
-        )
+
         collision.collisionDetection().forEach((result) => {
             // 碰撞是基于SAT碰撞，result返回两个参数，一个是overlap向量，一个是碰撞到的collision
             if (result.body.tag.has("obstacle")) {
                 engine.changeSenceToNode(loseSence())
-            }else if(result.body.tag.has("coin")){
+            } else if (result.body.tag.has("coin")) {
                 gameManager.getCoin();
                 (result.body.parent as Coin).pick()
-                
+
             }
         })
-        
+
         step++ // 未来将会加入 Timer 就不需要这样了
     }
     // 使用这种方法监听，可以在player被摧毁的时候自动取消监听
@@ -97,22 +96,34 @@ const Player = () => {
 class GameManager extends Container { // Container 是所有节点的基类，他能有多个子节点，一个父节点
     step: number = 0 // 未来将会加入 Timer 就不需要这样了
     coin: number = 0
+    score_text: Text
+    timer: Timer
 
-    score_text:Text
+    constructor(options: IContainerOptions) {
+        super(options)
+        this.timer = this.addChild(
+            new Timer({
+                engine: options.engine,
+                waitTime: 1,
+                initTimeLeft: 1
+            })
+        )
+        this.onEvent(this.timer, "timeout", this.createObstacle.bind(this))
+    }
 
     onReady(): void {
         // onReady 在其所有子节点被加载完毕并准备好后被引擎调用
         this.tag.add("game_manager")
         this.score_text = this.root.findByTag("score_text")[0] as Text
     }
-    onUpdate(_dt: number): void {
-        // onUpdate 会在每一帧被引擎调用
-        // 未来将会加入 Timer 就不需要这样了
-        if (this.step % 80 == 0) {
-            this.createObstacle()
-        }
-        this.step++
-    }
+    // onUpdate(_dt: number): void {
+    //     // onUpdate 会在每一帧被引擎调用
+    //     // 未来将会加入 Timer 就不需要这样了
+    //     if (this.step % 80 == 0) {
+    //         this.createObstacle()
+    //     }
+    //     this.step++
+    // }
     createObstacle() {
         const obstacle = new Obstacle(engine)
         const coin = new Coin(engine)
@@ -126,9 +137,9 @@ class GameManager extends Container { // Container 是所有节点的基类，�
             coin
         )
     }
-    getCoin(){
+    getCoin() {
         this.coin++
-        this.score_text.setText("分数："+this.coin)
+        this.score_text.setText("分数：" + this.coin)
     }
 }
 
@@ -170,9 +181,8 @@ class Coin extends MovingObject {
         super(coinTexture, Collision.rectShape(0, 0, 10, 10), engine)
         this.collision.tag.add("coin")
     }
-    pick(){
+    pick() {
         this.destory()
-        console.log("我死了")
     }
 }
 
@@ -205,7 +215,7 @@ const mainSence = () => {
         text: "分数：0",
         font: "30px Arial",
         position: new Vector2(5, 5),
-        tags:["score_text"]
+        tags: ["score_text"]
     }))
     return root
 }
@@ -233,8 +243,6 @@ const PlayAgin = () => {
         }
     }
     collision.onClick = () => {
-        console.log("change")
-        playAgin.position.x += 50
         engine.changeSenceToNode(mainSence())
     }
     return playAgin

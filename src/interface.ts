@@ -66,6 +66,18 @@ export interface ITextOptions extends IDrawableOptions {
     font?: string,
     color?: Color
 }
+
+export interface ITimerOptions extends IContainerOptions {
+    waitTime: number,
+    oneShot?: boolean,
+    start?: boolean,
+    initTimeLeft?:number
+}
+
+export interface ITimerEvents {
+    timeout(): void
+}
+
 // Compositor //
 export interface ICompositorOptions {
     renderer: Renderer
