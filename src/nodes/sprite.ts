@@ -2,8 +2,8 @@ import { AltasTexture, Texture } from "../video/texture/texture";
 import TextureCompositors from "../video/compositors/texture_compositor";
 import Drawable from "./drawable";
 import { ISpriteOptions } from "../interface"
-import { Rect } from "../main";
-
+import { IAnimations, ISpriteAnimations, Rect } from "../main";
+import Timer from "./timer"
 /**
  * 精灵
  * @category GameNode
@@ -15,13 +15,19 @@ class Sprite extends Drawable {
      */
     textureRegion: Rect = this.pool.Rect.pull()
     enableRegion: boolean = false
-    private region:Rect = this.pool.Rect.pull()  // 纹理真实大小
+    private region: Rect = this.pool.Rect.pull()  // 纹理真实大小
     hFrames: number = 1
     vFrames: number = 1
     gapSize: number = 0
-    
-    private textureWidth:number=0
-    private textureHight:number=0
+
+    private textureWidth: number = 0
+    private textureHight: number = 0
+
+    private animationTimer: Timer
+    private animatiosFarme: number = 0
+    animations: ISpriteAnimations
+    animationPaused: boolean = false
+    currentAnimationName?: string
 
     constructor(options: ISpriteOptions) {
         super(options);
@@ -30,8 +36,52 @@ class Sprite extends Drawable {
         this.vFrames = options.vFrames ?? 0
         this.gapSize = options.gapSize ?? 0
         if (this.gapSize > 0) {
-            this.setAnimation(options.animation ?? 0)
+            this.setAnimation(options.frames ?? 0)
         }
+        this.animations = options.animations ?? {}
+        this.animationTimer = new Timer({
+            start: false,
+            waitTime: 0,
+            engine: this.engine
+        })
+        this.animationTimer.on("timeout", this.animationsTimeOut.bind(this))
+    }
+
+    public get currentAnimation(): IAnimations | null {
+        if (!this.currentAnimationName) {
+            return null
+        }
+        return this.animations[this.currentAnimationName]
+    }
+
+    play(name: string) {
+        if (this.currentAnimationName == name) {
+            return
+        }
+        this.stop()
+        this.currentAnimationName = name
+        this.animationTimer.start = true
+        this.animatiosFarme = 0
+        this.setAnimation(this.currentAnimation!.fromFrames)
+    }
+    stop() {
+        this.animationTimer.stop()
+        this.currentAnimationName = undefined
+    }
+    private animationsTimeOut() {
+        if (!this.currentAnimationName) {
+            return
+        }
+        this.animatiosFarme++
+        this.setAnimation(this.currentAnimation!.fromFrames + this.animatiosFarme)
+        if (this.animatiosFarme > this.currentAnimation!.toFrames) {
+            this.stop()
+        }
+    }
+    update(dt: number): void {
+        super.update(dt)
+        this.animationTimer.start = !this.animationPaused
+        this.animationTimer.update(dt)
     }
     draw(): void {
         super.draw();
@@ -39,7 +89,6 @@ class Sprite extends Drawable {
             return;
         }
         const baseTexture = this.texture.baseTexture!;
-
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;
         this.region.copy(this.textureRegion)
@@ -63,7 +112,6 @@ class Sprite extends Drawable {
         this.engine.debugger?.drawDebugFrame(this.drawSize.x, this.drawSize.y)
         super.drawDebug()
     }
-
     setAnimation(frame: number) {
         if (!this.texture || !this.texture.baseTexture) {
             return;
@@ -74,10 +122,10 @@ class Sprite extends Drawable {
             }
             const cordx = frame % this.hFrames;
             const cordy = Math.floor(frame / this.hFrames);
-            
+
             this.enableRegion = true;
-            const fsw = Math.floor(this.textureWidth / this.hFrames)+this.gapSize ; // Add gapSize for horizontal gap
-            const fsh = Math.floor(this.textureHight / this.vFrames)+this.gapSize; // Add gapSize for vertical gap
+            const fsw = Math.floor(this.textureWidth / this.hFrames) + this.gapSize; // Add gapSize for horizontal gap
+            const fsh = Math.floor(this.textureHight / this.vFrames) + this.gapSize; // Add gapSize for vertical gap
 
             this.textureRegion.setRect(
                 cordx * fsw,

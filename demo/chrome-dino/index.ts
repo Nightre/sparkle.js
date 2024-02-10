@@ -94,7 +94,6 @@ const Player = () => {
 // 若你觉得这种方法不和你口味，可以使用上面的 playerSence的
 // 状态函数方式来写
 class GameManager extends Container { // Container 是所有节点的基类，他能有多个子节点，一个父节点
-    step: number = 0 // 未来将会加入 Timer 就不需要这样了
     coin: number = 0
     score_text: Text
     timer: Timer
@@ -116,14 +115,7 @@ class GameManager extends Container { // Container 是所有节点的基类，�
         this.tag.add("game_manager")
         this.score_text = this.root.findByTag("score_text")[0] as Text
     }
-    // onUpdate(_dt: number): void {
-    //     // onUpdate 会在每一帧被引擎调用
-    //     // 未来将会加入 Timer 就不需要这样了
-    //     if (this.step % 80 == 0) {
-    //         this.createObstacle()
-    //     }
-    //     this.step++
-    // }
+
     createObstacle() {
         const obstacle = new Obstacle(engine)
         const coin = new Coin(engine)

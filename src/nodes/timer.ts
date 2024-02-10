@@ -42,6 +42,10 @@ class Timer extends Container<ITimerEvents> {
         this.emit("timeout")
         this.timeLeft = 0
     }
+    stop(){
+        this.timeLeft = 0
+        this.start = false
+    }
 }
 
 export default Timer

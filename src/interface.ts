@@ -56,7 +56,16 @@ export interface ISpriteOptions extends IDrawableOptions {
     hFrames?: number;
     vFrames?: number;
     gapSize?: number;
-    animation?: number;
+    frames?: number;
+    animations?: ISpriteAnimations;
+}
+export interface ISpriteAnimations {
+    [name: string]: IAnimations
+}
+export interface IAnimations {
+    fromFrames: number,
+    toFrames: number,
+    time: number
 }
 export interface ICollisionOptions extends ITransform2DOptions {
     shape?: Vector2[]
@@ -71,7 +80,7 @@ export interface ITimerOptions extends IContainerOptions {
     waitTime: number,
     oneShot?: boolean,
     start?: boolean,
-    initTimeLeft?:number
+    initTimeLeft?: number
 }
 
 export interface ITimerEvents {
