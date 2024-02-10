@@ -23,7 +23,6 @@ import Collision from "./nodes/collision"
 
 import Path from "./math/path"
 import { InputManager } from "./input/input"
-import Sence from "./system/sence"
 import MouseManager from "./input/mouse"
 import PhysicsManager from "./physics/physics"
 import { Audio } from "./audio/audio"
@@ -61,8 +60,6 @@ export {
     Loader,
     AudioManager,
     Audio,
-
-    Sence,
 
     TextManager,
     InputManager,

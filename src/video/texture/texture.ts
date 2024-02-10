@@ -1,4 +1,4 @@
-import { Rect, SparkleEngine, TextureUniId } from "../../main"
+import { Rect, SparkleEngine } from "../../main"
 import pool from "../../system/pool"
 import { createTexture } from "../utils/texture"
 

@@ -2,10 +2,8 @@ import { SparkleEngine } from "../engine";
 import { Color } from "../main";
 
 class TextManager {
-    private engine: SparkleEngine
     private canvas: CanvasRenderingContext2D
-    constructor(engine: SparkleEngine) {
-        this.engine = engine
+    constructor(_engine: SparkleEngine) {
         this.canvas = this.getContext();
     }
     /**
