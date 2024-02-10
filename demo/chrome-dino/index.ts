@@ -98,7 +98,6 @@ const Player = () => {
     // 若希望在节点被摧毁时，监听依然存在可以使用 engine.input.on
     player.onEvent(engine.input, "onKeyDown", (key: string) => {
         if (key == 'w' && touch_ground) { // jump key
-            console.log("JUMP")
             velocityY = -600
             jumpMuisc.play()
         }else if(key == 's'){
