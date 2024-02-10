@@ -1,8 +1,8 @@
 import { Loader, SparkleEngine } from "../main";
 
 class Sence {
-    preload(loader: Loader) { }
-    create(engine: SparkleEngine) { }
+    preload(_loader: Loader) { }
+    create(_engine: SparkleEngine) { }
 }
 
 export default Sence

@@ -5,7 +5,7 @@ import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 import Collision from "./nodes/collision"
-import { EventEmitter, GLShader } from "./main"
+import { Audio, EventEmitter, GLShader } from "./main"
 
 export interface ICopyable<T> {
     copy: (obj: T) => void
@@ -199,4 +199,10 @@ export interface IDrawLineOptions extends IDrawOptions {
 
 export interface IDrawPolygonOptions extends IDrawOptions {
     path?: Path2D
+}
+
+export type Resources = Audio | Texture
+
+export interface ILoaderEvent {
+    complete(): void
 }

@@ -9,26 +9,6 @@ class Loader {
         this.baseUrl = baseUrl
     }
 
-    async load(path: string): Promise<any> {
-        const extension = path.split('.').pop()?.toLowerCase()
-
-        switch (extension) {
-            case 'json':
-                return this.loadData(path)
-            case 'png':
-            case 'jpg':
-            case 'jpeg':
-            case 'gif':
-                return this.loadImage(path)
-            case 'mp3':
-            case 'wav':
-            case 'ogg':
-                return this.loadAudio(path)
-            default:
-                throw new Error(`Unsupported file type: ${extension}`)
-        }
-    }
-
     async loadData(path: string): Promise<any> {
         const response = await fetch(this.baseUrl ? `${this.baseUrl}/${path}` : path)
         if (!response.ok) {
@@ -49,7 +29,9 @@ class Loader {
     async loadImage(path: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             const image = new Image()
-            image.onload = () => resolve(image)
+            image.onload = () => {
+                resolve(image)
+            }
             image.onerror = reject
             image.src = this.baseUrl ? `${this.baseUrl}/${path}` : path
         })
