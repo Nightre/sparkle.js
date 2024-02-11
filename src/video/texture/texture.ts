@@ -1,4 +1,4 @@
-import { Rect, SparkleEngine } from "../../main"
+import { Images, Rect, SparkleEngine } from "../../main"
 import pool from "../../system/pool"
 import { createTexture } from "../utils/texture"
 
@@ -61,15 +61,11 @@ export class BaseTexture {
      * 重新设置纹理
      * @param image 
      */
-    setImage(image: TexImageSource) {
-        const engine = this.engine
-        this.texture = createTexture(engine.renderer.gl, image, engine.renderer.antialias)
-        if (image instanceof VideoFrame) {
-            throw new Error("VideoFrame is currently not supported");
-        } else {
-            this.width = image.width
-            this.height = image.height
-        }
+    setImage(image: Images) {
+        const engine = this.engine;
+        this.texture = createTexture(engine.renderer.gl, image, engine.renderer.antialias);
+        this.width = image.width;
+        this.height = image.height;
     }
 }
 /**
