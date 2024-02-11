@@ -6,6 +6,7 @@ import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 import Collision from "./nodes/collision"
 import { Audio, EventEmitter, GLShader } from "./main"
+import Animations from "./animation/animation"
 
 export interface ICopyable<T> {
     copy: (obj: T) => void
@@ -53,16 +54,18 @@ export interface ITransform2DOptions extends IContainerOptions {
 }
 export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;
-    hFrames?: number;
-    vFrames?: number;
-    gapSize?: number;
-    frames?: number;
-    animations?: ISpriteAnimations;
+    animations?: Animations
 }
-export interface ISpriteAnimations {
-    [name: string]: IAnimations
+
+export interface IAnimationOption {
+    texture: Texture;
+    hFrames: number;
+    vFrames: number;
+    gapSize: number;
+    animations: { [name: string]: IAnimationFrames };
 }
-export interface IAnimations {
+
+export interface IAnimationFrames {
     fromFrames: number,
     toFrames: number,
     time: number
@@ -205,4 +208,13 @@ export type Resources = Audio | Texture
 
 export interface ILoaderEvent {
     complete(): void
+}
+
+export enum ResourcesType {
+    TEXTURE,
+    AUDIO
+}
+export interface IPreload {
+    url: string,
+    type: ResourcesType
 }

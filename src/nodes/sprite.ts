@@ -2,8 +2,9 @@ import { AltasTexture, Texture } from "../video/texture/texture";
 import TextureCompositors from "../video/compositors/texture_compositor";
 import Drawable from "./drawable";
 import { ISpriteOptions } from "../interface"
-import { IAnimations, ISpriteAnimations, Rect } from "../main";
+import { IAnimationFrames, Rect } from "../main";
 import Timer from "./timer"
+import Animations from "../animation/animation";
 /**
  * 精灵
  * @category GameNode
@@ -16,30 +17,19 @@ class Sprite extends Drawable {
     textureRegion: Rect = this.pool.Rect.pull()
     enableRegion: boolean = false
     private region: Rect = this.pool.Rect.pull()  // 纹理真实大小
-    hFrames: number = 1
-    vFrames: number = 1
-    gapSize: number = 0
-
-    private textureWidth: number = 0
-    private textureHight: number = 0
-
     private animationTimer: Timer
     private animatiosFarme: number = 0
-    aniData: ISpriteAnimations
+    animations?: Animations
     aniPaused: boolean = false
     aniLoop: boolean = false
-    currentAniName?: string
+    private currentAniName?: string
+    private currentAni?: IAnimationFrames
 
     constructor(options: ISpriteOptions) {
         super(options);
         this.texture = options.texture;
-        this.hFrames = options.hFrames ?? 0
-        this.vFrames = options.vFrames ?? 0
-        this.gapSize = options.gapSize ?? 0
-        if (this.gapSize > 0) {
-            this.setAnimation(options.frames ?? 0)
-        }
-        this.aniData = options.animations ?? {}
+
+        this.animations = options.animations
         this.animationTimer = new Timer({
             start: false,
             waitTime: 0,
@@ -48,27 +38,19 @@ class Sprite extends Drawable {
         this.animationTimer.on("timeout", this.animationsTimeOut.bind(this))
     }
 
-    public get currentAni(): IAnimations | null {
-        if (!this.currentAniName) {
-            return null
-        }
-        return this.aniData[this.currentAniName]
-    }
-
     play(name: string, loop: boolean = false, restart: boolean = false) {
         if (name == this.currentAniName && !restart) {
             return
         }
         this.stop()
+        this.texture = this.animations!.texture
         this.aniLoop = loop
         this.currentAniName = name
-        if (this.currentAni!.fromFrames > this.currentAni!.toFrames) {
-            throw new Error("fromFrames must be less than toFrames");
-        }
+        this.currentAni = this.animations!.getAniData(name)
         this.animationTimer.waitTime = this.currentAni!.time
         this.animationTimer.start()
         this.animatiosFarme = 0
-        this.setAnimation(this.currentAni!.fromFrames)
+        this.setAnimation(0)
     }
     stop() {
         this.aniLoop = false
@@ -82,13 +64,13 @@ class Sprite extends Drawable {
         this.animatiosFarme++
         if (this.currentAni!.fromFrames + this.animatiosFarme > this.currentAni!.toFrames) {
             if (this.aniLoop) {
-                this.play(this.currentAniName, true,true)
+                this.play(this.currentAniName, true, true)
             } else {
                 this.stop()
             }
             return
         }
-        this.setAnimation(this.currentAni!.fromFrames + this.animatiosFarme)
+        this.setAnimation(this.animatiosFarme)
     }
     update(dt: number): void {
         super.update(dt)
@@ -100,23 +82,25 @@ class Sprite extends Drawable {
         if (!this.texture || !this.visible) {
             return;
         }
-        const baseTexture = this.texture.baseTexture!;
+        
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;
+        const baseTexture = this.texture.baseTexture!;
+        
         this.region.copy(this.textureRegion)
         let enableRegion = this.enableRegion
         if (this.texture instanceof AltasTexture) {
-            this.region.add(this.texture.region)
+            this.region.clip(this.texture.region)
             enableRegion = true
         }
-        this.textureWidth = this.region.w
-        this.textureHight = this.region.h
         if (this.enableRegion) {
             this.region.w = this.textureRegion.w
             this.region.h = this.textureRegion.h
         }
+        
         const { w, h } = compositors.addQuad(baseTexture, enableRegion, this.region);
         this.drawSize.set(w, h)
+
         compositors.setColor(this.color)
         compositors.flush();
     }
@@ -125,28 +109,13 @@ class Sprite extends Drawable {
         super.drawDebug()
     }
     setAnimation(frame: number) {
-        if (!this.texture || !this.texture.baseTexture) {
-            return;
-        }
-        if (this.vFrames > 0 && this.hFrames > 0) {
-            if (frame > this.vFrames * this.hFrames - 1) {
-                throw new Error("There aren't as many animations, please adjust vFrames and hFrames");
+        if (this.currentAni) {
+            const currentFrame = this.currentAni.fromFrames + frame
+            const region = this.animations!.getAnimationRegion(currentFrame)
+            if (region) {
+                this.textureRegion.copy(region)
+                this.enableRegion = true
             }
-            const cordx = frame % this.hFrames;
-            const cordy = Math.floor(frame / this.hFrames);
-
-            this.enableRegion = true;
-            const fsw = Math.floor(this.textureWidth / this.hFrames) + this.gapSize; // Add gapSize for horizontal gap
-            const fsh = Math.floor(this.textureHight / this.vFrames) + this.gapSize; // Add gapSize for vertical gap
-
-            this.textureRegion.setRect(
-                cordx * fsw,
-                cordy * fsh,
-                fsw - this.gapSize, // Subtract gapSize to maintain frame size
-                fsh - this.gapSize  // Subtract gapSize to maintain frame size
-            )
-        } else {
-            throw new Error("vFrames and hFrames should be greater than 0");
         }
     }
 }

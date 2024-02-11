@@ -1,7 +1,7 @@
-import { Loader, SparkleEngine } from "../main";
+import { SparkleEngine } from "../main";
 
 class Sence {
-    preload(_loader: Loader) { }
+    async preload(){}
     create(_engine: SparkleEngine) { }
 }
 

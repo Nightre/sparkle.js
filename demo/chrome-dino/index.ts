@@ -1,4 +1,4 @@
-import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer } from "../../src/main"
+import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer, Animations } from "../../src/main"
 
 // 创建
 const engine = new SparkleEngine({
@@ -21,6 +21,26 @@ const playerTexture = engine.texture.altasFromTexture(entityTexture, new Rect(0,
 const obstacleTexture = engine.texture.altasFromTexture(staticTexture, new Rect(0, 0, 10, 47))
 const coinTexture = engine.texture.altasFromTexture(entityTexture, new Rect(51, 0, 8, 8))
 
+
+const playerAni = new Animations({
+    texture: playerTexture,
+    hFrames: 4,
+    vFrames: 2,
+    gapSize: 1,
+    animations: {
+        "run": {
+            fromFrames: 0,
+            toFrames: 3,
+            time: 0.1
+        },
+        "fly": {
+            fromFrames: 4,
+            toFrames: 7,
+            time: 0.1
+        }
+    }
+})
+
 // 可以使用状态函数（闭包函数）或者是继承 Sprite，两种都行
 // playerSence 是状态函数
 const Player = () => {
@@ -30,24 +50,9 @@ const Player = () => {
 
     const player = new Sprite({
         engine: engine,
-        texture: playerTexture,
         position: new Vector2(80, 240),
         scale: new Vector2(5),
-        hFrames: 4,
-        vFrames: 2,
-        gapSize: 1,
-        animations: {
-            "run": {
-                fromFrames: 0,
-                toFrames: 3,
-                time: 0.1
-            },
-            "fly": {
-                fromFrames: 4,
-                toFrames: 7,
-                time: 0.1
-            }
-        }
+        animations: playerAni
     })
     let gameManager = player.root.findByTag("game_manager")[0] as GameManager
     const collision = new Collision({

@@ -23,14 +23,13 @@ class Rect implements IPoolable {
         this.w = w
         this.h = h
     }
-    add(r: Rect){
+    clip(r: Rect){
         const d = [
             r.x + this.x,
             r.y + this.y,
             r.w,
             r.h
         ]
-        
 
         this.setRect(...d)
     }

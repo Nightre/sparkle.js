@@ -29,6 +29,8 @@ import { Audio } from "./audio/audio"
 import Rect from "./math/rect"
 import Timer from "./nodes/timer"
 import Sence from "./sence/sence"
+
+import Animations from "./animation/animation"
 export {
     Color,
     Vector2,
@@ -37,7 +39,7 @@ export {
     Rect,
 
     Sence,
-
+    Animations,
     Timer,
     Container,
     Drawable,

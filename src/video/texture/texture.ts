@@ -8,6 +8,7 @@ import { createTexture } from "../utils/texture"
  */
 export class TextureManager {
     engine: SparkleEngine
+    baseTextures: Map<string, BaseTexture> = new Map
     constructor(engine: SparkleEngine) {
         this.engine = engine
     }
@@ -20,9 +21,13 @@ export class TextureManager {
     }
 
     async textureFromUrl(url: string) {
-        const image = await this.engine.loader.loadImage(url)
-
-        return new Texture(this.createBaseTexture(image))
+        const old = this.baseTextures.get(url)
+        if (old) {
+            return new Texture(old)
+        } else {
+            const image = await this.engine.loader.loadImage(url)
+            return new Texture(this.createBaseTexture(image))
+        }
     }
 
     /**
@@ -73,6 +78,12 @@ export class BaseTexture {
  */
 export class Texture {
     baseTexture: BaseTexture | null
+    get width() {
+        return this.baseTexture?.width ?? 0
+    }
+    get height() {
+        return this.baseTexture?.height ?? 0
+    }
     constructor(baseTexture: BaseTexture) {
         this.baseTexture = baseTexture
     }
@@ -83,6 +94,12 @@ export class Texture {
  */
 export class AltasTexture extends Texture {
     region: Rect = pool.Rect.pull()
+    get width() {
+        return this.region.w
+    }
+    get height() {
+        return this.region.h
+    }
     constructor(baseTexture: BaseTexture, region?: Rect) {
         super(baseTexture)
         if (region) {
