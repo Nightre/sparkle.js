@@ -1,5 +1,9 @@
 import { SparkleEngine } from "../main";
 
+// class Resources {
+//     assets: { [key: string]: IResources } = {}
+// }
+
 class Loader {
     engine: SparkleEngine
     baseUrl?: string
@@ -38,4 +42,4 @@ class Loader {
     }
 }
 
-export default Loader
+export { Loader }

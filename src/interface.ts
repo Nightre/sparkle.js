@@ -232,3 +232,6 @@ export interface IContainerEvent {
 export interface IEventAble<T extends Record<string | symbol, any>> {
     event: EventEmitter<T>
 }
+export interface IResources {
+    resourcesId: string
+}

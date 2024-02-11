@@ -1,43 +1,46 @@
 {
   "name": "sparkle-engine",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "0.0.2",
   "type": "module",
   "files": [
-    "dist",
+    "dist/*",
     "index.d.ts"
   ],
   "main": "./src/index.ts",
-  "module": "./dist/counter.js",
+  "module": "./dist/sparkle.js",
   "types": "./index.d.ts",
   "exports": {
     "types": "./index.d.ts",
-    "import": "./dist/counter.js",
-    "require": "./dist/counter.umd.cjs"
+    "import": "./dist/sparkle.js",
+    "require": "./dist/sparkle.umd.cjs"
+  },
+  "keywords": [
+    "webgl",
+    "game",
+    "engine",
+    "game engine",
+    "canvas",
+    "game dev"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nightre/sparkle.js"
   },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint .",
-    "docs": "typedoc",
-    "dev:docs": "npx vitepress dev docs"
+    "docs": "typedoc"
   },
   "devDependencies": {
-    "@iminu/vitepress-plugin-auto-sidebar": "^1.0.3",
-    "@typescript-eslint/eslint-plugin": "^6.20.0",
-    "@typescript-eslint/parser": "^6.20.0",
-    "eslint": "^8.56.0",
+    "terser": "^5.27.0",
     "tslib": "^2.6.2",
+    "typedoc": "^0.25.7",
     "typedoc-theme-category-nav": "^0.0.3",
     "typescript": "^5.3.3",
-    "typescript-eslint": "^0.0.1-alpha.0",
-    "vite": "^5.0.10",
-    "vitepress": "^1.0.0-rc.41",
-    "vitepress-plugin-autobar": "^1.0.8"
+    "vite": "^5.0.10"
   },
-  "author": "Nightre <nightscratchs@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "typedoc": "^0.25.7"
-  }
+  "author": "nightscra",
+  "license": "MIT"
 }
