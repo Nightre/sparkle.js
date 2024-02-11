@@ -17,6 +17,7 @@ class Collision extends Transform2D {
         this.onEvent(this.engine.mouse, "onMouseUp", this.onMouseClick.bind(this))
         // 获取所有 Collision this.physics.getCollision(this)
     }
+
     setShape(shape: Vector2[]) {
         this.clearShape()
         shape.forEach((v) => {
@@ -27,14 +28,12 @@ class Collision extends Transform2D {
     collisionDetection() {
         return this.physics.collisionDetection(this)
     }
-
     mouseDetection() {
         if (!this.isReady) {
             return false
         }
         return this.physics.pointInPolygon(this.getMouseGlobalPositon(), this.ShapePosition)
     }
-
     exitTree(): void {
         super.exitTree()
         this.physics.remove(this)

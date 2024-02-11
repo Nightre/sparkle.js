@@ -77,27 +77,33 @@ class Sprite extends Drawable {
         this.animationTimer.paused = this.aniPaused
         this.animationTimer.update(dt)
     }
+
+
+    clipRegion() {
+        this.region.copy(this.textureRegion)
+        let enableRegion = this.enableRegion
+        if (this.texture instanceof AltasTexture) {
+            if (this.enableRegion) {
+                // 如果开启纹理裁剪，那么就从AltasTexture中裁剪一个region
+                this.texture.region.clip(this.region, this.region)
+            } else {
+                this.region.copy(this.texture.region)
+            }
+            enableRegion = true
+        }
+        return enableRegion
+    }
+
     draw(): void {
         super.draw();
         if (!this.texture || !this.visible) {
             return;
         }
-        
+
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;
         const baseTexture = this.texture.baseTexture!;
-        
-        this.region.copy(this.textureRegion)
-        let enableRegion = this.enableRegion
-        if (this.texture instanceof AltasTexture) {
-            this.region.clip(this.texture.region)
-            enableRegion = true
-        }
-        if (this.enableRegion) {
-            this.region.w = this.textureRegion.w
-            this.region.h = this.textureRegion.h
-        }
-        
+        const enableRegion = this.clipRegion()
         const { w, h } = compositors.addQuad(baseTexture, enableRegion, this.region);
         this.drawSize.set(w, h)
 
