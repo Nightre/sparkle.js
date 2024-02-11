@@ -89,7 +89,7 @@ export interface ITimerOptions extends IContainerOptions {
     initTimeLeft?: number
 }
 
-export interface ITimerEvents {
+export interface ITimerEvents extends IContainerEvent {
     timeout(): void
 }
 
@@ -217,4 +217,18 @@ export enum ResourcesType {
 export interface IPreload {
     url: string,
     type: ResourcesType
+}
+
+export interface ICollisionEvent extends IContainerEvent {
+    onBodyEnter: (body: ICollisionResult) => void
+    onBodyExit: (body: Collision) => void
+    onClick: () => void
+}
+export interface IContainerEvent {
+    onEnterTree: () => void
+    onExitTree: () => void
+    onReady: () => void
+}
+export interface IEventAble {
+    event: EventEmitter<any>
 }

@@ -1,6 +1,6 @@
 import { Renderer } from "../video/renderer";
 
-import { IContainerOptions, IListened } from "../interface"
+import { IContainerEvent, IContainerOptions, IEventAble, IListened } from "../interface"
 import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import pool, { PoolManager } from "../system/pool";
@@ -9,7 +9,7 @@ import pool, { PoolManager } from "../system/pool";
  * 所有游戏对象的基类，可以容纳子节点
  * @category GameNode
  */
-class Container<T extends {} = {}> extends EventEmitter<T> {
+class Container implements IEventAble {
     protected engine: SparkleEngine
     protected renderer: Renderer
 
@@ -29,7 +29,6 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
      * 仅休眠我自己，不影响其子节点
      */
     onlySelfSleep: boolean = false
-
     /**
      * Tag 用于节点查找，可以有多个tag
      */
@@ -44,6 +43,8 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
      * 注意：常驻节点必须是根节点的一级子节点
      */
     resident: boolean
+
+    event: EventEmitter<IContainerEvent>
     protected isReady: boolean = false
     private listened: IListened[] = []
     get root() {
@@ -51,7 +52,6 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
     }
 
     constructor(options: IContainerOptions) {
-        super()
         this.engine = options.engine;
         this.resident = options.resident ?? false
         if (this.resident) {
@@ -60,6 +60,7 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
         this.renderer = this.engine.renderer;
         this.pool = pool
         this.tag = options.tags ? new Set(options.tags) : new Set
+        this.event = new EventEmitter()
     }
 
     /**
@@ -90,7 +91,7 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
      * 添加一个子节点
      * @param child 
      */
-    addChild<T extends Container>(child: T):T {
+    addChild<T extends Container>(child: T): T {
         child.setParent(this);
         return child
     }
@@ -161,7 +162,7 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
         let node: Container | undefined = this;
         while (node) {
             if (!node.parent) {
-                return
+                return false
             }
             if (node === parent) {
                 return true;
@@ -175,7 +176,7 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
      * 判断节点是不是子节点（包括所有子孙节点）
      * @param child 
      */
-    isChild(child: Container) {
+    isChild(child: Container): boolean {
         return child.isParent(this);
     }
 
@@ -214,9 +215,6 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
     }
 
     destory() {
-        this.listened.forEach((v) => {
-            v.emitter.off(v.eventName, v.func)
-        })
         if (this.resident) {
             this.engine.removeResident(this)
         }
@@ -229,12 +227,20 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
      * @ignore
      */
     enterTree() {
+        this.listened.forEach((v) => {
+            v.emitter.on(v.eventName, v.func)
+        })
+        this.event.emit("onEnterTree")
         this.onEnterTree()
     }
     /**
      * @ignore
      */
     exitTree() {
+        this.listened.forEach((v) => {
+            v.emitter.off(v.eventName, v.func)
+        })
+        this.event.emit("onExitTree")
         this.onExitTree()
     }
     /**
@@ -262,7 +268,7 @@ class Container<T extends {} = {}> extends EventEmitter<T> {
      * @param tag 要查找的tag
      * @returns 找到的子节点数组
      */
-    findByTag(tag: string, deep: boolean=true): Container[] {
+    findByTag(tag: string, deep: boolean = true): Container[] {
         const result: Container[] = [];
         this.forEachChildren((child) => {
             if (child.tag.has(tag)) {

@@ -1,4 +1,4 @@
-import { ICollisionOptions, Transform2D, Vector2 } from "../main";
+import { ICollisionOptions, ICollisionResult, Transform2D, Vector2, ICollisionEvent, EventEmitter } from "../main";
 import PhysicsManager from "../physics/physics";
 
 /**
@@ -9,7 +9,10 @@ class Collision extends Transform2D {
     shape: Vector2[] = []
     ShapePosition: Vector2[] = []
     physics: PhysicsManager
-
+    results: ICollisionResult[] = []
+    collisions: Collision[] = []
+    declare event: EventEmitter<ICollisionEvent>;
+    
     constructor(options: ICollisionOptions) {
         super(options)
         this.setShape(options.shape ?? [])
@@ -17,7 +20,28 @@ class Collision extends Transform2D {
         this.onEvent(this.engine.mouse, "onMouseUp", this.onMouseClick.bind(this))
         // 获取所有 Collision this.physics.getCollision(this)
     }
+    update(dt: number): void {
+        super.update(dt)
+        const nowResults = this.collisionDetection()
+        const nowCollisions: Collision[] = []
 
+        nowResults.forEach((r) => {
+            if (!this.collisions.includes(r.body)) {
+                this.onBodyEnter(r)
+                this.event.emit("onBodyEnter", r)
+            }
+            nowCollisions.push(r.body)
+        })
+        this.collisions.forEach((body) => {
+            if (!nowCollisions.includes(body)) {
+                this.onBodyExit(body)
+                this.event.emit("onBodyExit", body)
+            }
+        })
+
+        this.collisions = nowCollisions
+        this.results = nowResults
+    }
     setShape(shape: Vector2[]) {
         this.clearShape()
         shape.forEach((v) => {
@@ -35,20 +59,24 @@ class Collision extends Transform2D {
         return this.physics.pointInPolygon(this.getMouseGlobalPositon(), this.ShapePosition)
     }
     exitTree(): void {
-        super.exitTree()
         this.physics.remove(this)
+        super.exitTree()
+        
     }
     enterTree(): void {
         super.enterTree()
-        //this.onEvent(this.engine.mouse, "onMouseUp", this.onMouseClick.bind(this))
         this.physics.add(this)
     }
     private onMouseClick() {
         if (this.mouseDetection()) {
+            this.event.emit("onClick")
             this.onClick()
         }
     }
     onClick() { }
+    onBodyEnter(_res: ICollisionResult) { }
+    onBodyExit(_body: Collision) { }
+
     draw(): void {
         super.draw()
         const model = this.renderer.modelMatrix

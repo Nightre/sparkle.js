@@ -23,6 +23,7 @@ class Audio extends EventEmitter<IAudioEvent> {
             source.disconnect(this.context.destination);
             this.source = undefined
         };
+        return source
     }
 }
 

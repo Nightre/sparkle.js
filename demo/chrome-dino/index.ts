@@ -1,4 +1,4 @@
-import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer, Animations } from "../../src/main"
+import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer, Animations, ICollisionResult } from "../../src/main"
 
 // 创建
 const engine = new SparkleEngine({
@@ -84,19 +84,19 @@ const Player = () => {
             player.play("fly", true)
         }
 
-        collision.collisionDetection().forEach((result) => {
-            // 碰撞是基于SAT碰撞，result返回两个参数，一个是overlap向量，一个是碰撞到的collision
-            if (result.body.tag.has("obstacle")) {
-                dieMuisc.play()
-                engine.changeSenceToNode(LoseSence())
-            } else if (result.body.tag.has("coin")) {
-                (result.body.parent as Coin).pick()
-                gameManager.getCoin();
-            }
-        })
-
         step++ // 未来将会加入 Timer 就不需要这样了
     }
+    collision.onBodyEnter = (res: ICollisionResult) => {
+        const body = res.body
+        if (body.tag.has("obstacle")) {
+            dieMuisc.play()
+            engine.changeSenceToNode(LoseSence())
+        } else if (body.tag.has("coin")) {
+            (body.parent as Coin).pick()
+            gameManager.getCoin();
+        }
+    }
+
     // 使用这种方法监听，可以在player被摧毁的时候自动取消监听
     // 若希望在节点被摧毁时，监听依然存在可以使用 engine.input.on
     player.onEvent(engine.input, "onKeyDown", (key: string) => {
@@ -129,7 +129,8 @@ class GameManager extends Container { // Container 是所有节点的基类，�
                 start: true
             })
         )
-        this.onEvent(this.timer, "timeout", this.createObstacle.bind(this))
+        this.timer.event.on("timeout", this.createObstacle.bind(this))
+        //this.onEvent(this.timer.event, "timeout", this.createObstacle.bind(this))
     }
 
     onReady(): void {

@@ -35,7 +35,7 @@ class Sprite extends Drawable {
             waitTime: 0,
             engine: this.engine
         })
-        this.animationTimer.on("timeout", this.animationsTimeOut.bind(this))
+        this.animationTimer.event.on("timeout", this.animationsTimeOut.bind(this))
     }
 
     play(name: string, loop: boolean = false, restart: boolean = false) {

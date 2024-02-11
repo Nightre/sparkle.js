@@ -1,5 +1,6 @@
 import Container from "./container";
 import { ITimerEvents, ITimerOptions } from "../interface"
+import { EventEmitter } from "../main";
 
 /**
  * 计时器节点，有个`timeout`信号
@@ -12,12 +13,13 @@ import { ITimerEvents, ITimerOptions } from "../interface"
  * ```
  * @category GameNode
  */
-class Timer extends Container<ITimerEvents> {
+class Timer extends Container {
     waitTime: number
     oneShot: boolean
     paused: boolean = false
     timeLeft: number
     private isStart: boolean = false
+    declare event: EventEmitter<ITimerEvents>;
     constructor(options: ITimerOptions) {
         super(options)
         this.waitTime = options.waitTime
@@ -41,7 +43,7 @@ class Timer extends Container<ITimerEvents> {
         if (this.oneShot) {
             this.isStart = false
         }
-        this.emit("timeout")
+        this.event.emit("timeout")
         this.timeLeft = 0
     }
     stop() {
