@@ -9,7 +9,7 @@ import pool, { PoolManager } from "../system/pool";
  * 所有游戏对象的基类，可以容纳子节点
  * @category GameNode
  */
-class Container implements IEventAble {
+class Container implements IEventAble<IContainerEvent> {
     protected engine: SparkleEngine
     protected renderer: Renderer
 
@@ -45,14 +45,15 @@ class Container implements IEventAble {
     resident: boolean
 
     event: EventEmitter<IContainerEvent>
+    inTree: boolean = false
     protected isReady: boolean = false
     private listened: IListened[] = []
     get root() {
         return this.engine.root
     }
 
-    constructor(options: IContainerOptions) {
-        this.engine = options.engine;
+    constructor(options: IContainerOptions = {}) {
+        this.engine = options.engine ?? (window as any).sparkleEngine;
         this.resident = options.resident ?? false
         if (this.resident) {
             this.engine.addResident(this)
@@ -69,8 +70,12 @@ class Container implements IEventAble {
      * @param eventName 
      * @param func 
      */
-    onEvent<T extends Record<string, any>>(emitter: EventEmitter<T>, eventName: keyof T, func: T[keyof T]) {
-        emitter.on(eventName, func)
+    onEvent<T extends Record<string, any>>(obj: IEventAble<T>, eventName: keyof T, func: T[keyof T]) {
+        const emitter = obj.event
+        if (this.inTree) {
+            emitter.on(eventName, func)
+        }
+
         this.listened.push({
             emitter,
             eventName: (eventName as string),
@@ -83,9 +88,18 @@ class Container implements IEventAble {
      * @param eventName 
      * @param func 
      */
-    offEvent<T extends Record<string, any>>(emitter: EventEmitter<T>, eventName: keyof T, func: T[keyof T]) {
-        emitter.off(eventName, func);
+    offEvent<T extends Record<string, any>>(obj: IEventAble<T>, eventName: keyof T, func: T[keyof T]) {
+        const emitter = obj.event
+        if (this.inTree) {
+            emitter.off(eventName, func)
+        }
         this.listened = this.listened.filter(v => !(v.emitter == emitter && v.eventName == eventName));
+    }
+    waitEvent<T extends Record<string, any>>(obj: IEventAble<T>, eventName: keyof T) {
+        const emitter = obj.event
+        return new Promise((resolve) => {
+            emitter.once(eventName, resolve as any)
+        })
     }
     /**
      * 添加一个子节点
@@ -230,6 +244,7 @@ class Container implements IEventAble {
         this.listened.forEach((v) => {
             v.emitter.on(v.eventName, v.func)
         })
+        this.inTree = true
         this.event.emit("onEnterTree")
         this.onEnterTree()
     }
@@ -240,6 +255,7 @@ class Container implements IEventAble {
         this.listened.forEach((v) => {
             v.emitter.off(v.eventName, v.func)
         })
+        this.inTree = false
         this.event.emit("onExitTree")
         this.onExitTree()
     }

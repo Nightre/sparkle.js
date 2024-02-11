@@ -1,18 +1,19 @@
 import { SparkleEngine } from "../engine";
-import { EventEmitter, IMouseEvents, IMouseData, Vector2 } from "../main";
+import { EventEmitter, IMouseEvents, IMouseData, Vector2, IEventAble } from "../main";
 import pool from "../system/pool";
 
 /**
  * @category Input
  */
-class MouseManager extends EventEmitter<IMouseEvents> {
+class MouseManager implements IEventAble<IMouseEvents> {
     engine: SparkleEngine;
     canvas: HTMLCanvasElement;
 
     mousePosition: Vector2 = pool.Vector2.pull(0)
     isMouseDown: boolean = false
+    event: EventEmitter<IMouseEvents> = new EventEmitter
+
     constructor(engine: SparkleEngine, canvas: HTMLCanvasElement) {
-        super();
         this.engine = engine;
         this.canvas = canvas;
 
@@ -42,18 +43,18 @@ class MouseManager extends EventEmitter<IMouseEvents> {
 
     private handleMouseDown(event: MouseEvent): void {
         const data = this.getMouseData(event);
-        this.emit('onMouseDown', data);
+        this.event.emit('onMouseDown', data);
         this.isMouseDown = true
     }
 
     private handleMouseMove(event: MouseEvent): void {
         const data = this.getMouseData(event);
-        this.emit('onMouseMove', data);
+        this.event.emit('onMouseMove', data);
     }
 
     private handleMouseUp(event: MouseEvent): void {
         const data = this.getMouseData(event);
-        this.emit('onMouseUp', data);
+        this.event.emit('onMouseUp', data);
         this.isMouseDown = false
     }
 }

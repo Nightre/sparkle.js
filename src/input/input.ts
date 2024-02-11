@@ -1,16 +1,17 @@
 import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
-import { IInputEvents } from "../interface";
+import { IEventAble, IInputEvents } from "../interface";
 
 /**
  * @category Input
  */
-class InputManager extends EventEmitter<IInputEvents> {
+class InputManager implements IEventAble<IInputEvents> {
     engine: SparkleEngine;
     pressedKeys: Set<string> = new Set();
 
+    event: EventEmitter<IInputEvents> = new EventEmitter
+
     constructor(engine: SparkleEngine) {
-        super();
         this.engine = engine;
         this.bindEvents();
     }
@@ -23,16 +24,16 @@ class InputManager extends EventEmitter<IInputEvents> {
     handleKeyDown(event: KeyboardEvent) {
         // 如果按键之前没有被按下，则触发 onKeyDown 事件
         if (!this.pressedKeys.has(event.key)) {
-            this.emit('onKeyDown', event.key);
+            this.event.emit('onKeyDown', event.key);
         } else {
             // 如果按键已经存在于 pressedKeys 中，表示这是一个重复的按下事件
-            this.emit('onKeyPressRepeat', event.key);
+            this.event.emit('onKeyPressRepeat', event.key);
         }
         this.pressedKeys.add(event.key);
     }
 
     handleKeyRelease(event: KeyboardEvent) {
-        this.emit('onKeyRelease', event.key);
+        this.event.emit('onKeyRelease', event.key);
         this.pressedKeys.delete(event.key);
     }
 

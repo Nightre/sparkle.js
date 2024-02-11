@@ -75,7 +75,8 @@ class SparkleEngine {
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
         this.changeSenceToNode(new Container({ engine: this }))
         this.maxFPS = options.maxFPS ?? 60
-        this.loop(0) // 开始游戏循环
+        this.loop(0); // 开始游戏循环
+        (window as any).sparkleEngine = this
     }
 
     reset() {

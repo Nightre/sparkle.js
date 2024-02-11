@@ -41,7 +41,7 @@ export interface IDrawableOptions extends ITransform2DOptions {
     color?: Color
 }
 export interface IContainerOptions {
-    engine: SparkleEngine
+    engine?: SparkleEngine
     resident?: boolean
     tags?: string[]
 }
@@ -229,6 +229,6 @@ export interface IContainerEvent {
     onExitTree: () => void
     onReady: () => void
 }
-export interface IEventAble {
-    event: EventEmitter<any>
+export interface IEventAble<T extends Record<string | symbol, any>> {
+    event: EventEmitter<T>
 }

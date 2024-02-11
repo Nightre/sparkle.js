@@ -123,14 +123,12 @@ class GameManager extends Container { // Container 是所有节点的基类，�
         super(options)
         this.timer = this.addChild(
             new Timer({
-                engine: options.engine,
                 waitTime: 1,
                 initTimeLeft: 1,
                 start: true
             })
         )
-        this.timer.event.on("timeout", this.createObstacle.bind(this))
-        //this.onEvent(this.timer.event, "timeout", this.createObstacle.bind(this))
+        this.onEvent(this.timer, "timeout", this.createObstacle.bind(this))
     }
 
     onReady(): void {
@@ -140,8 +138,8 @@ class GameManager extends Container { // Container 是所有节点的基类，�
     }
 
     createObstacle() {
-        const obstacle = new Obstacle(engine)
-        const coin = new Coin(engine)
+        const obstacle = new Obstacle()
+        const coin = new Coin()
 
         obstacle.position.set(740, Math.random() * 100 + 180)
         coin.position.set(760, obstacle.position.y - 40)
@@ -163,15 +161,13 @@ class MovingObject extends Sprite {
     constructor(
         texture: Texture,
         shape: Vector2[],
-        engine: SparkleEngine
     ) {
         super({
             texture: texture,
             scale: new Vector2(5),
-            engine
         })
         this.collision = new Collision({
-            engine, shape
+            shape
         })
         this.addChild(
             this.collision
@@ -185,14 +181,14 @@ class MovingObject extends Sprite {
     }
 }
 class Obstacle extends MovingObject {
-    constructor(engine: SparkleEngine) {
-        super(obstacleTexture, Collision.rectShape(0, 0, 10, 35), engine)
+    constructor() {
+        super(obstacleTexture, Collision.rectShape(0, 0, 10, 35))
         this.collision.tag.add("obstacle")
     }
 }
 class Coin extends MovingObject {
-    constructor(engine: SparkleEngine) {
-        super(coinTexture, Collision.rectShape(0, 0, 8, 8), engine)
+    constructor() {
+        super(coinTexture, Collision.rectShape(0, 0, 8, 8))
         this.collision.tag.add("coin")
         this.offset.set(4, 4)
     }
@@ -206,22 +202,15 @@ class Coin extends MovingObject {
 }
 // 使用状态函数编写的方式，可以使用另外一中方式，请看Obstacle
 const MainSence = () => {
-    const root = new Container({
-        engine: engine
-    })
-
+    const root = new Container()
     const ground = new Sprite({
-        engine: engine,
         texture: groundTexture,
         position: new Vector2(0, 30)
     })
-
     const bg = new Sprite({
-        engine: engine,
         texture: bgTexture,
         scale: new Vector2(10)
     })
-
     bg.addChild(
         ground
     )
@@ -229,7 +218,6 @@ const MainSence = () => {
     root.addChild(new GameManager({ engine }))
     root.addChild(Player())
     root.addChild(new Text({
-        engine,
         text: "分数：0",
         font: "30px Arial",
         position: new Vector2(5, 5),
@@ -237,15 +225,12 @@ const MainSence = () => {
     }))
     return root
 }
-
 const PlayAgin = () => {
     const collision = new Collision({
-        engine,
         shape: Collision.rectShape(0, 0, 180, 50)
     })
 
     const playAgin = new Text({
-        engine,
         text: "[重新开始]",
         font: "40px Arial",
         position: new Vector2(740 / 2, 250),
@@ -266,21 +251,16 @@ const PlayAgin = () => {
     }
     return playAgin
 }
-
 const LoseSence = () => {
-    const root = new Container({
-        engine: engine
-    })
+    const root = new Container()
 
     root.addChild(new Text({
-        engine,
         text: "你输了",
         font: "40px Arial",
         position: new Vector2(740 / 2, 50),
         anchor: TextAnchor.CENTER
     }))
     root.addChild(new Text({
-        engine,
         text: "分数：" + (engine.root.findByTag("game_manager")[0] as GameManager).coin,
         font: "40px Arial",
         position: new Vector2(740 / 2, 150),
