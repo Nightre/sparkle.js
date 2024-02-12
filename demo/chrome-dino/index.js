@@ -1,33 +1,39 @@
 import { SparkleEngine, Sence, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer, Animations, ICollisionResult, Audio } from "../../src/main"
+
 const engine = new SparkleEngine({
     // 指定游戏画布元素
-    canvas: document.getElementById("game") as HTMLCanvasElement,
+    canvas: document.getElementById("game"),
     antialias: false, // 像素画就关闭抗锯齿
     width: 740,
     height: 370
 })
 
+// 有多种方法实现一个节点或者是组件，Player 使用了状态函数
+// 可以使用继承的方法，请查看 下面的MovingObject以及Coin
 const Player = () => {
     let velocityY = 0 // 加速度，用于跳跃
-    let step = 0 // 未来将会加入 Timer 就不需要这样了
-    let touch_ground = false // 是否触碰到地面
-
+    let isGrounded = false // 是否触碰到地面
+    // 对 gameManager 的引用。根据 tag 查找
+    // 注意：必须在ready后查找
+    let gameManager
+    // 创建player节点
     const player = new Sprite({
         engine: engine,
         position: new Vector2(80, 240),
         scale: new Vector2(5),
         animations: engine.getAssets<Animations>("player_ani")
     })
-    let gameManager = player.root.findByTag("game_manager")[0] as GameManager
+    // 创建玩家的碰撞体
     const collision = new Collision({
         engine, shape: Collision.rectShape(0, 0, 12, 10)
     })
+    // 将碰撞体作为子节点（组件）
     player.addChild(
         collision
     )
     player.onReady = () => {
-        player.setAnimation(0)
-        gameManager = player.root.findByTag("game_manager")[0] as GameManager
+        // 当准备就绪
+        gameManager = player.root.findByTag("game_manager")[0]
     }
 
     // 添加标签，标签可以拥有多个，标签可以用于检测到碰撞时识别
@@ -37,34 +43,41 @@ const Player = () => {
     player.tag.add("player")
 
     player.onUpdate = (dt) => {
+        // 每一帧
         velocityY += 800 * dt
         player.position.y += velocityY * dt
         if (player.position.y > 240) {
             player.position.y = 240
-            touch_ground = true
+            isGrounded = true
+            // 播放动画
             player.play("run", true)
         } else {
-            touch_ground = false
+            isGrounded = false
+            // 播放动画
             player.play("fly", true)
         }
-
-        step++ // 未来将会加入 Timer 就不需要这样了
     }
-    collision.onBodyEnter = (res: ICollisionResult) => {
+    // 也可以使用事件监听onBodyEnter事件
+    // 有其他碰撞体进入该碰撞体内触发
+    collision.onBodyEnter = (res) => {
         const body = res.body
         if (body.tag.has("obstacle")) {
+            // 如果碰到的碰撞体有 obstacle 标签
+            // 获取资源并播放
             engine.getAssets<Audio>("die_muisc").play()
+            // 切换场景
             engine.changeToSence(LoseSence)
         } else if (body.tag.has("coin")) {
-            (body.parent as Coin).pick()
+            // 拾取金币
+            body.parent.pick()
             gameManager.getCoin();
         }
     }
 
-    // 使用这种方法监听，可以在player被摧毁的时候自动取消监听
+    // 使用这种方法监听，可以在该节点被移出场景树的时候自动取消监听
     // 若希望在节点被摧毁时，监听依然存在可以使用 engine.input.on
-    player.onEvent(engine.input, "onKeyDown", (key: string) => {
-        if (key == 'w' && touch_ground) { // jump key
+    player.onEvent(engine.input, "onKeyDown", (key) => {
+        if (key == 'w' && isGrounded) { // jump key
             velocityY = -600
             engine.getAssets<Audio>("jump_muisc").play()
         } else if (key == 's') {
@@ -79,11 +92,11 @@ const Player = () => {
 // 若你觉得这种方法不和你口味，可以使用上面的 playerSence的
 // 状态函数方式来写
 class GameManager extends Container { // Container 是所有节点的基类，他能有多个子节点，一个父节点
-    coin: number = 0
-    score_text: Text
-    timer: Timer
+    coin = 0
+    scoreText // 分数节点的引用
+    timer // timer节点的引用
 
-    constructor(options: IContainerOptions) {
+    constructor(options) {
         super(options)
         this.timer = this.addChild(
             new Timer({
@@ -92,15 +105,17 @@ class GameManager extends Container { // Container 是所有节点的基类，�
                 start: true
             })
         )
+        // 使用这种方法监听，可以在该节点被移出场景树的时候自动取消监听
+        // 若希望在节点被摧毁时，监听依然存在可以使用 engine.input.on
         this.onEvent(this.timer, "timeout", this.createObstacle.bind(this))
     }
 
-    onReady(): void {
+    onReady() {
         // onReady 在其所有子节点被加载完毕并准备好后被引擎调用
         this.tag.add("game_manager")
-        this.score_text = this.root.findByTag("score_text")[0] as Text
+        this.scoreText = this.root.findByTag("score_text")[0]
     }
-
+    // 创建一个障碍物
     createObstacle() {
         const obstacle = new Obstacle()
         const coin = new Coin()
@@ -114,17 +129,18 @@ class GameManager extends Container { // Container 是所有节点的基类，�
             coin
         )
     }
+    // 得到金币
     getCoin() {
         this.coin++
-        this.score_text.text = "分数：" + this.coin
+        this.scoreText.text = "分数：" + this.coin
     }
 }
 // 若你不喜欢这样写，可以查看Player的另外一种的写法
 class MovingObject extends Sprite {
-    collision: Collision
+    collision
     constructor(
-        texture: Texture,
-        shape: Vector2[],
+        texture,
+        shape,
     ) {
         super({
             texture: texture,
@@ -137,7 +153,7 @@ class MovingObject extends Sprite {
             this.collision
         )
     }
-    onUpdate(_dt: number): void {
+    onUpdate(_dt) {
         this.position.x -= _dt * 200
         if (this.position.x < -50) {
             this.destory()
@@ -159,13 +175,15 @@ class Coin extends MovingObject {
     pick() {
         this.destory()
     }
-    onUpdate(dt: number): void {
+    onUpdate(dt) {
         super.onUpdate(dt)
         this.rotation += dt * 1
     }
 }
 class GameSence extends Sence {
-    preload(): void {
+    preload() {
+        // 在preload函数中加载所需资源
+        // 切换到场景的时候会先preload之后create
         engine.loader.baseUrl = "."
         engine.resource.loadTexture("static_img", "ground.png")
         engine.resource.loadTexture("entity_img", "img.png")
@@ -196,13 +214,19 @@ class GameSence extends Sence {
                 }
             }
         })
+        // loadAnimation 也可以从url加载动画json
+        // 使用 loadData 然后在animations 字段写 资源ID即可
     }
-    create(_engine: SparkleEngine) {
-        const root = new Container()
+    create(engine) {
+        // 切换到场景的时候会先preload之后create
+
+        const root = new Container() // 创建一个根节点
+        // 创建地面节点
         const ground = new Sprite({
             texture: engine.getAssets<Texture>("ground"),
             position: new Vector2(0, 30)
         })
+        // 创建背景节点
         const bg = new Sprite({
             texture: engine.getAssets<Texture>("background"),
             scale: new Vector2(10)
@@ -223,32 +247,7 @@ class GameSence extends Sence {
     }
 }
 
-class LoseSence extends Sence {
-    create(_engine: SparkleEngine) {
-        const root = new Container()
-
-        root.addChild(new Text({
-            text: "你输了",
-            font: "40px Arial",
-            position: new Vector2(740 / 2, 50),
-            anchor: TextAnchor.CENTER
-        }))
-        root.addChild(new Text({
-            text: "分数：" + (engine.root.findByTag("game_manager")[0] as GameManager).coin,
-            font: "40px Arial",
-            position: new Vector2(740 / 2, 150),
-            anchor: TextAnchor.CENTER
-        }))
-    
-        root.addChild(
-            PlayAgin()
-        )
-    
-        return root
-    }
-}
-
-
+// 重来按钮
 const PlayAgin = () => {
     const collision = new Collision({
         shape: Collision.rectShape(0, 0, 180, 50)
@@ -264,16 +263,41 @@ const PlayAgin = () => {
         collision
     )
     collision.onUpdate = () => {
-        if (collision.mouseDetection()) {
+        if (collision.mouseDetection()) { // 这个函数用检测是否碰到鼠标指针
             playAgin.color.setColor(0, 0, 0, 1)
         } else {
             playAgin.color.setColor(1, 1, 1, 1)
         }
     }
+    // 当被点击时触发，也可以用事件
     collision.onClick = () => {
         engine.changeToSence(GameSence)
     }
     return playAgin
 }
+class LoseSence extends Sence {
+    create(_engine) {
+        const root = new Container()
+        root.addChild(new Text({
+            text: "你输了",
+            font: "40px Arial",
+            position: new Vector2(740 / 2, 50),
+            anchor: TextAnchor.CENTER
+        }))
+        root.addChild(new Text({
+            text: "分数：" + (engine.root.findByTag("game_manager")[0]).coin,
+            font: "40px Arial",
+            position: new Vector2(740 / 2, 150),
+            anchor: TextAnchor.CENTER
+        }))
 
+        root.addChild(
+            PlayAgin()
+        )
+
+        return root
+    }
+}
+
+// 切换到游戏场景
 engine.changeToSence(GameSence)

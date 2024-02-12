@@ -1,7 +1,7 @@
 {
   "name": "sparkle-engine",
   "private": false,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "files": [
     "dist/*",
@@ -9,7 +9,7 @@
   ],
   "main": "./src/index.ts",
   "module": "./dist/sparkle.js",
-  "types": "./index.d.ts",
+  "types": "./dist/main.d.ts",
   "exports": {
     "types": "./index.d.ts",
     "import": "./dist/sparkle.js",
@@ -29,12 +29,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint .",
+    "build": "vite build && tsc",
     "docs": "typedoc"
   },
   "devDependencies": {
-    "terser": "^5.27.0",
     "tslib": "^2.6.2",
     "typedoc": "^0.25.7",
     "typedoc-theme-category-nav": "^0.0.3",

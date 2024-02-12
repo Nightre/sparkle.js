@@ -3,7 +3,7 @@ export default {
     "entryPoints": [
         "./src/main.ts",
     ],
-    "out": "./docs/public/api/",
+    "out": "./docs/",
     "categorizeByGroup": false,
     "defaultCategory": "Others",
     "categoryOrder": ["Math", "GameNode", "Texture", "Input", "Physics", "Audio", "*"],

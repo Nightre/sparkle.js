@@ -45,7 +45,6 @@ class Debugger {
         compositors.setMode(PRIMITIVE_MODE.LINE)
         compositors.lineWidth = 3
 
-
         const rect = pool.Rect.pull(0, 0, w*this.scale[0], h*this.scale[1])
         path.rectPath(rect)
         compositors.flush()
