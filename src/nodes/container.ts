@@ -26,14 +26,7 @@ class Container implements IEventAble<IContainerEvent> {
      * 子节点列表
      */
     children: Container[] = []
-    /**
-     * 休眠，若sleep为真则不会调用{@link update}等函数
-     */
-    sleep: boolean = false
-    /**
-     * 仅休眠我自己，不影响其子节点
-     */
-    onlySelfSleep: boolean = false
+
     /**
      * Tag 用于节点查找，可以有多个tag
      */
@@ -228,15 +221,11 @@ class Container implements IEventAble<IContainerEvent> {
      */
     postDraw() {
         this.forEachChildren((child) => {
-            if (!child.sleep) {
-                child.draw();
-            }
+            child.draw();
             if (this.engine.debugger?.debugger) {
                 child.drawDebug()
             }
-            if (!child.sleep || child.onlySelfSleep) {
-                child.postDraw();
-            }
+            child.postDraw();
             if (!child.isReady) {
                 child.ready()
             }    

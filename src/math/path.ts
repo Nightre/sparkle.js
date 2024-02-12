@@ -66,7 +66,11 @@ class Path {
         }
     }
     forEachPoint(fn: (point: Vector2, i: number) => void) {
-        this.path.forEach(fn)
+        this.path.forEach((p, index) => {
+            if (index % 2 == 1) {
+                fn(p, index)
+            }
+        })
     }
 }
 

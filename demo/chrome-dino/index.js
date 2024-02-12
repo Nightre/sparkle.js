@@ -7,12 +7,9 @@ import {
     Vector2,
     Collision,
     Text,
-    Texture,
     TextAnchor,
     Timer,
-    Animations,
-    Audio 
-} from "../../src/main"
+} from  "https://unpkg.com/sparkle-engine/dist/sparkle.js"
 
 const engine = new SparkleEngine({
     // 指定游戏画布元素

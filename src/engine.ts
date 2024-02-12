@@ -85,9 +85,7 @@ class SparkleEngine {
 
         this.changeSenceToContainer(new Container({ engine: this }))
         this.maxFPS = options.maxFPS ?? 60
-        this.resource.once("idle", () => {
-            this.loop(0); // 开始游戏循环
-        })
+        this.loop(0); // 开始游戏循环
         this.getAssets = this.resource.get.bind(this.resource)
     }
 

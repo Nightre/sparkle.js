@@ -43,12 +43,13 @@ class Debugger {
         this.color.setColor(0, 0, 1)
         compositors.setColor(color ?? this.color)
         compositors.setMode(PRIMITIVE_MODE.LINE)
-        compositors.lineWidth = 3
+        compositors.lineWidth = 10
 
         const rect = pool.Rect.pull(0, 0, w*this.scale[0], h*this.scale[1])
         path.rectPath(rect)
         compositors.flush()
         pool.Rect.push(rect)
+
         this.engine.renderer.restore()
     }
     /**
