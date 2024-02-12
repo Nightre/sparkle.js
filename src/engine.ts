@@ -1,7 +1,7 @@
 import Container from "./nodes/container"
 import { Renderer } from "./video/renderer"
 import { ISparkleEngineOption } from "./interface";
-import { AudioManager, IResources, IResourcesStore, Loader, Sence } from "./main";
+import { AudioManager, IResources, Loader, Sence } from "./main";
 import { TextureManager } from "./video/texture/texture";
 import { InputManager } from "./input/input"
 import pool from "./system/pool";
