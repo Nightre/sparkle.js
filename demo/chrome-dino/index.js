@@ -12,7 +12,7 @@ import {
     Timer,
     Animations,
     Audio 
-} from "https://unpkg.com/sparkle-engine/dist/sparkle.js"
+} from "../../src/main"
 
 const engine = new SparkleEngine({
     // 指定游戏画布元素
@@ -34,7 +34,7 @@ const Player = () => {
     const player = new Sprite({
         position: new Vector2(80, 240),
         scale: new Vector2(5),
-        animations: engine.getAssets<Animations>("player_ani")
+        animations: engine.getAssets("player_ani")
     })
     // 创建玩家的碰撞体
     const collision = new Collision({
@@ -77,7 +77,7 @@ const Player = () => {
         if (body.tag.has("obstacle")) {
             // 如果碰到的碰撞体有 obstacle 标签
             // 获取资源并播放
-            engine.getAssets<Audio>("die_muisc").play()
+            engine.getAssets("die_muisc").play()
             // 切换场景
             engine.changeToSence(LoseSence)
         } else if (body.tag.has("coin")) {
@@ -92,7 +92,7 @@ const Player = () => {
     player.onEvent(engine.input, "onKeyDown", (key) => {
         if (key == 'w' && isGrounded) { // jump key
             velocityY = -600
-            engine.getAssets<Audio>("jump_muisc").play()
+            engine.getAssets("jump_muisc").play()
         } else if (key == 's') {
             velocityY += 250
         }
@@ -175,13 +175,13 @@ class MovingObject extends Sprite {
 }
 class Obstacle extends MovingObject {
     constructor() {
-        super(engine.getAssets<Texture>("obstacle"), Collision.rectShape(0, 0, 10, 35))
+        super(engine.getAssets("obstacle"), Collision.rectShape(0, 0, 10, 35))
         this.collision.tag.add("obstacle")
     }
 }
 class Coin extends MovingObject {
     constructor() {
-        super(engine.getAssets<Texture>("coin"), Collision.rectShape(0, 0, 8, 8))
+        super(engine.getAssets("coin"), Collision.rectShape(0, 0, 8, 8))
         this.collision.tag.add("coin")
         this.offset.set(4, 4)
     }
@@ -236,12 +236,12 @@ class GameSence extends Sence {
         const root = new Container() // 创建一个根节点
         // 创建地面节点
         const ground = new Sprite({
-            texture: engine.getAssets<Texture>("ground"),
+            texture: engine.getAssets("ground"),
             position: new Vector2(0, 30)
         })
         // 创建背景节点
         const bg = new Sprite({
-            texture: engine.getAssets<Texture>("background"),
+            texture: engine.getAssets("background"),
             scale: new Vector2(10)
         })
         bg.addChild(
