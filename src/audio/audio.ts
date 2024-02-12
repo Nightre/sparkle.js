@@ -1,17 +1,17 @@
-import { EventEmitter, IAudioEvent, IResources, ResourcesType, SparkleEngine } from "../main";
+import { EventEmitter, IAudioEvent, IEventAble, IResources, ResourcesType, SparkleEngine } from "../main";
 
 /**
  * @category Audio
  */
-class Audio extends EventEmitter<IAudioEvent> implements IResources {
+class Audio implements IResources, IEventAble<IAudioEvent> {
     resourcesId?: string;
     resourcesType = ResourcesType.AUDIO
 
+    event: EventEmitter<IAudioEvent> = new EventEmitter
     private buffer: AudioBuffer;
     private context: AudioContext;
     private source?: AudioBufferSourceNode
     constructor(audioManager: AudioManager, buffer: AudioBuffer) {
-        super();
         this.context = audioManager.context;
         this.buffer = buffer;
     }
@@ -22,7 +22,7 @@ class Audio extends EventEmitter<IAudioEvent> implements IResources {
         source.connect(this.context.destination);
         source.start(when);
         source.onended = () => {
-            this.emit("onEnd");
+            this.event.emit("onEnd");
             source.disconnect(this.context.destination);
             this.source = undefined
         };

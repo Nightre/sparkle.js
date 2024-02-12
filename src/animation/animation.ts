@@ -5,6 +5,7 @@ import pool from "../system/pool";
 class Animations implements IResources {
     resourcesId?: string;
     resourcesType = ResourcesType.ANIMATION
+
     hFrames: number
     vFrames: number
     gapSize: number

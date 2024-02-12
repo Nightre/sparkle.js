@@ -76,6 +76,7 @@ export class Texture implements IResources {
     baseTexture: BaseTexture | null
     resourcesId?: string
     resourcesType = ResourcesType.TEXTURE
+
     get width() {
         return this.baseTexture?.width ?? 0
     }

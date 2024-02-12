@@ -4,11 +4,29 @@ import { AltasTexture } from "../video/texture/texture";
 class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
     private loadingAssets: { [key: string]: Promise<IResources> } = {}
     assets: IResourcesStore = {}
-
+    private currectRegion: number = -1
+    private regions: { [key: string]: number } = {}
     private engine: SparkleEngine
+    private regionsCallback: { [key: string]: () => void } = {}
+    private regionsCount: number = 0
     constructor(engine: SparkleEngine) {
         super()
         this.engine = engine
+    }
+    getRegion() {
+        return this.regionsCount++
+    }
+    startRegion() {
+        this.currectRegion = this.getRegion()
+        this.regions[this.currectRegion] = 0
+    }
+    endRegion(fn: () => void) {
+        this.regionsCallback[this.currectRegion] = fn
+        if (this.regions[this.currectRegion] == 0) {
+            // 没有任何
+            fn()
+        }
+        this.currectRegion = -1
     }
 
     async loadTexture(id: string, data: string | Images) {
@@ -63,10 +81,19 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
         return await this.load(id, this.engine.loader.loadData(url))
     }
     private async load<T extends IResources>(id: string, p: Promise<T>): Promise<T> {
+
+        const inRegion = this.currectRegion !== -1
+        const region = this.currectRegion
         this.loadingAssets[id] = p
+
+        if (inRegion) this.regions[region]++
         const r = await p
         r.resourcesId = id
         delete this.loadingAssets[id]
+        if (inRegion) this.regions[region]--
+        if (inRegion && this.regions[region] == 0) {
+            this.regionsCallback[region]()
+        }
         this.emit("loaded", r)
         if (Object.keys(this.loadingAssets)) {
             this.emit("idle")
@@ -74,12 +101,11 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
         this.assets[id] = r
         return r
     }
-    get(id: string) {
+    get<T extends IResources>(id: string): T {
         if (typeof this.assets[id] === "undefined") {
-            console.log(this.assets[id], this.assets)
             throw new Error(`assets ${id} dose not exist`);
         }
-        return this.assets[id]
+        return this.assets[id] as T
     }
 
     private async getAsyncAssets(id: string) {
@@ -99,6 +125,7 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
 class DataResources<T = unknown> implements IResources {
     resourcesId?: string | undefined;
     resourcesType = ResourcesType.DATA
+
     data: T
     constructor(data: T) {
         this.data = data

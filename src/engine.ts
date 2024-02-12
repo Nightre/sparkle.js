@@ -1,7 +1,7 @@
 import Container from "./nodes/container"
 import { Renderer } from "./video/renderer"
 import { ISparkleEngineOption } from "./interface";
-import { AudioManager, IResourcesStore, Loader } from "./main";
+import { AudioManager, IResources, IResourcesStore, Loader, Sence } from "./main";
 import { TextureManager } from "./video/texture/texture";
 import { InputManager } from "./input/input"
 import pool from "./system/pool";
@@ -37,7 +37,7 @@ class SparkleEngine {
     public text: TextManager
 
     public resource: ResourcesManager
-
+    public getAssets: <T extends IResources>(id: string) => T
     private lastTime: number = 0
     private residents: Set<Container> = new Set
     /**
@@ -76,11 +76,15 @@ class SparkleEngine {
         this.text = new TextManager(this)
         this.renderer = new Renderer(this, { ...options });
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
-        this.resource = new ResourcesManager(this)
+        this.resource = new ResourcesManager(this);
+        (window as any).sparkleEngine = this
+
         this.changeSenceToNode(new Container({ engine: this }))
         this.maxFPS = options.maxFPS ?? 60
-        this.loop(0); // 开始游戏循环
-        (window as any).sparkleEngine = this
+        this.resource.once("idle", () => {
+            this.loop(0); // 开始游戏循环
+        })
+        this.getAssets = this.resource.get.bind(this.resource)
     }
 
     reset() {
@@ -153,9 +157,21 @@ class SparkleEngine {
             this.toDestory.pop()!.doDestory()
         })
     }
-    
-    public get assets() : IResourcesStore {
-        return this.resource.assets
+
+    async changeToSence(sence: new () => Sence) {
+        this.changeSenceToNode(await this.instantiateSence(sence))
+    }
+
+    instantiateSence<T extends Sence>(Sence: new () => T) {
+        return new Promise<Container>((resolve) => {
+            this.resource.startRegion()
+            const sence = new Sence()
+            sence.preload()
+            
+            this.resource.endRegion(() => {
+                resolve(sence.create(this))
+            })
+        })
     }
 }
 

@@ -1,8 +1,8 @@
-import { SparkleEngine } from "../main";
+import { Container, SparkleEngine } from "../main";
 
-class Sence {
-    async preload(){}
-    create(_engine: SparkleEngine) { }
+abstract class Sence {
+    preload() { }
+    abstract create(_engine: SparkleEngine):Container
 }
 
 export default Sence
