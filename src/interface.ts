@@ -56,13 +56,19 @@ export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;
     animations?: Animations
 }
-
+export interface AnimationsStore { [name: string]: IAnimationFrames }
+export interface ILoadAnimationOptions {
+    hFrames: number;
+    vFrames: number;
+    gapSize: number;
+    animations: string | AnimationsStore;
+}
 export interface IAnimationOption {
     texture: Texture;
     hFrames: number;
     vFrames: number;
     gapSize: number;
-    animations: { [name: string]: IAnimationFrames };
+    animations: AnimationsStore;
 }
 
 export interface IAnimationFrames {
@@ -212,11 +218,9 @@ export interface ILoaderEvent {
 
 export enum ResourcesType {
     TEXTURE,
-    AUDIO
-}
-export interface IPreload {
-    url: string,
-    type: ResourcesType
+    AUDIO,
+    DATA,
+    ANIMATION
 }
 
 export interface ICollisionEvent extends IContainerEvent {
@@ -233,6 +237,12 @@ export interface IEventAble<T extends Record<string | symbol, any>> {
     event: EventEmitter<T>
 }
 export interface IResources {
-    resourcesId: string
+    resourcesId?: string
+    resourcesType: ResourcesType
 }
-export type Images = HTMLImageElement | ImageBitmap | ImageData | HTMLCanvasElement | HTMLVideoElement | OffscreenCanvas 
+export type Images = HTMLImageElement | ImageBitmap | ImageData | HTMLCanvasElement | HTMLVideoElement | OffscreenCanvas
+export interface IResourcesManagerEvent {
+    idle: () => void
+    loaded: (r: IResources) => void
+}
+export interface IResourcesStore<T extends IResources = IResources> { [key: string]: T }

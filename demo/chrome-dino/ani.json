@@ -1,0 +1,12 @@
+{
+    "run": {
+        "fromFrames": 0,
+        "toFrames": 3,
+        "time": 0.1
+    },
+    "fly": {
+        "fromFrames": 4,
+        "toFrames": 7,
+        "time": 0.1
+    }
+}

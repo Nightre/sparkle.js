@@ -1,14 +1,43 @@
 import { SparkleEngine, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer, Animations, ICollisionResult } from "../../src/main"
+const engine = new SparkleEngine({
+    // 指定游戏画布元素
+    canvas: document.getElementById("game") as HTMLCanvasElement,
+    antialias: false, // 像素画就关闭抗锯齿
+    width: 740,
+    height: 370
+})
+
+engine.resource.loadTexture("static_img", "ground.png")
+engine.resource.loadTexture("entity_img", "img.png")
+
+engine.resource.loadAltasTexture("background", "static_img", new Rect(12, 11, 74, 37))
+engine.resource.loadAltasTexture("obstacle", "static_img", new Rect(0, 0, 10, 47))
+engine.resource.loadAltasTexture("coin", "entity_img", new Rect(51, 0, 8, 8))
+engine.resource.loadAltasTexture("player", "entity_img", new Rect(0, 0, 50, 30))
+
+engine.resource.loadAudio("jump_muisc", "jump.mp3")
+engine.resource.loadAudio("die_muisc", "die.mp3")
+engine.resource.loadAnimation("player_ani", "player", {
+    hFrames: 4,
+    vFrames: 2,
+    gapSize: 1,
+    animations: {
+        "run": {
+            fromFrames: 0,
+            toFrames: 3,
+            time: 0.1
+        },
+        "fly": {
+            fromFrames: 4,
+            toFrames: 7,
+            time: 0.1
+        }
+    }
+})
 
 const main = async () => {
     // 创建
-    const engine = new SparkleEngine({
-        // 指定游戏画布元素
-        canvas: document.getElementById("game") as HTMLCanvasElement,
-        antialias: false, // 像素画就关闭抗锯齿
-        width: 740,
-        height: 370
-    })
+
     // 设置加载资源的基础路径
     engine.loader.baseUrl = "."
     const staticTexture = await engine.texture.textureFromUrl("ground.png")
@@ -18,29 +47,8 @@ const main = async () => {
 
     const bgTexture = engine.texture.altasFromTexture(staticTexture, new Rect(12, 11, 74, 37))
     const groundTexture = engine.texture.altasFromTexture(staticTexture, new Rect(10, 0, 74, 37))
-    const playerTexture = engine.texture.altasFromTexture(entityTexture, new Rect(0, 0, 50, 30))
     const obstacleTexture = engine.texture.altasFromTexture(staticTexture, new Rect(0, 0, 10, 47))
     const coinTexture = engine.texture.altasFromTexture(entityTexture, new Rect(51, 0, 8, 8))
-
-
-    const playerAni = new Animations({
-        texture: playerTexture,
-        hFrames: 4,
-        vFrames: 2,
-        gapSize: 1,
-        animations: {
-            "run": {
-                fromFrames: 0,
-                toFrames: 3,
-                time: 0.1
-            },
-            "fly": {
-                fromFrames: 4,
-                toFrames: 7,
-                time: 0.1
-            }
-        }
-    })
 
     // 可以使用状态函数（闭包函数）或者是继承 Sprite，两种都行
     // playerSence 是状态函数
@@ -48,12 +56,12 @@ const main = async () => {
         let velocityY = 0 // 加速度，用于跳跃
         let step = 0 // 未来将会加入 Timer 就不需要这样了
         let touch_ground = false // 是否触碰到地面
-
+        console.log(engine.resource)
         const player = new Sprite({
             engine: engine,
             position: new Vector2(80, 240),
             scale: new Vector2(5),
-            animations: playerAni
+            animations: engine.resource.get("player_ani") as Animations
         })
         let gameManager = player.root.findByTag("game_manager")[0] as GameManager
         const collision = new Collision({
@@ -267,7 +275,7 @@ const main = async () => {
             position: new Vector2(740 / 2, 150),
             anchor: TextAnchor.CENTER
         }))
-       
+
         root.addChild(
             PlayAgin()
         )
@@ -277,5 +285,4 @@ const main = async () => {
 
     engine.changeSenceToNode(MainSence())
 }
-
 main()

@@ -1,8 +1,10 @@
-import { IAnimationFrames, IAnimationOption } from "../interface";
-import { Texture } from "../main";
+import { IAnimationFrames, IAnimationOption, ResourcesType } from "../interface";
+import { IResources, Texture } from "../main";
 import pool from "../system/pool";
 
-class Animations {
+class Animations implements IResources {
+    resourcesId?: string;
+    resourcesType = ResourcesType.ANIMATION
     hFrames: number
     vFrames: number
     gapSize: number

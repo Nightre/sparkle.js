@@ -1,7 +1,7 @@
 import Container from "./nodes/container"
 import { Renderer } from "./video/renderer"
 import { ISparkleEngineOption } from "./interface";
-import { AudioManager, Loader } from "./main";
+import { AudioManager, IResourcesStore, Loader } from "./main";
 import { TextureManager } from "./video/texture/texture";
 import { InputManager } from "./input/input"
 import pool from "./system/pool";
@@ -9,6 +9,7 @@ import MouseManager from "./input/mouse"
 import Debugger from "./debugger/debugger"
 import PhysicsManager from "./physics/physics"
 import TextManager from "./video/text_manager"
+import { ResourcesManager } from "./loader/loader";
 
 /**
  * 引擎
@@ -34,6 +35,8 @@ class SparkleEngine {
     public audio: AudioManager
     /** 文字管理  */
     public text: TextManager
+
+    public resource: ResourcesManager
 
     private lastTime: number = 0
     private residents: Set<Container> = new Set
@@ -73,6 +76,7 @@ class SparkleEngine {
         this.text = new TextManager(this)
         this.renderer = new Renderer(this, { ...options });
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
+        this.resource = new ResourcesManager(this)
         this.changeSenceToNode(new Container({ engine: this }))
         this.maxFPS = options.maxFPS ?? 60
         this.loop(0); // 开始游戏循环
@@ -148,6 +152,10 @@ class SparkleEngine {
         this.toDestory.forEach(() => {
             this.toDestory.pop()!.doDestory()
         })
+    }
+    
+    public get assets() : IResourcesStore {
+        return this.resource.assets
     }
 }
 

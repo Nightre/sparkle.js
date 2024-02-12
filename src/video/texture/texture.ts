@@ -1,4 +1,4 @@
-import { Images, Rect, SparkleEngine } from "../../main"
+import { IResources, Images, Rect, ResourcesType, SparkleEngine } from "../../main"
 import pool from "../../system/pool"
 import { createTexture } from "../utils/texture"
 
@@ -72,8 +72,10 @@ export class BaseTexture {
  * 普通的纹理
  * @category Texture
  */
-export class Texture {
+export class Texture implements IResources {
     baseTexture: BaseTexture | null
+    resourcesId?: string
+    resourcesType = ResourcesType.TEXTURE
     get width() {
         return this.baseTexture?.width ?? 0
     }
@@ -90,6 +92,7 @@ export class Texture {
  */
 export class AltasTexture extends Texture {
     region: Rect = pool.Rect.pull()
+
     get width() {
         return this.region.w
     }

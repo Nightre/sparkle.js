@@ -1,9 +1,12 @@
-import { EventEmitter, IAudioEvent, SparkleEngine } from "../main";
+import { EventEmitter, IAudioEvent, IResources, ResourcesType, SparkleEngine } from "../main";
 
 /**
  * @category Audio
  */
-class Audio extends EventEmitter<IAudioEvent> {
+class Audio extends EventEmitter<IAudioEvent> implements IResources {
+    resourcesId?: string;
+    resourcesType = ResourcesType.AUDIO
+
     private buffer: AudioBuffer;
     private context: AudioContext;
     private source?: AudioBufferSourceNode
