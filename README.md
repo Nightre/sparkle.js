@@ -1,7 +1,9 @@
 # SPARKLE GAME ENGINE
 
 Sparkle is a HTML5 game engine that offers a simple and joyful approach to game development
-Sparkle.js 是一个基于webgl的html5游戏引擎，让游戏开发变得简单且有趣！
+Sparkle.js 是一个基于webgl的html5轻量级游戏引擎，让游戏开发变得简单且有趣！
+
+还在制作，快完成了
 
 # 目录
 
@@ -14,9 +16,11 @@ Sparkle.js 是一个基于webgl的html5游戏引擎，让游戏开发变得简�
     * [生命周期]()
     * [事件]()
     * [标签查找]()
-* [显示]()
+* [游戏节点]()
     * [精灵]()
     * [文字]()
+    * [计时器]()
+    * [碰撞]()
 * [资源]()
     * [资源预加载]()
     * [纹理]()
@@ -26,9 +30,7 @@ Sparkle.js 是一个基于webgl的html5游戏引擎，让游戏开发变得简�
 * [输入]()
     * [鼠标输入]()
     * [键盘输入]()
-* [碰撞]()
 * [其他]()
-    * [计时器]()
     * [自定义绘制]()
 
 
@@ -197,4 +199,5 @@ engine.root.findByTag(["enemy","monster"])
 node.tags.has("enemy")
 ```
 
-# 显示
+# 游戏节点
+
