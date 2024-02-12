@@ -9,14 +9,14 @@ Sparkle.js 是一个基于webgl的html5轻量级游戏引擎，让游戏开发�
 
 * [Demo](https://nightre.github.io/sparkle.js/demo/chrome-dino)
 * [API Reference](https://nightre.github.io/sparkle.js/docs/index)
-* [快速开始]()
-* [第一个项目：Hello Word]()
-* [场景]()
-* [节点]()
-    * [生命周期]()
-    * [事件]()
-    * [标签查找]()
-* [游戏节点]()
+* [快速开始](#快速开始)
+* [第一个项目Hello Word](#第一个项目HelloWord)
+* [场景](#场景)
+* [节点](#节点)
+    * [生命周期](#生命周期)
+    * [事件](#事件)
+    * [标签查找](#标签查找)
+* [游戏节点](#游戏节点)
     * [精灵]()
     * [文字]()
     * [计时器]()
@@ -49,7 +49,7 @@ npm i sparkle-engine
 import { SparkleEngine } from "sparkle-engine";
 ```
 
-# 第一个项目： Hello Word
+# 第一个项目HelloWord
 
 使用 SPARKLE GAME ENGINE 编写一个 Helloworld
 
