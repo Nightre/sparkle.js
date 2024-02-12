@@ -54,7 +54,7 @@ class SparkleEngine {
      * @param options
      */
     maxFPS: number
-
+    toDestory: Container[] = []
     constructor(options: ISparkleEngineOption) {
 
 
@@ -97,7 +97,7 @@ class SparkleEngine {
             c.setParent(sence)
         })
         if (this.root) {
-            this.root.destory()
+            this.root.doDestory()
         }
         this.physics.reset()
         this.root = sence
@@ -141,8 +141,13 @@ class SparkleEngine {
         }
         this.update(dt)
         this.renderer.draw()
-  
+        this.destoryChild()
         window.requestAnimationFrame(this.loop.bind(this))
+    }
+    destoryChild() {
+        this.toDestory.forEach(() => {
+            this.toDestory.pop()!.doDestory()
+        })
     }
 }
 

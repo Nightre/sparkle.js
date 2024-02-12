@@ -123,7 +123,7 @@ export interface AttributeInfo {
     normalized?: boolean
     offset: number
 }
-export type TextureUniId = string | TexImageSource
+export type TextureUniId = string | Images
 // Render  //
 export interface IRenderOptions {
     /** canvas */

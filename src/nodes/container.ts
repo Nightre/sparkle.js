@@ -46,6 +46,7 @@ class Container implements IEventAble<IContainerEvent> {
 
     event: EventEmitter<IContainerEvent>
     inTree: boolean = false
+    destroyed: boolean = false
     protected isReady: boolean = false
     private listened: IListened[] = []
     get root() {
@@ -98,7 +99,7 @@ class Container implements IEventAble<IContainerEvent> {
     waitEvent<T extends Record<string, any>>(obj: IEventAble<T>, eventName: keyof T) {
         const emitter = obj.event
         return new Promise((resolve) => {
-            emitter.once(eventName, resolve as any)
+            emitter.once(eventName, resolve as never)
         })
     }
     /**
@@ -209,7 +210,7 @@ class Container implements IEventAble<IContainerEvent> {
             }
             if (!child.isReady) {
                 child.ready()
-            }
+            }    
         })
     }
 
@@ -228,13 +229,13 @@ class Container implements IEventAble<IContainerEvent> {
         })
     }
 
-    destory() {
+    doDestory() {
         if (this.resident) {
             this.engine.removeResident(this)
         }
         this.removeFromParent()
         this.forEachChildren((child) => {
-            child.destory()
+            child.doDestory()
         })
     }
     /**
@@ -319,6 +320,10 @@ class Container implements IEventAble<IContainerEvent> {
 
         // 如果所有子节点都没有满足条件，返回false
         return false;
+    }
+    destory() {
+        this.destroyed = true
+        this.engine.toDestory.push(this)
     }
 }
 

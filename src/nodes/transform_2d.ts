@@ -98,8 +98,8 @@ class Transform2D extends Container {
         this.renderer.restore();
     }
 
-    destory() {
-        super.destory()
+    doDestory() {
+        super.doDestory()
         this.pool.Vector2.push(this.position!);
         this.pool.Vector2.push(this.scale!);
         this.pool.Vector2.push(this.skew!);

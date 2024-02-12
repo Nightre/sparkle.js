@@ -13,7 +13,7 @@ export class TextureManager {
         this.engine = engine
     }
 
-    textureFromImage(image: TexImageSource) {
+    textureFromImage(image: Images) {
         return new Texture(this.createBaseTexture(image))
     }
     altasFromTexture(texture: Texture, rect?: Rect) {
@@ -35,7 +35,7 @@ export class TextureManager {
      * @param image 
      * @returns 
      */
-    createBaseTexture(image: TexImageSource) {
+    createBaseTexture(image: Images) {
         const newOldBaseTexture = new BaseTexture(this.engine, image)
         return newOldBaseTexture
     }
@@ -50,9 +50,9 @@ export class BaseTexture {
     texture!: WebGLTexture
     width!: number
     height!: number
-    source: TexImageSource
+    source: Images
     engine: SparkleEngine
-    constructor(engine: SparkleEngine, image: TexImageSource) {
+    constructor(engine: SparkleEngine, image: Images) {
         this.source = image
         this.engine = engine
         this.setImage(image)

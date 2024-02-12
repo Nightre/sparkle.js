@@ -103,8 +103,8 @@ class Collision extends Transform2D {
         this.shape = []
         this.ShapePosition = []
     }
-    destory(): void {
-        super.destory()
+    doDestory(): void {
+        super.doDestory()
         this.clearShape()
     }
     static rectShape(x: number, y: number, width: number, height: number) {

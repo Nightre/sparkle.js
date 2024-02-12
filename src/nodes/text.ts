@@ -50,18 +50,18 @@ class Text extends Drawable {
         compositors.flush();
     }
     setText(text: string) {
-        const texImageSource = this.engine.text.drawText(
+        const Images = this.engine.text.drawText(
             text,
             this.font,
             this.color
         )
         if (this.texture) {
             this.texture.setImage(
-                texImageSource
+                Images
             )
         } else {
             this.texture = this.engine.texture.createBaseTexture(
-                texImageSource
+                Images
             )
         }
         this.drawSize.set(
