@@ -4,6 +4,7 @@ import pool from "../system/pool"
 
 /**
  * 矩形
+ * @category Math
  */
 class Rect implements IPoolable {
     /** 坐标x */

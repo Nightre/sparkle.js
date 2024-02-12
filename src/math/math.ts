@@ -1,5 +1,6 @@
 /**
  * MathUtil 类包含一些常用的数学工具函数。
+ * @category Math
  */
 class MathUtil {
     /**

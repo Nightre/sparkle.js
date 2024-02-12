@@ -1,4 +1,18 @@
-import { SparkleEngine, Sence, Container, Sprite, Rect, Vector2, Collision, Text, Texture, IContainerOptions, TextAnchor, Timer, Animations, ICollisionResult, Audio } from "../../src/main"
+import { 
+    SparkleEngine,
+    Sence,
+    Container,
+    Sprite,
+    Rect,
+    Vector2,
+    Collision,
+    Text,
+    Texture,
+    TextAnchor,
+    Timer,
+    Animations,
+    Audio 
+} from "https://unpkg.com/sparkle-engine/dist/sparkle.js"
 
 const engine = new SparkleEngine({
     // 指定游戏画布元素
@@ -18,14 +32,13 @@ const Player = () => {
     let gameManager
     // 创建player节点
     const player = new Sprite({
-        engine: engine,
         position: new Vector2(80, 240),
         scale: new Vector2(5),
         animations: engine.getAssets<Animations>("player_ani")
     })
     // 创建玩家的碰撞体
     const collision = new Collision({
-        engine, shape: Collision.rectShape(0, 0, 12, 10)
+        shape: Collision.rectShape(0, 0, 12, 10)
     })
     // 将碰撞体作为子节点（组件）
     player.addChild(

@@ -4,6 +4,17 @@ import PhysicsManager from "../physics/physics";
 /**
  * @category GameNode
  * @category Physics
+ * @example 示例
+ * ```
+ * const collision = new Collision({
+ *      shape: Collision.rectShape(0, 0, 12, 10)
+ * })
+ * collision.onBodyEnter=(res)=>{} // 其他物理体进入
+ * collision.onBodyExit=(res)=>{} // 其他物理体离开
+ * collision.onClick=()=>{} //被点击
+ * // 以上上个均可以用事件连接
+ * ```
+ * 该节点的事件，请查看：{@link ICollisionEvent}
  */
 class Collision extends Transform2D {
     shape: Vector2[] = []
@@ -49,6 +60,10 @@ class Collision extends Transform2D {
             this.ShapePosition.push(v.clone())
         })
     }
+    /**
+     * 检测碰撞，一般不需要手动调用
+     * @returns 
+     */
     collisionDetection() {
         return this.physics.collisionDetection(this)
     }
@@ -58,11 +73,17 @@ class Collision extends Transform2D {
         }
         return this.physics.satPointInPolygon(this.getMouseGlobalPositon(), this.ShapePosition)
     }
+    /**
+     * @ignore
+     */
     exitTree(): void {
         this.physics.remove(this)
         super.exitTree()
         
     }
+    /**
+     * @ignore
+     */
     enterTree(): void {
         super.enterTree()
         this.physics.add(this)

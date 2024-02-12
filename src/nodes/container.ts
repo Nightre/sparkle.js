@@ -7,6 +7,11 @@ import pool, { PoolManager } from "../system/pool";
 
 /**
  * 所有游戏对象的基类，可以容纳子节点
+ * @example 
+ * ```js
+ * const node = new Container()
+ * ```
+ * 该节点的事件，请查看：{@link IContainerEvent}
  * @category GameNode
  */
 class Container implements IEventAble<IContainerEvent> {

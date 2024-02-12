@@ -6,6 +6,13 @@ import TextureCompositors from "../video/compositors/texture_compositor"
 /**
  * 精灵
  * @category GameNode
+ * @example ```js
+ * const node = new Text({
+ *      text: "Hello!",
+ *      font: "40px Arial",
+ *      anchor: TextAnchor.CENTER
+ * })
+ * ```
  */
 class Text extends Drawable {
     private texture!: BaseTexture;

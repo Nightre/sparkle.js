@@ -7,6 +7,18 @@ import Timer from "./timer"
 import Animations from "../animation/animation";
 /**
  * 精灵
+ * @example ```
+ * const node = new Sprite({
+ *      texture: yourTexture
+ * })
+ * ```
+ * 可以使用animations
+ * ```
+ * const player = new Sprite({
+ *      animations: engine.getAssets("player_ani")
+ * })
+ * player.play("run", true) // loop
+ * ```
  * @category GameNode
  */
 class Sprite extends Drawable {

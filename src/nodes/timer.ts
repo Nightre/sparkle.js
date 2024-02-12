@@ -1,6 +1,6 @@
 import Container from "./container";
 import { ITimerEvents, ITimerOptions } from "../interface"
-import { EventEmitter } from "../main";
+import { EventEmitter, IEventAble } from "../main";
 
 /**
  * 计时器节点，有个`timeout`信号
@@ -11,9 +11,19 @@ import { EventEmitter } from "../main";
  *      timer.update(dt)
  * }
  * ```
+ * @example
+ * ```
+ * cosnt node = new Timer({
+ *      waitTime: 1,
+ *      initTimeLeft: 1,
+ *      start: true
+ * })
+ * node.onTimeout = ()=>{} // 或者是用信号onTimeout
+ * ```
+ * 该节点的所有事件：{@link ITimerEvents}
  * @category GameNode
  */
-class Timer extends Container {
+class Timer extends Container implements IEventAble<ITimerEvents> {
     /**
      * 计时器等待的时间
      */
@@ -77,6 +87,12 @@ class Timer extends Container {
     start() {
         this.timeLeft = 0
         this.isStart = true
+    }
+    /**
+     * timeout 时调用
+     */
+    onTimeout(){
+
     }
 }
 
