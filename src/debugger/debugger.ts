@@ -21,8 +21,10 @@ class Debugger {
         this.debugger = !this.debugger
     }
 
+    /**
+     * @ignore
+     */
     update() {
-
         this.frames = []
         if (this.input.pressedKeys.has("b") && this.input.pressedKeys.has("Control")) {
             if (!this.pressedDebugger) {
@@ -33,7 +35,9 @@ class Debugger {
             this.pressedDebugger = false
         }
     }
-
+    /**
+     * @ignore
+     */
     drawDebugFrame(w: number, h: number, color?: Color) {
         const { path, compositors } = this.init()
         this.color.setColor(0, 0, 1)
@@ -48,6 +52,9 @@ class Debugger {
         pool.Rect.push(rect)
         this.engine.renderer.restore()
     }
+    /**
+     * @ignore
+     */
     drawDebugCollision(vs: Vector2[]) {
         if (vs.length == 0) {
             return
@@ -68,6 +75,9 @@ class Debugger {
         compositors.flush()
         this.engine.renderer.restore()
     }
+    /**
+     * @ignore
+     */
     addDebugCross() {
         const { path, compositors } = this.init()
         compositors.setMode(PRIMITIVE_MODE.LINE)
@@ -83,6 +93,9 @@ class Debugger {
         compositors.flush()
         this.engine.renderer.restore()
     }
+    /**
+     * @ignore
+     */
     init() {
         const renderer = this.engine.renderer
 

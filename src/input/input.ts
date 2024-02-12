@@ -1,26 +1,26 @@
-import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import { IEventAble, IInputEvents } from "../interface";
 
 /**
+ * 监听输入
  * @category Input
  */
 class InputManager implements IEventAble<IInputEvents> {
-    engine: SparkleEngine;
+    /**
+     * 所有按下的按键
+     */
     pressedKeys: Set<string> = new Set();
 
     event: EventEmitter<IInputEvents> = new EventEmitter
 
-    constructor(engine: SparkleEngine) {
-        this.engine = engine;
-        this.bindEvents();
-    }
-
-    bindEvents() {
+    constructor() {
         window.addEventListener('keydown', this.handleKeyDown.bind(this));
         window.addEventListener('keyup', this.handleKeyRelease.bind(this));
     }
-
+    /**
+     * @ignore
+     * @param event 
+     */
     handleKeyDown(event: KeyboardEvent) {
         // 如果按键之前没有被按下，则触发 onKeyDown 事件
         if (!this.pressedKeys.has(event.key)) {
@@ -31,12 +31,18 @@ class InputManager implements IEventAble<IInputEvents> {
         }
         this.pressedKeys.add(event.key);
     }
-
+    /**
+     * @ignore
+     * @param event 
+     */
     handleKeyRelease(event: KeyboardEvent) {
         this.event.emit('onKeyRelease', event.key);
         this.pressedKeys.delete(event.key);
     }
-
+    /**
+     * 获取所有点击的按键
+     * @returns 
+     */
     getAllPressedKeys(): Set<string> {
         return this.pressedKeys;
     }

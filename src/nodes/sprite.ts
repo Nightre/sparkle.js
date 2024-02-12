@@ -10,18 +10,34 @@ import Animations from "../animation/animation";
  * @category GameNode
  */
 class Sprite extends Drawable {
+    /**
+     * 显示的纹理
+     */
     texture?: Texture;
     /**
      * 纹理裁剪区域
      */
     textureRegion: Rect = this.pool.Rect.pull()
+    /**
+     * 是否开启纹理裁剪
+     */
     enableRegion: boolean = false
+
+    /**
+     * 动画
+     */
+    animations?: Animations
+    /**
+     * 是否暂停动画，如果想暂停动画，请设置该属性
+     */
+    aniPaused: boolean = false
+
+    private aniLoop: boolean = false
+
     private region: Rect = this.pool.Rect.pull()  // 纹理真实大小
     private animationTimer: Timer
     private animatiosFarme: number = 0
-    animations?: Animations
-    aniPaused: boolean = false
-    aniLoop: boolean = false
+
     private currentAniName?: string
     private currentAni?: IAnimationFrames
 
@@ -37,7 +53,14 @@ class Sprite extends Drawable {
         })
         this.animationTimer.event.on("timeout", this.animationsTimeOut.bind(this))
     }
-
+    /**
+     * 播放某个动画，如果已经在播放目标动画，则不会重新播放
+     * 若希望重新播放，请设置restart参数为true
+     * @param name 动画名称
+     * @param loop 是否循环
+     * @param restart 是否重启动画
+     * @returns 
+     */
     play(name: string, loop: boolean = false, restart: boolean = false) {
         if (name == this.currentAniName && !restart) {
             return
@@ -52,6 +75,9 @@ class Sprite extends Drawable {
         this.animatiosFarme = 0
         this.setAnimation(0)
     }
+    /**
+     * 停止动画
+     */
     stop() {
         this.aniLoop = false
         this.animationTimer.stop()
@@ -72,6 +98,10 @@ class Sprite extends Drawable {
         }
         this.setAnimation(this.animatiosFarme)
     }
+    /**
+     * @ignore
+     * @param dt 
+     */
     update(dt: number): void {
         super.update(dt)
         this.animationTimer.paused = this.aniPaused
@@ -79,7 +109,7 @@ class Sprite extends Drawable {
     }
 
 
-    clipRegion() {
+    private clipRegion() {
         this.region.copy(this.textureRegion)
         let enableRegion = this.enableRegion
         if (this.texture instanceof AltasTexture) {
@@ -93,7 +123,10 @@ class Sprite extends Drawable {
         }
         return enableRegion
     }
-
+    /**
+     * @ignore
+     * @returns 
+     */
     draw(): void {
         super.draw();
         if (!this.texture || !this.visible) {
@@ -110,10 +143,17 @@ class Sprite extends Drawable {
         compositors.setColor(this.color)
         compositors.flush();
     }
+    /**
+     * @ignore
+     */
     drawDebug() {
         this.engine.debugger?.drawDebugFrame(this.drawSize.x, this.drawSize.y)
         super.drawDebug()
     }
+    /**
+     * 设置动画帧
+     * @param frame 
+     */
     setAnimation(frame: number) {
         if (this.currentAni) {
             const currentFrame = this.currentAni.fromFrames + frame

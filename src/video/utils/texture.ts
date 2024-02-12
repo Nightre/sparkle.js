@@ -1,3 +1,5 @@
+import { Images } from "../../main";
+
 export function createTexture(gl: WebGLRenderingContext, image: Images, antialias: boolean): WebGLTexture {
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);

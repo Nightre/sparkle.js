@@ -14,9 +14,22 @@ import { EventEmitter } from "../main";
  * @category GameNode
  */
 class Timer extends Container {
+    /**
+     * 计时器等待的时间
+     */
     waitTime: number
+    /**
+     * 是否只触发一次
+     * 如果为`true`会一直重复循环
+     */
     oneShot: boolean
+    /**
+     * 是否暂停
+     */
     paused: boolean = false
+    /**
+    * timer 剩余的时间（可以更改）
+    */
     timeLeft: number
     private isStart: boolean = false
     declare event: EventEmitter<ITimerEvents>;
@@ -29,6 +42,11 @@ class Timer extends Container {
         }
         this.timeLeft = options.initTimeLeft ?? 0
     }
+    /**
+     * @ignore
+     * @param dt 
+     * @returns 
+     */
     update(dt: number): void {
         super.update(dt)
         if (this.isStart && !this.paused) {
@@ -46,10 +64,16 @@ class Timer extends Container {
         this.event.emit("timeout")
         this.timeLeft = 0
     }
+    /**
+     * 关闭
+     */
     stop() {
         this.timeLeft = 0
         this.isStart = false
     }
+    /**
+     * 开启
+     */
     start() {
         this.timeLeft = 0
         this.isStart = true

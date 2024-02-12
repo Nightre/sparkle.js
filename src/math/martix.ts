@@ -7,7 +7,6 @@ import pool from "../system/pool";
  * @category Math
  */
 export default class Matrix implements IPoolable, ICopyable<Matrix> {
-    className = "Matrix"
     /**
      * [a, b, tx]
      * [c, d, tx]
@@ -20,9 +19,13 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
         this.element = new Float32Array(6)
         this.poolReset(array);
     }
+    /**
+     * @ignore
+     * @param array 
+     */
     poolReset(array?: Float32Array) {
         if (array) {
-            this.setTransform(
+            this.setMatrix(
                 array
             );
         } else {
@@ -31,13 +34,17 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
     }
 
     identity() {
-        this.setTransform(
+        this.setMatrix(
             [
                 1, 0, 0,
                 1, 0, 0
             ]
         );
     }
+    /**
+     * 旋转这个矩阵
+     * @param r 
+     */
     rotate(r: number) {
         const a = this.element[0],
             b = this.element[1],
@@ -51,16 +58,31 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
         this.element[2] = a * -sr + c * cr;
         this.element[3] = b * -sr + d * cr;
     }
+    /**
+     * 缩放矩阵
+     * @param x 
+     * @param y 
+     */
     scale(x: number, y = x) {
         this.element[0] = this.element[0] * x;
         this.element[1] = this.element[1] * x;
         this.element[2] = this.element[2] * y;
         this.element[3] = this.element[3] * y;
     }
+    /**
+     * 平移矩阵
+     * @param x 
+     * @param y 
+     */
     translate(x: number, y: number) {
         this.element[4] = this.element[0] * x + this.element[2] * y + this.element[4];
         this.element[5] = this.element[1] * x + this.element[3] * y + this.element[5];
     }
+    /**
+     * 斜切
+     * @param x 
+     * @param y 
+     */
     skew(x: number, y = x) {
         const tanX = Math.tan(x);
         const tanY = Math.tan(y);
@@ -78,27 +100,47 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
         this.element[1] += tanX * a;
         this.element[3] += tanX * c;
     }
-
-    setTransform(v: number[] | Float32Array) {
+    /**
+     * 直接设置
+     * @param v 
+     */
+    setMatrix(v: number[] | Float32Array) {
         v.forEach((value, index) => {
             this.element[index] = value;
         })
     }
-
+    /**
+     * 变换一个二维坐标
+     * @param x 
+     * @param y 
+     * @returns 
+     */
     apply(x: number, y: number) {
         return [
             x * this.element[0] + y * this.element[2] + this.element[4],
             x * this.element[1] + y * this.element[3] + this.element[5]
         ]
     }
+    /**
+     * 复制其他矩阵到该矩阵
+     * @param martix 
+     */
     copy(martix: Matrix) {
-        this.setTransform(
+        this.setMatrix(
             martix.element
         )
     }
+    /**
+     * 克隆矩阵
+     * @returns 
+     */
     clone() {
         return pool.Matrix.pull(this.element);
     }
+    /**
+     * 逆矩阵
+     * @returns 
+     */
     invert() {
         const det = this.element[0] * this.element[3] - this.element[1] * this.element[2];
         if (det === 0) {
@@ -117,20 +159,31 @@ export default class Matrix implements IPoolable, ICopyable<Matrix> {
 
         return pool.Matrix.pull(invertedElements);
     }
-
+    /**
+     * 获取该矩阵的角度
+     * @returns 
+     */
     getRotation() {
-        // 由于a = this.element[0], b = this.element[1]
-        // 可以使用Math.atan2(b, a)来获得旋转角度，它会返回一个介于 -π 到 π 之间的值
         return Math.atan2(this.element[1], this.element[0]);
     }
+    /**
+     * 获取该矩阵的缩放
+     * @returns 
+     */
     getScale() {
         const x = Math.sqrt(this.element[0] * this.element[0] + this.element[1] * this.element[1]);
         const y = Math.sqrt(this.element[2] * this.element[2] + this.element[3] * this.element[3]);
         return [x, y];
     }
+    /**
+     * 设置绝对缩放
+     * @param x 
+     * @param y 
+     */
     setAbsoluteScale(x: number, y = x) {
-        const scaleX = x / this.getScale()[0];
-        const scaleY = y / this.getScale()[1];
+        const scale =  this.getScale()
+        const scaleX = x / scale[0];
+        const scaleY = y / scale[1];
 
         this.scale(scaleX, scaleY);
     }

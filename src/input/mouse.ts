@@ -3,13 +3,19 @@ import { EventEmitter, IMouseEvents, IMouseData, Vector2, IEventAble } from "../
 import pool from "../system/pool";
 
 /**
+ * 鼠标输入
  * @category Input
  */
 class MouseManager implements IEventAble<IMouseEvents> {
-    engine: SparkleEngine;
-    canvas: HTMLCanvasElement;
-
+    private engine: SparkleEngine;
+    private canvas: HTMLCanvasElement;
+    /**
+     * 鼠标的全局位置
+     */
     mousePosition: Vector2 = pool.Vector2.pull(0)
+    /**
+     * 鼠标是否点击
+     */
     isMouseDown: boolean = false
     event: EventEmitter<IMouseEvents> = new EventEmitter
 

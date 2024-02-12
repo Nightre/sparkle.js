@@ -32,7 +32,6 @@ export interface PoolTypes {
 
 export type Constructor<T> = new (...args: any[]) => T;
 export interface IPoolable {
-    className: string;
     poolReset(...args: any[]): void;
 }
 
@@ -61,6 +60,9 @@ export interface ILoadAnimationOptions {
     hFrames: number;
     vFrames: number;
     gapSize: number;
+    /**
+     * 若为string，则从url加载
+     */
     animations: string | AnimationsStore;
 }
 export interface IAnimationOption {

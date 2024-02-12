@@ -1,18 +1,31 @@
-import { IAnimationFrames, IAnimationOption, ResourcesType } from "../interface";
-import { IResources, Texture } from "../main";
+import { IAnimationFrames, IAnimationOption } from "../interface";
+import { IResources, Resources, Texture } from "../main";
 import pool from "../system/pool";
 
-class Animations implements IResources {
-    resourcesId?: string;
-    resourcesType = ResourcesType.ANIMATION
-
+class Animations extends Resources implements IResources {
+    /**
+     * 横着几帧
+     */
     hFrames: number
+    /**
+     * 竖着几帧
+     */
     vFrames: number
+    /**
+     * 间隔
+     */
     gapSize: number
+    /**
+     * 纹理
+     */
     texture: Texture
+    /**
+     * 动画
+     */
     animations: { [name: string]: IAnimationFrames };
 
     constructor(options: IAnimationOption) {
+        super()
         this.hFrames = options.hFrames
         this.vFrames = options.vFrames
         this.gapSize = options.gapSize

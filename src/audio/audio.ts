@@ -1,20 +1,24 @@
-import { EventEmitter, IAudioEvent, IEventAble, IResources, ResourcesType, SparkleEngine } from "../main";
+import { EventEmitter, IAudioEvent, IEventAble, Resources, SparkleEngine } from "../main";
 
 /**
  * @category Audio
  */
-class Audio implements IResources, IEventAble<IAudioEvent> {
-    resourcesId?: string;
-    resourcesType = ResourcesType.AUDIO
+class Audio extends Resources implements IEventAble<IAudioEvent>  {
 
     event: EventEmitter<IAudioEvent> = new EventEmitter
     private buffer: AudioBuffer;
     private context: AudioContext;
     private source?: AudioBufferSourceNode
     constructor(audioManager: AudioManager, buffer: AudioBuffer) {
+        super()
         this.context = audioManager.context;
         this.buffer = buffer;
     }
+    /**
+     * 播放音频
+     * @param when 开始时间 
+     * @returns 
+     */
     play(when: number = 0) {
         this.source = this.context.createBufferSource();
         const source = this.source

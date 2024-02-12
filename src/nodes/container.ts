@@ -45,8 +45,17 @@ class Container implements IEventAble<IContainerEvent> {
     resident: boolean
 
     event: EventEmitter<IContainerEvent>
+    /**
+     * 是否在场景树中
+     */
     inTree: boolean = false
+    /**
+     * 是否被销毁
+     */
     destroyed: boolean = false
+    /**
+     * 是否已就绪
+     */
     protected isReady: boolean = false
     private listened: IListened[] = []
     get root() {
@@ -67,7 +76,7 @@ class Container implements IEventAble<IContainerEvent> {
 
     /**
      * 使用该种方法监听事件，当节点被销毁时自动取消监听
-     * @param emitter 
+     * @param obj 
      * @param eventName 
      * @param func 
      */
@@ -85,7 +94,7 @@ class Container implements IEventAble<IContainerEvent> {
     }
     /**
      * 使用该方法取消 {@link onEvent} 监听的事件
-     * @param emitter 
+     * @param obj 
      * @param eventName 
      * @param func 
      */
@@ -96,6 +105,12 @@ class Container implements IEventAble<IContainerEvent> {
         }
         this.listened = this.listened.filter(v => !(v.emitter == emitter && v.eventName == eventName));
     }
+    /**
+     * 等待某个事件被触发，想实现等待1秒，那么就用该方法等待timer的事件
+     * @param obj 
+     * @param eventName 
+     * @returns 
+     */
     waitEvent<T extends Record<string, any>>(obj: IEventAble<T>, eventName: keyof T) {
         const emitter = obj.event
         return new Promise((resolve) => {
@@ -195,8 +210,17 @@ class Container implements IEventAble<IContainerEvent> {
         return child.isParent(this);
     }
 
+    /**
+     * @ignore
+     */
     drawDebug() { }
+    /**
+     * @ignore
+     */
     draw() { }
+    /**
+     * @ignore
+     */
     postDraw() {
         this.forEachChildren((child) => {
             if (!child.sleep) {
@@ -213,7 +237,9 @@ class Container implements IEventAble<IContainerEvent> {
             }    
         })
     }
-
+    /**
+     * @ignore
+     */
     update(dt: number) {
         // ready 是下一帧时调用，这个时候节点都被draw过了一次
         if (this.isReady) {
@@ -221,14 +247,18 @@ class Container implements IEventAble<IContainerEvent> {
         }
         // 子类实现
     }
-
+    /**
+     * @ignore
+     */
     postUpdate(dt: number) {
         this.forEachChildren((child) => {
             child.update(dt);
             child.postUpdate(dt);
         })
     }
-
+    /**
+     * @ignore
+     */
     doDestory() {
         if (this.resident) {
             this.engine.removeResident(this)
@@ -267,28 +297,49 @@ class Container implements IEventAble<IContainerEvent> {
         this.isReady = true
         this.onReady()
     }
-
+    /**
+     * 当进入场景树时被调用 
+     */
     onEnterTree() { }
+    /**
+     * 当离开场景树时被调用 
+     */
     onExitTree() { }
+    /**
+     * 当节点以及他的子节点准备就绪时
+     * @ignore
+     */
     onReady() { }
+    /**
+     * 每一帧调用
+     * @param _dt 
+     */
     onUpdate(_dt: number) { }
-
+    /**
+     * 获取鼠标的全局位置，等同于 `this.engine.mouse.mousePosition`
+     * @returns 
+     */
     getMouseGlobalPositon() {
         return this.engine.mouse.mousePosition
     }
-
+    /**
+     * 遍历我的子节点
+     * @ignore
+     * @param fn 
+     */
     forEachChildren(fn: (child: Container) => void) {
         this.children.forEach(fn);
     }
     /**
      * 根据tag查找子节点
-     * @param tag 要查找的tag
+     * @param tag 要查找的tag（支持多个）
      * @returns 找到的子节点数组
      */
-    findByTag(tag: string, deep: boolean = true): Container[] {
+    findByTag(tag: string | string[], deep: boolean = true): Container[] {
         const result: Container[] = [];
+        const tags = Array.isArray(tag) ? tag : [tag];
         this.forEachChildren((child) => {
-            if (child.tag.has(tag)) {
+            if (tags.some(t => child.tag.has(t))) {
                 result.push(child);
             }
             if (deep) {
@@ -321,6 +372,9 @@ class Container implements IEventAble<IContainerEvent> {
         // 如果所有子节点都没有满足条件，返回false
         return false;
     }
+    /**
+     * 销毁这个节点
+     */
     destory() {
         this.destroyed = true
         this.engine.toDestory.push(this)

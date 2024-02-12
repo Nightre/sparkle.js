@@ -1,7 +1,7 @@
-import { IResources, Images, Rect, ResourcesType, SparkleEngine } from "../../main"
+import { Images, Rect, SparkleEngine } from "../../main"
 import pool from "../../system/pool"
 import { createTexture } from "../utils/texture"
-
+import Resources from "../../loader/resources"
 
 /**
  * @category Texture
@@ -12,14 +12,28 @@ export class TextureManager {
     constructor(engine: SparkleEngine) {
         this.engine = engine
     }
-
+    /**
+     * 创建纹理
+     * @param image 
+     * @returns 
+     */
     textureFromImage(image: Images) {
         return new Texture(this.createBaseTexture(image))
     }
+    /**
+     * 创建裁剪纹理
+     * @param texture 
+     * @param rect 
+     * @returns 
+     */
     altasFromTexture(texture: Texture, rect?: Rect) {
         return new AltasTexture(texture.baseTexture!, rect)
     }
-
+    /**
+     * 从url加载纹理
+     * @param url 
+     * @returns 
+     */
     async textureFromUrl(url: string) {
         const old = this.baseTextures.get(url)
         if (old) {
@@ -72,11 +86,11 @@ export class BaseTexture {
  * 普通的纹理
  * @category Texture
  */
-export class Texture implements IResources {
+export class Texture extends Resources {
+    /**
+     * @ignore
+     */
     baseTexture: BaseTexture | null
-    resourcesId?: string
-    resourcesType = ResourcesType.TEXTURE
-
     get width() {
         return this.baseTexture?.width ?? 0
     }
@@ -84,6 +98,7 @@ export class Texture implements IResources {
         return this.baseTexture?.height ?? 0
     }
     constructor(baseTexture: BaseTexture) {
+        super()
         this.baseTexture = baseTexture
     }
 }
@@ -92,6 +107,9 @@ export class Texture implements IResources {
  * @category Texture
  */
 export class AltasTexture extends Texture {
+    /**
+     * 裁剪区域
+     */
     region: Rect = pool.Rect.pull()
 
     get width() {

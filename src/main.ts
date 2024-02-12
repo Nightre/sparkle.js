@@ -5,16 +5,14 @@ import Drawable from "./nodes/drawable"
 import Transform2D from "./nodes/transform_2d"
 import Sprite from "./nodes/sprite"
 import Color from "./math/color"
-import Compositor from "./video/compositors/compositors"
-import TextureCompositors from "./video/compositors/texture_compositor"
-import { BaseTexture, Texture } from "./video/texture/texture"
+import { BaseTexture, Texture, AltasTexture } from "./video/texture/texture"
 import GLShader from "./video/glshader"
 import VertexArrayBuffer from "./video/vertex_array"
 import { SparkleEngine } from "./engine"
 import { ObjectPool } from "./system/pool"
 import { Renderer } from "./video/renderer"
 import EventEmitter from "./system/event"
-import { Loader } from "./loader/loader"
+import { Loader, ResourcesManager } from "./loader/loader"
 import AudioManager from "./audio/audio"
 import { TextureManager } from "./video/texture/texture"
 import Text from "./nodes/text"
@@ -29,9 +27,13 @@ import { Audio } from "./audio/audio"
 import Rect from "./math/rect"
 import Timer from "./nodes/timer"
 import Sence from "./sence/sence"
-
+import MathUtils from "./math/math"
 import Animations from "./animation/animation"
+import { DataResources } from "./loader/loader"
+import Resources from "./loader/resources"
+
 export {
+    Resources,
     Color,
     Vector2,
     Matrix,
@@ -48,12 +50,11 @@ export {
     Text,
     Collision,
 
-    Compositor,
-    TextureCompositors,
-
     TextureManager,
     Texture,
     BaseTexture,
+    AltasTexture,
+    DataResources,
 
     GLShader,
     Renderer,
@@ -65,11 +66,14 @@ export {
     Loader,
     AudioManager,
     Audio,
-
+    ResourcesManager,
+    
     TextManager,
     InputManager,
     MouseManager,
     PhysicsManager,
+    MathUtils,
+
 }
 
 export * from "./interface"

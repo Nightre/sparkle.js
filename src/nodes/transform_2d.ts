@@ -9,36 +9,52 @@ import { Matrix } from "../main";
  * @category GameNode
  */
 class Transform2D extends Container {
+    /** 坐标，坐标是相对于父的。若要设置全局坐标，请使用{@link globalPosition} */
     position: Vector2;
+    /** 缩放，缩放同样是相对父的 */
     scale: Vector2;
+    /** 旋转，旋转是相对于父的。若要设置全局旋转，请使用{@link globalRotation}  */
     rotation: number;
+    /** 斜切 */
     skew: Vector2;
+    /** 偏移 */
     offset: Vector2;
+
+    /** 
+     * 全局坐标 
+     * @readonly
+     */
     globalPosition: Vector2 = this.pool.Vector2.pull(0, 0)
+    /** 
+     * 全局旋转 
+     * @readonly
+     */
     globalRotation: number = 0
-    
-    modelMatrix: Matrix
-    beforeModelMatrix: Matrix
 
-    setGlobalPosition(v: Vector2) {
-        const invert = this.beforeModelMatrix.invert()
-        console.log(
-            this.beforeModelMatrix,
-            this.renderer.lastMartix
-        )
+    private modelMatrix: Matrix
 
-        const [x, y] = invert!.apply(v.x, v.y)
-        this.globalPosition.set(x, y)
-        this.position?.set(x, y)
-    }
-    setGlobalRotation(r: number) {
-        const invert = this.beforeModelMatrix.invert()
-        this.globalRotation = r
-        this.rotation = r + invert!.getRotation()
-    }
+    // setGlobalPosition(v: Vector2) {
+    //     const invert = this.beforeModelMatrix.invert()
+    //     const [x, y] = invert!.apply(v.x, v.y)
+    //     this.globalPosition.set(x, y)
+    //     this.position?.set(x, y)
+    // }
+    // setGlobalRotation(r: number) {
+    //     const invert = this.beforeModelMatrix.invert()
+    //     this.globalRotation = r
+    //     this.rotation = r + invert!.getRotation()
+    // }
+    /**
+     * 获取鼠标相对于我的位置
+     * @returns 
+     */
     getMouseLocalPositon() {
         return this.globalPosition.sub(this.engine.mouse.mousePosition, false)
     }
+    /**
+     * 获取鼠标的全局位置
+     * @returns 
+     */
     getMouseGlobalPositon() {
         return this.engine.mouse.mousePosition
     }
@@ -46,7 +62,6 @@ class Transform2D extends Container {
     constructor(options: ITransform2DOptions) {
         super(options)
         this.modelMatrix = this.pool.Matrix.pull()
-        this.beforeModelMatrix = this.pool.Matrix.pull()
 
         this.position = options.position ?? this.pool.Vector2.pull(0, 0);
         this.scale = options.scale ?? this.pool.Vector2.pull(1, 1);
@@ -55,11 +70,13 @@ class Transform2D extends Container {
         this.rotation = options.rotation ?? 0;
     }
 
-
+    /**
+     * @ignore
+     */
     draw() {
         super.draw()
         this.renderer.save()
-        this.beforeModelMatrix.copy(this.renderer.modelMatrix)
+
         this.renderer.modelMatrix.translate(
             this.position!.x, this.position!.y
         );
@@ -77,7 +94,7 @@ class Transform2D extends Container {
             this.skew!.x, this.skew!.y
         );
 
-        
+
         const [x, y] = this.renderer.modelMatrix.apply(0, 0)
         this.globalPosition.set(x, y)
         this.modelMatrix.copy(this.renderer.modelMatrix)
@@ -85,6 +102,9 @@ class Transform2D extends Container {
             -this.offset!.x, -this.offset!.y
         );
     }
+    /**
+     * @ignore
+     */
     drawDebug() {
         super.drawDebug()
         this.renderer.save()
@@ -92,12 +112,17 @@ class Transform2D extends Container {
         this.engine.debugger?.addDebugCross()
         this.renderer.restore()
     }
+    /**
+     * @ignore
+     */
     postDraw(): void {
         super.postDraw();
 
         this.renderer.restore();
     }
-
+    /**
+     * @ignore
+     */
     doDestory() {
         super.doDestory()
         this.pool.Vector2.push(this.position!);

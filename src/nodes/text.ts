@@ -1,16 +1,21 @@
 import { BaseTexture } from "../video/texture/texture";
 import Drawable from "./drawable";
 import { ITextOptions } from "../interface"
-import { Color, TextAnchor, TextureCompositors } from "../main";
-
+import { TextAnchor } from "../main";
+import TextureCompositors from "../video/compositors/texture_compositor"
 /**
  * 精灵
  * @category GameNode
  */
 class Text extends Drawable {
     private texture!: BaseTexture;
-    color: Color
+    /**
+     * 文字的字体
+     */
     font: string
+    /**
+     * 文字锚点
+     */
     anchor: TextAnchor
     private _text!: string;
     public get text(): string {
@@ -20,7 +25,10 @@ class Text extends Drawable {
         this.setText(v)
         this._text = v;
     }
-
+    /**
+     * 设置text显示的文字请修改text属性即可
+     * @param options 
+     */
     constructor(options: ITextOptions) {
         super(options);
         this.color = options.color ?? this.pool.Color.pull(1, 1, 1, 1)
@@ -28,6 +36,10 @@ class Text extends Drawable {
         this.text = options.text ?? ""
         this.anchor = options.anchor ?? TextAnchor.LEFT
     }
+    /**
+     * @ignore
+     * @returns 
+     */
     draw(): void {
         super.draw();
         const m = this.renderer.modelMatrix
@@ -49,7 +61,7 @@ class Text extends Drawable {
 
         compositors.flush();
     }
-    setText(text: string) {
+    private setText(text: string) {
         const Images = this.engine.text.drawText(
             text,
             this.font,

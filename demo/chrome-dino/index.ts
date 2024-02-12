@@ -116,7 +116,7 @@ class GameManager extends Container { // Container 是所有节点的基类，�
     }
     getCoin() {
         this.coin++
-        this.score_text.setText("分数：" + this.coin)
+        this.score_text.text = "分数：" + this.coin
     }
 }
 // 若你不喜欢这样写，可以查看Player的另外一种的写法

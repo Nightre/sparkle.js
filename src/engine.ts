@@ -35,9 +35,11 @@ class SparkleEngine {
     public audio: AudioManager
     /** 文字管理  */
     public text: TextManager
-
+    /** 资源管理 */
     public resource: ResourcesManager
+    /** 获取资源快捷方式，等同于 engine.resource.get */
     public getAssets: <T extends IResources>(id: string) => T
+
     private lastTime: number = 0
     private residents: Set<Container> = new Set
     /**
@@ -56,7 +58,9 @@ class SparkleEngine {
      * ```
      * @param options
      */
+    /** 目前尚不支持限制帧率 */
     maxFPS: number
+    /**@ignore */
     toDestory: Container[] = []
     constructor(options: ISparkleEngineOption) {
 
@@ -67,7 +71,7 @@ class SparkleEngine {
         pool.register()
 
         // 初始化管理类
-        this.input = new InputManager(this)
+        this.input = new InputManager()
         this.mouse = new MouseManager(this, options.canvas)
         this.loader = new Loader(this)
         this.texture = new TextureManager(this)
@@ -79,7 +83,7 @@ class SparkleEngine {
         this.resource = new ResourcesManager(this);
         (window as any).sparkleEngine = this
 
-        this.changeSenceToNode(new Container({ engine: this }))
+        this.changeSenceToContainer(new Container({ engine: this }))
         this.maxFPS = options.maxFPS ?? 60
         this.resource.once("idle", () => {
             this.loop(0); // 开始游戏循环
@@ -87,20 +91,14 @@ class SparkleEngine {
         this.getAssets = this.resource.get.bind(this.resource)
     }
 
-    reset() {
-        // 重置场景
-        const sence = new Container({ engine: this })
-        this.changeSenceToNode(sence)
-    }
-
     /**
-     * 转换到某个Container
+     * 转换到某个 Container
      * @example
      * ```js
-     * engine.changeSenceToNode(Container)
+     * engine.changeSenceToContainer(Container)
      * ```
      */
-    changeSenceToNode(sence: Container) {
+    changeSenceToContainer(sence: Container) {
         this.residents.forEach((c) => {
             c.setParent(sence)
         })
@@ -152,26 +150,48 @@ class SparkleEngine {
         this.destoryChild()
         window.requestAnimationFrame(this.loop.bind(this))
     }
-    destoryChild() {
+    private destoryChild() {
         this.toDestory.forEach(() => {
             this.toDestory.pop()!.doDestory()
         })
     }
-
+    /**
+     * 切换场景
+     * @example
+     * ```js
+     * class GameSence extends Sence {
+     *      ...
+     * }
+     * engine.changeToSence(GameSence)
+     * ```
+     * @param sence 
+     */
     async changeToSence(sence: new () => Sence) {
-        this.changeSenceToNode(await this.instantiateSence(sence))
+        this.changeSenceToContainer(await this.instantiateSence(sence))
     }
-
+    /**
+     * 实例化一个场景。由于场景有preload操作，所以该操作是异步的
+     * @param Sence 
+     * @returns 
+     */
     instantiateSence<T extends Sence>(Sence: new () => T) {
         return new Promise<Container>((resolve) => {
             this.resource.startRegion()
             const sence = new Sence()
             sence.preload()
-            
+
             this.resource.endRegion(() => {
                 resolve(sence.create(this))
             })
         })
+    }
+    /**
+     * 重置场景
+     */
+    reset() {
+        // 重置场景
+        const sence = new Container({ engine: this })
+        this.changeSenceToContainer(sence)
     }
 }
 

@@ -4,6 +4,7 @@ import Vector2 from "./vector";
 
 /**
  * @category Math
+ * 表示一个路径
  */
 class Path {
     private startPoint: Vector2 = pool.Vector2.pull(0)

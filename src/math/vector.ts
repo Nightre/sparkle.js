@@ -7,7 +7,6 @@ import pool from "../system/pool"
  * @category Math
  */
 class Vector2 implements IPoolable, ICopyable<Vector2> {
-    className = "Vector2"
     x: number = 0
     y: number = 0
 

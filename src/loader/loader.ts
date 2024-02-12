@@ -1,34 +1,32 @@
-import { Animations, AnimationsStore, EventEmitter, IAnimationOption, ILoadAnimationOptions, IResources, IResourcesManagerEvent, IResourcesStore, Images, Rect, ResourcesType, SparkleEngine, Texture } from "../main";
+import { Animations, AnimationsStore, EventEmitter, IAnimationOption, ILoadAnimationOptions, IResources, IResourcesManagerEvent, IResourcesStore, Images, Rect, Resources, SparkleEngine, Texture } from "../main";
 import { AltasTexture } from "../video/texture/texture";
 
+/**
+ * 资源管理器
+ */
 class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
-    private loadingAssets: { [key: string]: Promise<IResources> } = {}
+    /** 所有资源 */
     assets: IResourcesStore = {}
+    private loadingAssets: { [key: string]: Promise<IResources> } = {}
     private currectRegion: number = -1
     private regions: { [key: string]: number } = {}
     private engine: SparkleEngine
     private regionsCallback: { [key: string]: () => void } = {}
     private regionsCount: number = 0
+
     constructor(engine: SparkleEngine) {
         super()
         this.engine = engine
     }
-    getRegion() {
+    private getRegion() {
         return this.regionsCount++
     }
-    startRegion() {
-        this.currectRegion = this.getRegion()
-        this.regions[this.currectRegion] = 0
-    }
-    endRegion(fn: () => void) {
-        this.regionsCallback[this.currectRegion] = fn
-        if (this.regions[this.currectRegion] == 0) {
-            // 没有任何
-            fn()
-        }
-        this.currectRegion = -1
-    }
-
+    /**
+     * 加载一个纹理
+     * @param id 资源id
+     * @param data 可以是字符串（从url加载）或者是图片数据
+     * @returns 返回的纹理
+     */
     async loadTexture(id: string, data: string | Images) {
         if (typeof data === "string") {
             // 如果数据是字符串证，从url加载
@@ -38,7 +36,14 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
             return this.assets[id] as Texture
         }
     }
-    async loadAltasTexture(id: string, textureId: string, rect: Rect) {
+    /**
+     * 加载一个裁剪纹理
+     * @param id 资源id
+     * @param textureId 纹理
+     * @param rect 裁剪的矩形
+     * @returns 返回的纹理
+     */
+    async loadAltasTexture(id: string, textureId: string, rect?: Rect) {
         const load = async () => {
             const r = await this.getAsyncAssets(textureId)
             if (r instanceof Texture) {
@@ -50,9 +55,22 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
         }
         return await this.load(id, load())
     }
+    /**
+     * 加载一个音频
+     * @param id 音频id
+     * @param url 音频url
+     * @returns 
+     */
     async loadAudio(id: string, url: string) {
         return await this.load(id, this.engine.audio.audioFromUrl(url))
     }
+    /**
+     * 加载一个动画资源
+     * @param id 资源
+     * @param textureId 纹理id 
+     * @param options 动画数据
+     * @returns 
+     */
     async loadAnimation(id: string, textureId: string, options: ILoadAnimationOptions) {
         const load = async () => {
             const r = await this.getAsyncAssets(textureId)
@@ -77,6 +95,12 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
         }
         return await this.load(id, load())
     }
+    /**
+     * 加载一个JSON
+     * @param id 资源id
+     * @param url 资源url
+     * @returns 
+     */
     async loadJSON(id: string, url: string) {
         return await this.load(id, this.engine.loader.loadData(url))
     }
@@ -101,6 +125,11 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
         this.assets[id] = r
         return r
     }
+    /**
+     * 获取某个资源
+     * @param id 
+     * @returns 
+     */
     get<T extends IResources>(id: string): T {
         if (typeof this.assets[id] === "undefined") {
             throw new Error(`assets ${id} dose not exist`);
@@ -120,18 +149,37 @@ class ResourcesManager extends EventEmitter<IResourcesManagerEvent>  {
             throw new Error(`Assets ${id} dose not exsit`);
         }
     }
-}
-
-class DataResources<T = unknown> implements IResources {
-    resourcesId?: string | undefined;
-    resourcesType = ResourcesType.DATA
-
-    data: T
-    constructor(data: T) {
-        this.data = data
+    /**
+     * 一般不会用到
+     * 创建一个加载区域，可以监听该区域所有资源加载完成
+     * @returns 
+     */
+    startRegion() {
+        this.currectRegion = this.getRegion()
+        this.regions[this.currectRegion] = 0
+    }
+    /**
+     * 一般不会用到
+     * 结束加载区域，可以监听该区域所有资源加载完成
+     * @returns 
+     */
+    endRegion(fn: () => void) {
+        this.regionsCallback[this.currectRegion] = fn
+        if (this.regions[this.currectRegion] == 0) {
+            // 没有任何
+            fn()
+        }
+        this.currectRegion = -1
     }
 }
 
+
+/**
+ * 加载器，注意：不会将加载的结果转化为游戏引擎封装
+ * 比如{@link loadImage} 会直接返回 HTMLImageElement
+ * 若想加载游戏引擎封装资源，请使用engine resource属性
+ * {@link ResourcesManager}
+ */
 class Loader {
     engine: SparkleEngine
     baseUrl?: string
@@ -140,7 +188,11 @@ class Loader {
         this.engine = engine
         this.baseUrl = baseUrl
     }
-
+    /**
+     * 加载一个数据
+     * @param path 
+     * @returns 
+     */
     async loadData(path: string): Promise<DataResources> {
         const response = await fetch(this.baseUrl ? `${this.baseUrl}/${path}` : path)
         if (!response.ok) {
@@ -148,7 +200,11 @@ class Loader {
         }
         return new DataResources(await response.json())
     }
-
+    /**
+     * 加载一个音频
+     * @param path 
+     * @returns 
+     */
     async loadAudio(path: string): Promise<AudioBuffer> {
         const response = await fetch(this.baseUrl ? `${this.baseUrl}/${path}` : path)
         if (!response.ok) {
@@ -157,7 +213,11 @@ class Loader {
         const arrayBuffer = await response.arrayBuffer()
         return await this.engine.audio.decode(arrayBuffer)
     }
-
+    /**
+     * 加载一个图像
+     * @param path 
+     * @returns 
+     */
     async loadImage(path: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             const image = new Image()
@@ -170,4 +230,14 @@ class Loader {
     }
 }
 
-export { Loader, ResourcesManager, DataResources as JSONResources }
+/**
+ * 数据资源，LoadJSON会创建该资源
+ */
+class DataResources<T = unknown> extends Resources {
+    data: T
+    constructor(data: T) {
+        super()
+        this.data = data
+    }
+}
+export { Loader, ResourcesManager, DataResources }

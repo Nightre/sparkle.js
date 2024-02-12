@@ -56,7 +56,7 @@ class Collision extends Transform2D {
         if (!this.isReady) {
             return false
         }
-        return this.physics.pointInPolygon(this.getMouseGlobalPositon(), this.ShapePosition)
+        return this.physics.satPointInPolygon(this.getMouseGlobalPositon(), this.ShapePosition)
     }
     exitTree(): void {
         this.physics.remove(this)

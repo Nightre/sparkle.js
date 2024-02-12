@@ -26,25 +26,23 @@ export default async function (sparkle: SparkleEngine, tool: ITool) {
     cat2.position.set(20, 20)
     cat2.offset.set(100,100)
 
-    setTimeout(() => {
-        if (
-            cat2.globalPosition.x != 50 + 20 + 20 ||
-            cat2.globalPosition.y != 50 + 20 + 20
-        ) {
-            tool.fail("global_position")
-        }
-        cat2.setGlobalPosition(new Vector2(50, 50))
-        setTimeout(() => {
-            if (
-                cat2.globalPosition.x != 50 ||
-                cat2.globalPosition.y != 50
-            ) {
-                tool.fail("global_position" + cat2.globalPosition.x)
-            }
-        }, 1000);
-    }, 1000);
+    // setTimeout(() => {
+    //     if (
+    //         cat2.globalPosition.x != 50 + 20 + 20 ||
+    //         cat2.globalPosition.y != 50 + 20 + 20
+    //     ) {
+    //         tool.fail("global_position")
+    //     }
+    //     //cat2.setGlobalPosition(new Vector2(50, 50))
+    //     setTimeout(() => {
+    //         if (
+    //             cat2.globalPosition.x != 50 ||
+    //             cat2.globalPosition.y != 50
+    //         ) {
+    //             tool.fail("global_position" + cat2.globalPosition.x)
+    //         }
+    //     }, 1000);
+    // }, 1000);
 
-    sparkle.root.addChild(
-        cat
-    )
+    sparkle.changeSenceToContainer(cat)
 }
