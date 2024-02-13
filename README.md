@@ -1,4 +1,9 @@
-# SPARKLE.JS GAME ENGINE
+<div  align="center">    
+<img src="./logo.png" width = "300" height = "200" alt="图片名称" align=center style="image-rendering: pixelated;" />
+</div>
+<div  align="center">    
+<h1>SPARKLE.JS GAME ENGINE</h1>
+</div>
 
 Sparkle.js 是一个基于WebGL的HTML5的0依赖轻量级小巧的游戏引擎，让游戏开发变得简单且有趣！
 ^_^

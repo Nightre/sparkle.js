@@ -64,8 +64,6 @@ class SparkleEngine {
     toDestory: Container[] = []
     private loadedSences: Set<new () => Sence> = new Set()
     constructor(options: ISparkleEngineOption) {
-
-
         if (!options.canvas) {
             throw new Error("Please provide a canvas");
         }
@@ -83,10 +81,9 @@ class SparkleEngine {
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
         this.resource = new ResourcesManager(this);
         (window as any).sparkleEngine = this
-
         this.changeSenceToContainer(new Container({ engine: this }))
         this.maxFPS = options.maxFPS ?? 60
-        this.loop(0); // 开始游戏循环
+        this.loop(0); // 开始游戏 循环
         this.getAssets = this.resource.get.bind(this.resource)
     }
 
