@@ -16,7 +16,7 @@ class Drawable extends Transform2D {
     drawSize: Vector2 = this.pool.Vector2.pull(0, 0)
     constructor(options: IDrawableOptions) {
         super(options)
-        this.color = options.color ?? this.pool.Color.pull(0, 0, 0, 1)
+        this.color = options.color ?? this.pool.Color.pull(1, 1, 1, 1)
         
     }
     /**

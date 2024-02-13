@@ -43,7 +43,7 @@ const Player = () => {
     )
     player.onReady = () => {
         // 当准备就绪
-        gameManager = player.root.findByTag("game_manager")[0]
+        gameManager = player.root.findByTag("game_manager")
     }
 
     // 添加标签，标签可以拥有多个，标签可以用于检测到碰撞时识别
@@ -102,10 +102,6 @@ const Player = () => {
 // 若你觉得这种方法不和你口味，可以使用上面的 playerSence的
 // 状态函数方式来写
 class GameManager extends Container { // Container 是所有节点的基类，他能有多个子节点，一个父节点
-    coin = 0
-    scoreText // 分数节点的引用
-    timer // timer节点的引用
-
     constructor(options) {
         super(options)
         this.timer = this.addChild(
@@ -115,6 +111,7 @@ class GameManager extends Container { // Container 是所有节点的基类，�
                 start: true
             })
         )
+        this.coin = 0
         // 使用这种方法监听，可以在该节点被移出场景树的时候自动取消监听
         // 若希望在节点被摧毁时，监听依然存在可以使用 engine.input.on
         this.onEvent(this.timer, "timeout", this.createObstacle.bind(this))
@@ -123,7 +120,7 @@ class GameManager extends Container { // Container 是所有节点的基类，�
     onReady() {
         // onReady 在其所有子节点被加载完毕并准备好后被引擎调用
         this.tag.add("game_manager")
-        this.scoreText = this.root.findByTag("score_text")[0]
+        this.scoreText = this.root.findByTag("score_text")
     }
     // 创建一个障碍物
     createObstacle() {
@@ -295,7 +292,7 @@ class LoseSence extends Sence {
             anchor: TextAnchor.CENTER
         }))
         root.addChild(new Text({
-            text: "分数：" + (engine.root.findByTag("game_manager")[0]).coin,
+            text: "分数：" + (engine.root.findByTag("game_manager")).coin,
             font: "40px Arial",
             position: new Vector2(740 / 2, 150),
             anchor: TextAnchor.CENTER
