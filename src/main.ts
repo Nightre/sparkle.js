@@ -31,7 +31,7 @@ import MathUtils from "./math/math"
 import Animations from "./animation/animation"
 import { DataResources } from "./loader/loader"
 import Resources from "./loader/resources"
-
+import Graphical from "./nodes/graphical"
 export {
     Resources,
     Color,
@@ -49,6 +49,8 @@ export {
     Sprite,
     Text,
     Collision,
+    Graphical,
+    
 
     TextureManager,
     Texture,

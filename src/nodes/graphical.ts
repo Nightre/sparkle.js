@@ -1,6 +1,10 @@
-import { GraphicalType, ICircleOptions, IGraphicalOptions, IPolygonOptions, IRectOptions, Path, Rect, Vector2 } from "../main";
+import { GraphicalType, IGraphicalOptions, Rect, Vector2 } from "../main";
 import Drawable from "./drawable";
 
+/**
+ * 绘制图形，圆形多边形，正方形等
+ * @category GameNode
+ */
 class Graphical extends Drawable {
     type: GraphicalType;
     path?: Vector2[]

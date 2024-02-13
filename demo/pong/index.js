@@ -8,9 +8,9 @@ import {
     Container,
     GraphicalType,
     Rect,
-    Collision
+    Collision,
+    Graphical
 } from "https://unpkg.com/sparkle-engine/dist/sparkle.js"
-import Graphical from "../../src/nodes/graphical"
 
 const engine = new SparkleEngine({
     // 指定游戏画布元素
