@@ -47,21 +47,11 @@ class Path {
         this.fistStack = []
     }
 
-    forEachLine(fn: (start: Vector2, end: Vector2, nextStart?: Vector2, nextEnd?: Vector2) => void) {
+    forEachLine(fn: (start: Vector2, end: Vector2) => void) {
         for (let index = 0; index < this.path.length; index += 2) {
-            let nextStart: undefined | Vector2
-            let nextEnd: undefined | Vector2
-
-            if (this.fistStack[index + 2] === false) {
-                nextStart = this.path[index + 2]
-                nextEnd = this.path[index + 3]
-            }
-
             fn(
                 this.path[index],
                 this.path[index + 1],
-                nextStart,
-                nextEnd,
             )
         }
     }
@@ -71,6 +61,28 @@ class Path {
                 fn(p, index)
             }
         })
+    }
+    circlePath(radius: number) {
+        let first = true;
+        // TODO: 或许需要修改
+        const segments = Math.max(100, radius * 5 + 10);
+        for (let i = 0; i <= segments; i++) {
+            const theta = (i / segments) * 2 * Math.PI;
+            const dx = radius * Math.cos(theta);
+            const dy = radius * Math.sin(theta);
+            if (first) {
+                this.moveTo(dx, dy)
+                first = false
+            }
+            this.lineTo(dx, dy);
+        }
+    }
+    polygonPath(path: Vector2[]) {
+        this.moveTo(path[0].x, path[0].y)
+        path.forEach((v) => {
+            this.lineTo(v.x, v.y)
+        })
+        this.lineTo(path[0].x, path[0].y)
     }
 }
 

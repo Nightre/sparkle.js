@@ -103,6 +103,15 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
     scale(scalar: number, self: boolean = true): Vector2 {
         return this.mul(scalar, self);
     }
+
+    static lerp(v1: Vector2, v2: Vector2, t: number): Vector2 {
+        const x = v1.x + t * (v2.x - v1.x);
+        const y = v1.y + t * (v2.y - v1.y);
+        return pool.Vector2.pull(x, y);
+    }
+    static fromAngle(angle: number): Vector2 {
+        return new Vector2(Math.cos(angle), Math.sin(angle));
+    }
 }
 
 export default Vector2

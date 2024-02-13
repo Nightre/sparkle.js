@@ -201,6 +201,7 @@ class Renderer {
     clear() {
         const gl = this.gl
         const bg = this.backgroundColor
+        
         gl.clearColor(bg.r, bg.g, bg.b, bg.alpha)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     }

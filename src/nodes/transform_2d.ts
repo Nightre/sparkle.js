@@ -116,8 +116,10 @@ class Transform2D extends Container {
      * @ignore
      */
     postDraw(): void {
+        this.renderer.modelMatrix.translate(
+            this.offset!.x, this.offset!.y
+        );
         super.postDraw();
-
         this.renderer.restore();
     }
     /**

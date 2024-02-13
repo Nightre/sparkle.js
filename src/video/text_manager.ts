@@ -33,9 +33,8 @@ class TextManager {
         let textHeight = parseInt(font, 10); // 假设字体大小在font字符串的开始
 
         // 设置canvas的大小
-        canvas.canvas.width = textWidth;
+        canvas.canvas.width = textWidth + 2;
         canvas.canvas.height = textHeight * 1.25;
-        canvas.fillStyle = "black";
         // 清除canvas
         canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
         canvas.fillStyle = `rgba(${color.r * 255},${color.g * 255},${color.b * 255},${color.alpha * 255})`;

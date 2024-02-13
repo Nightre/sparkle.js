@@ -236,9 +236,7 @@ class Container implements IEventAble<IContainerEvent> {
      */
     update(dt: number) {
         // ready 是下一帧时调用，这个时候节点都被draw过了一次
-        if (this.isReady) {
-            this.onUpdate(dt)
-        }
+        this.onUpdate(dt)
         // 子类实现
     }
     /**
@@ -246,7 +244,9 @@ class Container implements IEventAble<IContainerEvent> {
      */
     postUpdate(dt: number) {
         this.forEachChildren((child) => {
-            child.update(dt);
+            if (child.isReady) {
+                child.update(dt);
+            }
             child.postUpdate(dt);
         })
     }
@@ -329,7 +329,7 @@ class Container implements IEventAble<IContainerEvent> {
      * @param tag 要查找的tag（支持多个）
      * @returns 找到的子节点数组
      */
-    findByTag(tag: string | string[], deep: boolean = true): Container[] {
+    findAllByTag(tag: string | string[], deep: boolean = true): Container[] {
         const result: Container[] = [];
         const tags = Array.isArray(tag) ? tag : [tag];
         this.forEachChildren((child) => {
@@ -337,8 +337,23 @@ class Container implements IEventAble<IContainerEvent> {
                 result.push(child);
             }
             if (deep) {
-                const foundChildren = child.findByTag(tag, deep);
+                const foundChildren = child.findAllByTag(tag, deep);
                 result.push(...foundChildren);
+            }
+        });
+        return result;
+    }
+    findByTag(tag: string | string[], deep: boolean = true): Container | null {
+        const tags = Array.isArray(tag) ? tag : [tag];
+        let result: Container | null = null;
+        this.forEachChildren((child) => {
+            if (result) {
+                return;
+            }
+            if (tags.some(t => child.tag.has(t))) {
+                result = child;
+            } else if (deep) {
+                result = child.findByTag(tag, deep);
             }
         });
         return result;

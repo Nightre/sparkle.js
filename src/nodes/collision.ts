@@ -33,6 +33,7 @@ class Collision extends Transform2D {
     }
     update(dt: number): void {
         super.update(dt)
+
         const nowResults = this.collisionDetection()
         const nowCollisions: Collision[] = []
 
@@ -77,9 +78,8 @@ class Collision extends Transform2D {
      * @ignore
      */
     exitTree(): void {
-        this.physics.remove(this)
         super.exitTree()
-        
+        this.physics.remove(this)
     }
     /**
      * @ignore

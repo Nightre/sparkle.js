@@ -9,7 +9,7 @@ import {
     Text,
     TextAnchor,
     Timer,
-} from "https://unpkg.com/sparkle-engine/dist/sparkle.js"
+} from "../../src/main" //"https://unpkg.com/sparkle-engine/dist/sparkle.js"
 
 const engine = new SparkleEngine({
     // 指定游戏画布元素
@@ -97,7 +97,7 @@ const Player = () => {
 
     return player
 }
-
+    
 // 这是另外一种编写模式，是继承某个类
 // 若你觉得这种方法不和你口味，可以使用上面的 playerSence的
 // 状态函数方式来写
@@ -147,7 +147,6 @@ class GameManager extends Container { // Container 是所有节点的基类，�
 }
 // 若你不喜欢这样写，可以查看Player的另外一种的写法
 class MovingObject extends Sprite {
-    collision
     constructor(
         texture,
         shape,
@@ -181,6 +180,7 @@ class Coin extends MovingObject {
         super(engine.getAssets("coin"), Collision.rectShape(0, 0, 8, 8))
         this.collision.tag.add("coin")
         this.offset.set(4, 4)
+        this.collision.offset.set(4, 4)
     }
     pick() {
         this.destory()

@@ -55,24 +55,29 @@ class PrimitiveCompositors extends Compositor {
     }
 
     private linePathToVertex() {
-        // TODO:关节
-        this.path.forEachLine((start: Vector2, end: Vector2, _nextStart?: Vector2, _nextEnd?: Vector2) => {
+        let prevEndUp: Vector2 | null = null;
+        let prevEndDown: Vector2 | null = null;
+    
+        this.path.forEachLine((start: Vector2, end: Vector2) => {
             const dis = start.sub(end, false)
             dis.unit().normal().scale(this.lineWidth * 0.5)
-
+    
             const startUp = start.add(dis, false)
             const startDown = start.sub(dis, false)
-
+    
             const endUp = end.add(dis, false)
             const endDown = end.sub(dis, false)
-
+    
             this.addVertex(startDown)
             this.addVertex(startUp)
             this.addVertex(endDown)
-
+    
             this.addVertex(startUp)
             this.addVertex(endUp)
             this.addVertex(endDown)
+    
+            prevEndUp = endUp;
+            prevEndDown = endDown;
         })
     }
     pointPathToVertex() {

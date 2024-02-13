@@ -5,7 +5,7 @@ import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 import Collision from "./nodes/collision"
-import { Audio, EventEmitter, GLShader } from "./main"
+import { Audio, Drawable, EventEmitter, GLShader, Rect } from "./main"
 import Animations from "./animation/animation"
 
 export interface ICopyable<T> {
@@ -204,11 +204,10 @@ export interface IDrawOptions {
 
 export interface IDrawLineOptions extends IDrawOptions {
     lineWdith: number
-    path?: Path2D
 }
 
 export interface IDrawPolygonOptions extends IDrawOptions {
-    path?: Path2D
+
 }
 
 export type Resources = Audio | Texture
@@ -247,3 +246,31 @@ export interface IResourcesManagerEvent {
     loaded: (r: IResources) => void
 }
 export interface IResourcesStore<T extends IResources = IResources> { [key: string]: T }
+
+export enum GraphicalType {
+    RECT,
+    POLYGON,
+    CIRCLE,
+}
+
+export interface IBaseGraphicalOptions extends IDrawableOptions  {
+    fill?: boolean
+    lineWidth?: number
+}
+
+export interface IRectOptions extends IBaseGraphicalOptions {
+    type: GraphicalType.RECT;
+    rect: Rect;
+}
+
+export interface IPolygonOptions extends IBaseGraphicalOptions {
+    type: GraphicalType.POLYGON;
+    path: Vector2[];
+}
+
+export interface ICircleOptions extends IBaseGraphicalOptions {
+    type: GraphicalType.CIRCLE;
+    radius: number;
+}
+
+export type IGraphicalOptions = IRectOptions | IPolygonOptions | ICircleOptions;

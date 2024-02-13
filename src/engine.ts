@@ -103,7 +103,6 @@ class SparkleEngine {
         if (this.root) {
             this.root.doDestory()
         }
-        this.physics.reset()
         this.root = sence
     }
     /**

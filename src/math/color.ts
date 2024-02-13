@@ -72,11 +72,19 @@ class Color implements IPoolable, ICopyable<Color> {
      * 从Hex格式加载颜色
      * @param hexString 
      */
-    static fromHexString(hexString: string): Color {
-        const r = parseInt(hexString.slice(1, 3), 16);
-        const g = parseInt(hexString.slice(3, 5), 16);
-        const b = parseInt(hexString.slice(5, 7), 16);
-        return new Color(r, g, b);
+    static fromHex(hexString: string): Color {
+        // 检查并处理前导'#'
+        if (hexString.startsWith('#')) {
+            hexString = hexString.slice(1);
+        }
+        const r = parseInt(hexString.slice(0, 2), 16) / 255;
+        const g = parseInt(hexString.slice(2, 4), 16) / 255;
+        const b = parseInt(hexString.slice(4, 6), 16) / 255;
+        let a = 1;
+        if (hexString.length >= 8) {
+            a = parseInt(hexString.slice(6, 8), 16) / 255;
+        }
+        return new Color(r, g, b, a);
     }
     /**
      * 创建红色
