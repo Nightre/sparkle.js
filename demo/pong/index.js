@@ -53,7 +53,7 @@ class Ball extends Graphical {
             color: Color.fromHex("#808080"),
             position: new Vector2(300, 150),
         })
-        this.speed = 200
+        this.speed = 300
         this.velocity = Vector2.fromAngle(1)
         this.collision = new Collision({
             shape: Collision.rectShape(0, 0, 40, 40),
@@ -67,6 +67,7 @@ class Ball extends Graphical {
                 const relativePos = this.globalPosition.sub(body.globalPosition, false)
                 // 将相对位置转换为角度，并设置为球的新方向
                 this.velocity.direction = relativePos.direction
+                engine.getAssets("jump").play()
             }
         }
         this.addChild(
@@ -115,10 +116,12 @@ class scoreText extends Text{
 }
 
 class MainSence extends Sence {
+    preload(){
+        engine.loader.baseUrl = "."
+        engine.resource.loadAudio("jump","jump.mp3")
+    }
     create() {
         const root = new Container()
-
-       
         root.addChild(new Panel(new Vector2(30, 150)))
         root.addChild(new Panel(new Vector2(600 - 30 - 10, 150)))
         root.addChild(new Ball())

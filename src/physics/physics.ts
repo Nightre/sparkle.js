@@ -1,6 +1,7 @@
 import { SparkleEngine } from "../engine";
 import { ICollisionResult, Vector2 } from "../main";
 import Collision from "../nodes/collision"
+import pool from "../system/pool";
 
 //TODO: 使用四叉树，BVH 等优化
 /**
@@ -87,11 +88,12 @@ class PhysicsManager {
 
         // 如果存在碰撞，计算并返回最小平移向量
         if (smallestAxis) {
-            const d = this.getPolygonCenter(poly1).sub(this.getPolygonCenter(poly2), false);
+            const d = this.getPolygonCenter(poly1).sub(this.getPolygonCenter(poly2));
             if (d.dot(smallestAxis) > 0) {
                 smallestAxis = smallestAxis.mul(-1);
             }
-            return smallestAxis.unit(false).mul(overlap);
+            pool.Vector2.push(d)
+            return smallestAxis.unit().mul(overlap);
         }
 
         return null;
@@ -106,7 +108,7 @@ class PhysicsManager {
             const p1 = poly[i];
             const p2 = poly[(i + 1) % poly.length]; // Loop back to the first vertex
             const edge = p1.sub(p2, false);
-            axes.push(edge.normal(false).unit(false)); // Add the normal of the edge to the axes
+            axes.push(edge.normal().unit()); // Add the normal of the edge to the axes
         }
         return axes;
     }
@@ -159,7 +161,7 @@ class PhysicsManager {
             centerX += p.x;
             centerY += p.y;
         });
-        return new Vector2(centerX / poly.length, centerY / poly.length);
+        return pool.Vector2.pull(centerX / poly.length, centerY / poly.length);
     }
 
 }
