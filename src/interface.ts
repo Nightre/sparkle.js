@@ -5,7 +5,7 @@ import Color from "./math/color"
 import { Renderer } from "./video/renderer"
 import { Texture } from "./video/texture/texture"
 import Collision from "./nodes/collision"
-import { Audio, Drawable, EventEmitter, GLShader, Rect } from "./main"
+import { Audio, EventEmitter, GLShader, Rect } from "./main"
 import Animations from "./animation/animation"
 
 export interface ICopyable<T> {

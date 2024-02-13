@@ -55,8 +55,8 @@ class PrimitiveCompositors extends Compositor {
     }
 
     private linePathToVertex() {
-        let prevEndUp: Vector2 | null = null;
-        let prevEndDown: Vector2 | null = null;
+        // let _prevEndUp: Vector2 | null = null;
+        // let _prevEndDown: Vector2 | null = null;
     
         this.path.forEachLine((start: Vector2, end: Vector2) => {
             const dis = start.sub(end, true)
@@ -76,8 +76,8 @@ class PrimitiveCompositors extends Compositor {
             this.addVertex(endUp)
             this.addVertex(endDown)
     
-            prevEndUp = endUp;
-            prevEndDown = endDown;
+            // _prevEndUp = endUp;
+            // _prevEndDown = endDown;
         })
     }
     pointPathToVertex() {

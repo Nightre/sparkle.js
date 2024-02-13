@@ -9,7 +9,7 @@ import {
     GraphicalType,
     Rect,
     Collision
-} from "../../src/main"
+} from "https://unpkg.com/sparkle-engine/dist/sparkle.js"
 import Graphical from "../../src/nodes/graphical"
 
 const engine = new SparkleEngine({
