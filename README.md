@@ -5,11 +5,11 @@ Sparkle.js 是一个基于WebGL的HTML5的0依赖轻量级小巧的游戏引擎�
 
 # 目录
 
+* [API 文档](https://nightre.github.io/sparkle.js/docs/index)
 * [Demo](#Demo)
     * [HelloWorld](https://nightre.github.io/sparkle.js/demo/hello-world)
     * [小鸟跑步](https://nightre.github.io/sparkle.js/demo/chrome-dino)
     * [乒乓](https://nightre.github.io/sparkle.js/demo/pong)
-* [API Reference](https://nightre.github.io/sparkle.js/docs/index)
 * [快速开始](#快速开始)
 * [第一个项目：HelloWord](#第一个项目HelloWord)
 * [第二个项目：乒乓球](#第二个项目乒乓球)
