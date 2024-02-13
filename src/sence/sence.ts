@@ -2,7 +2,8 @@ import { Container, SparkleEngine } from "../main";
 
 /**
  * 场景
- * @example ```
+ * @example
+ *  ```
  * class GameSence extends Sence{
  *      preload(){
  *           engine.loader.baseUrl = "."

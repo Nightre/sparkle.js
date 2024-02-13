@@ -6,7 +6,8 @@ import TextureCompositors from "../video/compositors/texture_compositor"
 /**
  * 精灵
  * @category GameNode
- * @example ```js
+ * @example 
+ * ```js
  * const node = new Text({
  *      text: "Hello!",
  *      font: "40px Arial",
