@@ -59,14 +59,14 @@ class PrimitiveCompositors extends Compositor {
         let prevEndDown: Vector2 | null = null;
     
         this.path.forEachLine((start: Vector2, end: Vector2) => {
-            const dis = start.sub(end, false)
+            const dis = start.sub(end, true)
             dis.unit().normal().scale(this.lineWidth * 0.5)
     
-            const startUp = start.add(dis, false)
-            const startDown = start.sub(dis, false)
+            const startUp = start.add(dis, true)
+            const startDown = start.sub(dis, true)
     
-            const endUp = end.add(dis, false)
-            const endDown = end.sub(dis, false)
+            const endUp = end.add(dis, true)
+            const endDown = end.sub(dis, true)
     
             this.addVertex(startDown)
             this.addVertex(startUp)

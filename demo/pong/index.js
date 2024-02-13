@@ -35,7 +35,7 @@ class Panel extends Graphical {
             new Collision({
                 shape: Collision.rectShape(0, 0, 20, 80),
                 offset: new Vector2(0, 40),
-                tags: ["panel"]
+                tags: ["board"]
             })
         )
     }
@@ -54,19 +54,19 @@ class Ball extends Graphical {
             position: new Vector2(300, 150),
         })
         this.speed = 300
-        this.velocity = Vector2.fromAngle(1)
+        this.direction = Vector2.fromAngle(1)
         this.collision = new Collision({
             shape: Collision.rectShape(0, 0, 40, 40),
             offset: new Vector2(20, 20),
         })
+
         this.collision.onBodyEnter = (res) => {
             const body = res.body
-            
-            if (body.tag.has("panel")) {
-                engine.root.findByTag("scoreText").getScore()
-                const relativePos = this.globalPosition.sub(body.globalPosition, false)
-                // 将相对位置转换为角度，并设置为球的新方向
-                this.velocity.direction = relativePos.direction
+            if (body.tag.has("board")) {
+                this.scoreText.addScore()
+                const rebound = this.globalPosition.sub(body.globalPosition, true)
+                this.direction.direction = rebound.direction
+                this.position.add(res.overlap)
                 engine.getAssets("jump").play()
             }
         }
@@ -74,16 +74,19 @@ class Ball extends Graphical {
             this.collision
         )
     }
+    onReady() {
+        this.scoreText = engine.root.findByTag("scoreText")
+    }
     reStart() {
-        this.velocity = Vector2.fromAngle(1)
+        this.direction = Vector2.fromAngle(1)
         this.position.set(300, 150)
-        engine.root.findByTag("scoreText").reStart()
+        this.scoreText.reStart()
     }
     onUpdate(dt) {
-        this.position.add(this.velocity.scale(dt, false).scale(this.speed, false))
+        this.position.add(this.direction.scale(dt * this.speed, true))
         if (this.position.y + 20 > 300 || this.position.y - 20 < 0) {
             // 反转y方向的速度
-            this.velocity.y = -this.velocity.y
+            this.direction.y = -this.direction.y
         }
         // 检查是否碰到了左右边界
         if (this.position.x > 600 || this.position.x < 0) {
@@ -92,9 +95,8 @@ class Ball extends Graphical {
     }
 }
 
-class scoreText extends Text{
-    constructor(){
-        
+class scoreText extends Text {
+    constructor() {
         super({
             position: new Vector2(300, 0),
             text: "0",
@@ -105,27 +107,28 @@ class scoreText extends Text{
         })
         this.score = 0
     }
-    getScore(){
+    addScore() {
         this.score++
         this.text = this.score.toString()
     }
-    reStart(){
+    reStart() {
         this.score = 0
         this.text = "0"
     }
 }
 
 class MainSence extends Sence {
-    preload(){
+    preload() {
         engine.loader.baseUrl = "."
-        engine.resource.loadAudio("jump","jump.mp3")
+        engine.resource.loadAudio("jump", "jump.mp3")
     }
     create() {
         const root = new Container()
         root.addChild(new Panel(new Vector2(30, 150)))
-        root.addChild(new Panel(new Vector2(600 - 30 - 10, 150)))
+        root.addChild(new Panel(new Vector2(560, 150)))
         root.addChild(new Ball())
         root.addChild(new scoreText())
+        console.log(2)
         return root
     }
 }

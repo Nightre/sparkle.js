@@ -32,7 +32,7 @@ class Collision extends Transform2D {
         // 获取所有 Collision this.physics.getCollision(this)
     }
     update(dt: number): void {
-        super.update(dt)
+        
 
         const nowResults = this.collisionDetection()
         const nowCollisions: Collision[] = []
@@ -53,6 +53,7 @@ class Collision extends Transform2D {
 
         this.collisions = nowCollisions
         this.results = nowResults
+        super.update(dt)
     }
     setShape(shape: Vector2[]) {
         this.clearShape()

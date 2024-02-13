@@ -107,7 +107,7 @@ class PhysicsManager {
         for (let i = 0; i < poly.length; i++) {
             const p1 = poly[i];
             const p2 = poly[(i + 1) % poly.length]; // Loop back to the first vertex
-            const edge = p1.sub(p2, false);
+            const edge = p1.sub(p2, true);
             axes.push(edge.normal().unit()); // Add the normal of the edge to the axes
         }
         return axes;

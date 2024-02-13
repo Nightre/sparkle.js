@@ -55,53 +55,53 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
     cross(v: Vector2): number {
         return this.x * v.y - this.y * v.x;
     }
-    sub(v: Vector2, self: boolean = true) {
+    sub(v: Vector2, create: boolean = false) {
         const [x, y] = [this.x - v.x, this.y - v.y]
-        if (self) {
+        if (!create) {
             this.set(x, y)
             return this
         }
         return pool.Vector2.pull(x, y)
     }
-    add(v: Vector2, self: boolean = true) {
+    add(v: Vector2, create: boolean = false) {
         const [x, y] = [this.x + v.x, this.y + v.y]
-        if (self) {
+        if (!create) {
             this.set(x, y)
             return this
         }
         return pool.Vector2.pull(x, y)
     }
-    mul(scalar: number, self: boolean = true): Vector2 {
+    mul(scalar: number, create: boolean = false): Vector2 {
         const [x, y] = [this.x * scalar, this.y * scalar]
-        if (self) {
+        if (!create) {
             this.set(x, y)
             return this
         }
         return pool.Vector2.pull(x, y)
     }
-    div(scalar: number, self: boolean = true): Vector2 {
+    div(scalar: number, create: boolean = false): Vector2 {
 
         const [x, y] = [this.x / scalar, this.y / scalar]
-        if (self) {
+        if (!create) {
             this.set(x, y)
             return this
         }
         return pool.Vector2.pull(x, y)
     }
-    unit(self: boolean = true): Vector2 {
+    unit(create: boolean = false): Vector2 {
         const mag = this.magnitude;
-        return this.div(mag, self);
+        return this.div(mag, create);
     }
-    normal(self: boolean = true): Vector2 {
+    normal(create: boolean = false): Vector2 {
         const [x, y] = [-this.y, this.x]
-        if (self) {
+        if (!create) {
             this.set(x, y)
             return this
         }
         return pool.Vector2.pull(x, y)
     }
-    scale(scalar: number, self: boolean = true): Vector2 {
-        return this.mul(scalar, self);
+    scale(scalar: number, create: boolean = false): Vector2 {
+        return this.mul(scalar, create);
     }
 
     static lerp(v1: Vector2, v2: Vector2, t: number): Vector2 {

@@ -49,7 +49,7 @@ class Transform2D extends Container {
      * @returns 
      */
     getMouseLocalPositon() {
-        return this.globalPosition.sub(this.engine.mouse.mousePosition, false)
+        return this.globalPosition.sub(this.engine.mouse.mousePosition, true)
     }
     /**
      * 获取鼠标的全局位置
