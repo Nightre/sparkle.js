@@ -84,14 +84,14 @@ class MainSence extends Sence {
 // 切换场景
 engine.changeToSence(MainSence)
 ```
-然后你就能看见屏幕上有个大大的`Hello World`了
+然后你就能看见屏幕上有个`Hello World`了
 
 # 场景
 
-MainSence是一个`场景`，`场景`的preload方法用于加载资源，比如`纹理`，`音频`等等资源
-当所有资源都加载成功后，会调用场景的`create`方法，并将该方法返回的节点作为`场景树`的根节点
+上面`MainSence`是一个游戏场景，场景的preload方法用于预加载资源
+当preload方法的所有资源都加载完成后，会调用场景的`create`方法，并将该方法返回的节点作为场景树的根节点
 场景树是组织和管理游戏场景中各个元素的数据结构。它类似于一棵树，而每个节点可以包含子节点。
-在sparkle.js中`组件`（比如下图的Timer就是一个组件）也是一个节点
+在sparkle.js中组件（比如下图的Timer就是一个组件）也是一个节点
 ```
 Sprite（用于显示）
   |
@@ -178,7 +178,7 @@ node.onEvent(timer, "timeout", ()=>{
 还可以使用`waitEvent`来等待一个事件发出
 ```js
 const node = new Container()
-await node.awaitEvent(timer, "timeout")
+await node.waitEvent(timer, "timeout")
 alert("timeout !")
 ```
 若想知道每个节点的具体事件有那些，请查阅[API 文档](https://nightre.github.io/sparkle.js/docs/index)

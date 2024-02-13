@@ -52,7 +52,7 @@ class Text extends Drawable {
         const m = this.renderer.modelMatrix
         switch (this.anchor) {
             case TextAnchor.CENTER:
-                m.translate(-this.drawSize.x/2, 0)
+                m.translate(-this.drawSize.x / 2, 0)
                 break;
             case TextAnchor.RIGHT:
                 m.translate(-this.drawSize.x, 0)
@@ -65,23 +65,21 @@ class Text extends Drawable {
         const compositors = this.renderer.currentCompositors as TextureCompositors;
         compositors.addQuad(this.texture, false);
         compositors.setColor(this.color)
-
         compositors.flush();
     }
     private setText(text: string) {
-        const Images = this.engine.text.drawText(
+
+        const img = this.engine.text.drawText(
             text,
             this.font,
             this.color
         )
         if (this.texture) {
             this.texture.setImage(
-                Images
+                img, true
             )
         } else {
-            this.texture = this.engine.texture.createBaseTexture(
-                Images
-            )
+            this.texture = new BaseTexture(this.engine, img, true)
         }
         this.drawSize.set(
             this.texture.width,

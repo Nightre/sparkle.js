@@ -50,8 +50,7 @@ export class TextureManager {
      * @returns 
      */
     createBaseTexture(image: Images) {
-        const newOldBaseTexture = new BaseTexture(this.engine, image)
-        return newOldBaseTexture
+        return new BaseTexture(this.engine, image)
     }
 }
 
@@ -66,18 +65,18 @@ export class BaseTexture {
     height!: number
     source: Images
     engine: SparkleEngine
-    constructor(engine: SparkleEngine, image: Images) {
+    constructor(engine: SparkleEngine, image: Images, text: boolean=false) {
         this.source = image
         this.engine = engine
-        this.setImage(image)
+        this.setImage(image, text)
     }
     /**
      * 重新设置纹理
      * @param image 
      */
-    setImage(image: Images) {
+    setImage(image: Images, text: boolean = false) {
         const engine = this.engine;
-        this.texture = createTexture(engine.renderer.gl, image, engine.renderer.antialias);
+        this.texture = createTexture(engine.renderer.gl, image, engine.renderer.antialias, text);
         this.width = image.width;
         this.height = image.height;
     }
