@@ -1,5 +1,5 @@
 <div  align="center">    
-<img src="https://github.com/Nightre/sparkle.js/assets/149653910/20e460de-d016-4288-a9e4-1b3e60ac1486" width = "300" height = "200" alt="图片名称" align=center style="image-rendering: pixelated;" />
+<img src="https://github.com/Nightre/sparkle.js/assets/149653910/0964fb5f-abb0-41d7-8caf-b4bcbf4d0323" width = "300" height = "200" alt="图片" align=center style="image-rendering: pixelated;" />
 </div>
 <div  align="center">    
 <h1>SPARKLE.JS GAME ENGINE</h1>
