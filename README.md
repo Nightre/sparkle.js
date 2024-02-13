@@ -339,3 +339,4 @@ class MainSence extends Sence {
 * 阅读[小鸟跑步](https://nightre.github.io/sparkle.js/demo/chrome-dino)demo的源码
 * 阅读[教程](./tutorial.md)
 * 阅读[API](https://nightre.github.io/sparkle.js/docs/index)
+* 或者点个 star ？滑稽
