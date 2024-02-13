@@ -62,6 +62,7 @@ class SparkleEngine {
     maxFPS: number
     /**@ignore */
     toDestory: Container[] = []
+    private loadedSences: Set<new () => Sence> = new Set()
     constructor(options: ISparkleEngineOption) {
 
 
@@ -173,10 +174,13 @@ class SparkleEngine {
      */
     instantiateSence<T extends Sence>(Sence: new () => T) {
         return new Promise<Container>((resolve) => {
+            
             this.resource.startRegion()
             const sence = new Sence()
-            sence.preload()
-
+            if (!this.loadedSences.has(Sence)) {
+                sence.preload()
+                this.loadedSences.add(Sence)                
+            }
             this.resource.endRegion(() => {
                 resolve(sence.create(this))
             })
