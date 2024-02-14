@@ -20,7 +20,7 @@ Sparkle.js is a lightweight and compact game engine based on WebGL for HTML5 wit
 * [Quick Start](#QuickStart)
 * [First Project: HelloWorld](#first-project-helloworld)
 * [Second Project: Ping Pong](#second-project-ping-pong)
-* [Tutorial](./tutorial.md)
+* [Tutorial (tutorial.md)](./tutorial.md)
     * [Scene](./tutorial.md#Scene)
     * [Node](./tutorial.md#Node)
         * [Life Cycle](./tutorial.md#Life-Cycle)
