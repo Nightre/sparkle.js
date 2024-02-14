@@ -263,14 +263,14 @@ class Ball extends Graphical {
     constructor() {
         // ...
         this.collision.onBodyEnter = (res) => {
-            // res 返回碰到的碰撞体，以及overlap
+            // `res` returns the collision object encountered and overlay
             const body = res.body
-            if (body.tag.has("board")) { // 判断是不是板子
-                // 获取与板子之间的差
+            if (body.tag.has("board")) { // Determine if it is a board
+                // Obtain the difference in coordinates with the board
                 const rebound = this.globalPosition.sub(body.globalPosition,true)
-                // 设置方向
+                // Set direction
                 this.direction.direction = rebound.direction
-                // 播放声音
+                // Play Sound
                 engine.getAssets("jump").play()
             }
         }
