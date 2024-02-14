@@ -122,12 +122,12 @@ Then write a [sence](./tutorial.md#Sence). This scene has an additional `preload
 class MainSence extends Sence {
     preload(){
         engine.loader.baseUrl = "."
-        // 加载一个资源
-        // "jump" 是资源id，"jump.mp3"是资源的路径
+        // Load a resource
+        // "Jump" is the resource ID, and "jump. mp3" is the path to the resource
         engine.resource.loadAudio("jump","jump.mp3")
     }
     create() {
-        // 创建一个根节点
+        // Create a root node
         const root = new Container()
 
         return root
