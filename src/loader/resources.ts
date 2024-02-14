@@ -8,7 +8,7 @@ class Resources implements IResources {
     /**
      * @ignore
      */
-    resourcesType = ResourcesType.ANIMATION
+    resourcesType?:ResourcesType;
 }
 
 export default Resources

@@ -238,7 +238,7 @@ export interface IEventAble<T extends Record<string | symbol, any>> {
 }
 export interface IResources {
     resourcesId?: string
-    resourcesType: ResourcesType
+    resourcesType?:ResourcesType
 }
 export type Images = HTMLImageElement | ImageBitmap | ImageData | HTMLCanvasElement | HTMLVideoElement | OffscreenCanvas
 export interface IResourcesManagerEvent {

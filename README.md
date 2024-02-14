@@ -5,62 +5,64 @@
 <h1>SPARKLE.JS GAME ENGINE</h1>
 </div>
 
-Sparkle.js 是一个基于WebGL的HTML5的0依赖轻量级小巧的游戏引擎，让游戏开发变得简单且有趣！
+Sparkle.js is a lightweight and compact game engine based on WebGL for HTML5 with zero dependencies, making game development simple and fun!
+
 ^_^
+[中文文档](./README_ZH.md)
 
-# 目录
+# Contents
 
-* [API 文档](https://nightre.github.io/sparkle.js/docs/index)
+* [API](https://nightre.github.io/sparkle.js/docs/index)
 * [Demo](#Demo)
     * [HelloWorld](https://nightre.github.io/sparkle.js/demo/hello-world)
-    * [小鸟跑步](https://nightre.github.io/sparkle.js/demo/chrome-dino)
-    * [乒乓](https://nightre.github.io/sparkle.js/demo/pong)
-* [快速开始](#快速开始)
+    * [chrome dino](https://nightre.github.io/sparkle.js/demo/chrome-dino)
+    * [ping pong](https://nightre.github.io/sparkle.js/demo/pong)
+* [Quick Start](#QuickStart)
 * [第一个项目：HelloWord](#第一个项目HelloWord)
 * [第二个项目：乒乓球](#第二个项目乒乓球)
-* [场景](./tutorial.md#场景)
-* [节点](./tutorial.md#节点)
-  * [生命周期](./tutorial.md#生命周期)
-  * [事件](./tutorial.md#事件)
-  * [标签查找](./tutorial.md#标签查找)
-* [游戏节点](./tutorial.md#游戏节点)
-  * [精灵](./tutorial.md#精灵)
-  * [文字](./tutorial.md#文字)
-  * [计时器](./tutorial.md#计时器)
-  * [碰撞](./tutorial.md#碰撞)
-* [资源](./tutorial.md#资源)
-  * [资源预加载](./tutorial.md#资源预加载)
-  * [纹理](./tutorial.md#纹理)
-  * [音频](./tutorial.md#音频)
-  * [动画](./tutorial.md#动画)
-* [调试工具](./tutorial.md#调试工具)
-* [输入](./tutorial.md#输入)
-  * [鼠标输入](./tutorial.md#鼠标输入)
-  * [键盘输入](./tutorial.md#键盘输入)
+* [Scene](./tutorial.md#Scene)
+* [Node](./tutorial.md#Node)
+  * [Life Cycle](./tutorial.md#Life-Cycle)
+  * [Events](./tutorial.md#Events)
+  * [Tag Search](./tutorial.md#Tag-Search)
+* [GameNode](./tutorial.md#GameNode)
+  * [Sprite](./tutorial.md#Sprite)
+  * [Text](./tutorial.md#Text)
+  * [Timer](./tutorial.md#Timer)
+  * [Collision](./tutorial.md#Collision)
+* [Resources](./tutorial.md#Resources)
+  * [Resource Preloading](./tutorial.md#Resource-Preloading)
+  * [Texture](./tutorial.md#Texture)
+  * [Audio](./tutorial.md#Audio)
+  * [Animation](./tutorial.md#Animation)
+* [Debugging Tools](./tutorial.md#Debugging-Tools)
+* [Input](./tutorial.md#Input)
+  * [Mouse Input](./tutorial.md#Mouse-Input)
+  * [Keyboard Input](./tutorial.md#Keyboard-Input)
 
-# 快速开始
+# Quick Start
 
-安装
+Installation
 
 ```
 npm i sparkle-engine
 ```
 
-或者是使用unpkg
+Or use unpkg
 
 ```html
 <script src="https://unpkg.com/sparkle-engine/dist/sparkle.umd.cjs"></script>
 ```
 
-引入
+Import
 
 ```js
 import { SparkleEngine } from "sparkle-engine";
 ```
 
-# 第一个项目HelloWord
+# First Project HelloWorld
 
-使用 SPARKLE GAME ENGINE 编写一个 Helloworld
+Write a HelloWorld using SPARKLE GAME ENGINE
 
 ```html
 <canvas id="game"></canvas>
@@ -68,18 +70,17 @@ import { SparkleEngine } from "sparkle-engine";
 
 ```js
 const engine = new SparkleEngine({
-    // 指定游戏画布元素
+    // Specify the game canvas element
     canvas: document.getElementById("game"),
 })
 ```
-
-然后创建一个场景，切换到该场景
+Then create a scene and switch to that scene
 
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     preload(){
-        // 在这里加载资源，不过这个Helloworld项目不需要加载资源
-        // 所以无需写任何代码
+        // Load resources here, but this HelloWorld project does not need to load resources
+        // So no need to write any code
     }
     create(){
         const text = new Text({
@@ -89,26 +90,25 @@ class MainSence extends Sence {
         return text
     }
 }
-// 切换场景
-engine.changeToSence(MainSence)
+// Switch scene
+engine.changeToScene(MainScene)
 ```
 
-然后你就能看见屏幕上有个`Hello World`了
+Then you will see a 'Hello World' on the screen
 
-# 第二个项目乒乓球
-使用 SPARKLE GAME ENGINE 编写一个 乒乓球 游戏，项目[源码](https://github.com/Nightre/sparkle.js/blob/main/demo/pong)
-，[在线玩这个项目](https://nightre.github.io/sparkle.js/demo/pong/)
+# Second Project: Ping Pong
+Use the SPARKLE GAME ENGINE to write a ping pong game. [source code](https://github.com/Nightre/sparkle.js/blob/main/demo/pong)
+，[link to play the project online](https://nightre.github.io/sparkle.js/demo/pong/)
+This project requires an audio resource. You can download it [here](https://github.com/Nightre/sparkle.js/blob/main/demo/pong/jump.mp3), or use your own.
 
-该项目需要一个音频资源，在[此处](https://github.com/Nightre/sparkle.js/blob/main/demo/pong/jump.mp3)下载，或者用你自己的
-
-先创建一个引擎实列
+First, create an engine instance:
 ```html
 <canvas id="game"></canvas>
 ```
 
 ```js
 const engine = new SparkleEngine({
-    // 指定游戏画布元素
+    // Specify the game canvas element
     canvas: document.getElementById("game"),
     backgroundColor: Color.fromHex("#FFFFCC"),
     width: 600,
@@ -116,7 +116,8 @@ const engine = new SparkleEngine({
 })
 ```
 
-然后编写一个[场景](./tutorial.md#场景)，这个场景比 Helloworld 中的场景多了一个`preload`方法，在`preload`方法中加载需要预加载的资源，当`perload`方法中的所有资源加载完毕，会调用场景的`create`方法返回的节点将作为场景根节点，资源可以使用`engine.getAssets("jump")`获取
+Then write a [sence](./tutorial.md#Sence). This scene has an additional `preload` method compared to the scene in Helloworld. Load the resources that need to be preloaded in the `preload` method. When all the resources in the preload method are loaded, the node returned by the `create` method of the scene will be used as the root node of the scene. Resources can be obtained using `engine.getAssets("jump")`.
+
 ```js
 class MainSence extends Sence {
     preload(){
@@ -135,41 +136,41 @@ class MainSence extends Sence {
 // 切换到目标场景
 engine.changeToSence(MainSence)
 ```
-接下来创建乒乓球游戏的板子，他接收一个position作为坐标，Graphical 可以用来显示图形（多边形，圆形，方形等），然后创建一个`Collision`子节点，作为一个组件。在Sparklejs中组件也是一个节点，比如`Collision`和`Timer`都是节点
+Next, create a board for the table tennis game, which receives a position as a coordinate. Graphical can be used to display graphics (polygons, circles, squares, etc.), and then create a `Collision`, As a component. In Sparklejs, a component is also a node, for example, `Collision` and `Timer` are both components
 
-更多信息请查看[节点](#节点)
+For more details, please review [node](./tutorial.md#Node)
 ```js
 class Board extends Graphical {
     constructor(position) {
         super({
             type: GraphicalType.RECT,
-            // 一个方形
+            // A rectangle
             rect: new Rect(0, 0, 20, 80),
-            // 是否填充这个图形
+            // Whether to fill this shape
             fill: true,
-            // 图形的颜色
+            // The color of the shape
             color: Color.fromHex("#003300"),
-            position, // 需要两个板子，所以position不是固定的，让使用者来设定
-            offset: new Vector2(0, 40),// 偏移
+            position, // Two boards are needed, so the position is not fixed, let the user set it
+            offset: new Vector2(0, 40),// Offset
         })
         this.addChild(
-            // 添加这个碰撞子节点
+            // Add this collision child node
             new Collision({
-                shape: Collision.rectShape(0, 0, 20, 80), // 碰撞的形状
+                shape: Collision.rectShape(0, 0, 20, 80), // The shape of the collision
                 offset: new Vector2(0, 40),
-                tags: ["board"] // 一个标签，可以用于查找或者判断节点
+                tags: ["board"] // A tag, can be used to find or judge nodes
             })
         )
     }
     onUpdate(dt) {
-        // 每一帧时将自己的坐标设置为鼠标的坐标
+        // Set your own coordinates to the mouse coordinates every frame
         this.position.y = this.getMouseGlobalPositon().y
     }
 }
 ```
-标签是一个很有用的东西，能简化很多工作，详细信息请查看[标签查找](./tutorial.md#标签查找)
+Tags are a very useful thing that can simplify a lot of work. For more information, please see [Tag Search](./tutorial.md#Tag-Search)
 
-然后实例化两个板子，并加入到主场景
+Then instantiate two boards and add them to the main scene
 ```js
 class MainSence extends Sence {
     preload(){
@@ -185,61 +186,61 @@ class MainSence extends Sence {
 }
 
 ```
-然后打开看看效果，可以使用`Ctrl+B`来打开调试模式，能看见碰撞体，以及中心坐标等，接下来创建一个球
+Then open and see the effect, you can use `Ctrl+B` to open the debug mode, you can see the collision body, and the center coordinates, etc., next create a ball
 ```js
 class Ball extends Graphical {
     constructor() {
         super({
-            // 创建形状
+            // Create a shape
             type: GraphicalType.CIRCLE,
-            radius: 20, // 半径
+            radius: 20, // Radius
             fill: true,
             color: Color.fromHex("#808080"),
             position: new Vector2(300, 150),
         })
         this.speed = 300
-        // 创建一个方向向量，球的方向
+        // Create a direction vector, the direction of the ball
         this.direction = Vector2.fromAngle(1)
-        // 创建一个碰撞体，也可以使用继承的方法创碰撞体
+        // Create a collision body, you can also use the inherited method to create a collision body
         this.collision = new Collision({
-            // 形状
+            // Shape
             shape: Collision.rectShape(0, 0, 40, 40),
-            // 偏移
+            // Offset
             offset: new Vector2(20, 20),
         })
-        // 添加这个碰撞体
+        // Add this collision body
         this.addChild(
             this.collision
         )
     }
-    // 游戏重来
+    // Game restart
     reStart() {
-        // 重设方向
+        // Reset direction
         this.direction = Vector2.fromAngle(1)
-        // 重设坐标
+        // Reset coordinates
         this.position.set(300, 150)
     }
     onUpdate(dt) {
-        // 坐标加速，scale后面的true代表创建一个新值是缩放该向量的新向量
-        // 因为缩放不应该改变direction而是创建一个新的
+        // Coordinate acceleration, the true behind scale represents creating a new value is a new vector that scales this vector
+        // Because scaling should not change direction but create a new one
         this.position.add(this.direction.scale(dt * this.speed, true))
-        // 碰到上墙壁和下墙壁
+        // Hit the upper wall and lower wall
         if (this.position.y + 20 > 300 || this.position.y - 20 < 0) {
-            // 反转y方向的速度
+            // Reverse the speed of the y direction
             this.direction.y = -this.direction.y
         }
-        // 检查是否碰到了左右边界
+        // Check if it has hit the left and right boundaries
         if (this.position.x > 600 || this.position.x < 0) {
-            // 重来
+            // Restart
             this.reStart()
         }
     }
 }
 ```
-`onUpdate`是每一帧都会调用的一个函数，`onReady`是该节点准备好且其子节点也准备好时被调用。具体请查看[生命周期](./tutorial.md#生命周期)
 
-二维向量操作函数一般后面都一个`create`参数，代表是否创建一个新的向量或者是修改原本的向量，然后把ball加入到主场景
+`onUpdate` is a function that will be called every frame, `onReady` is called when this node is ready and its child nodes are also ready. For details, please see [Lifecycle](./tutorial.md#Life-Cycle)
 
+The two-dimensional vector operation function generally has a `create` parameter behind it, which means whether to create a new vector or modify the original vector, and then add the ball to the main scene
 ```js
 class MainSence extends Sence {
     //...
@@ -253,9 +254,9 @@ class MainSence extends Sence {
     }
 }
 ```
-现在你应该能看见一个能弹的球了，但是碰到板子还不会被弹开，接下来就编写碰到板子的逻辑
+Now you should be able to see a bouncing ball, but it won’t bounce off when it hits the board. Next, write the logic of hitting the board
 
-注意：是使用`SAT`碰撞实现，所以仅支持凸多边形
+Note: It is implemented using `SAT` collision, so it only supports convex polygons
 ```js
 
 class Ball extends Graphical {
@@ -276,27 +277,27 @@ class Ball extends Graphical {
     }
 }
 ```
-`engine.getAssets("jump")`用于获取资源，`onBodyEnter`将在有物理体进入ball时被调用，但你也可使用[事件](./tutorial.md#事件)来监听，好了现在你可以看见球碰到板子会反弹了
+`engine.getAssets("jump")` is used to get resources, `onBodyEnter` will be called when a physical body enters the ball, but you can also use [events](./tutorial.md#Events) to listen. Now you can see the ball bounce off the board.
 
-接下来添加一个分数
+Next, add a score
 ```js
 class scoreText extends Text{
     constructor(){
-        // 继承于文字
+        // Inherits from text
         super({
             position: new Vector2(300, 0),
-            text: "0", // 初始显示一个 0
-            font: "32px Arial", // 字体
-            color: Color.black(), // 颜色
-            anchor: TextAnchor.CENTER, // 文字在中心
-            tags: ['scoreText'] // 有个标签方便其他节点访问
+            text: "0", // Initially display a 0
+            font: "32px Arial", // Font
+            color: Color.black(), // Color
+            anchor: TextAnchor.CENTER, // Text in the center
+            tags: ['scoreText'] // A tag for easy access by other nodes
         })
-        // 分数
+        // Score
         this.score = 0
     }
     addScore(){
         this.score++
-        // 修改文字可以直接设置text属性
+        // To modify the text, you can directly set the text property
         this.text = this.score.toString()
     }
     reStart(){
@@ -305,7 +306,7 @@ class scoreText extends Text{
     }
 }
 ```
-你可能会好奇，为什么scoreText和collision写法有点不一样，这两种都是可以的，具体查看[节点](./tutorial.md#节点)，然后把scoreText加入到主场景，并在碰撞到板子的时候加分，球跑出屏幕外时restart
+You might be curious why the writing style of scoreText and collision is a bit different, both are possible, for details see nodes, then add scoreText to the main scene, and add points when it collides with the board, restart when the ball runs off the screen
 ```js
 class Ball extends Graphical {
     constructor() {
@@ -313,7 +314,7 @@ class Ball extends Graphical {
         this.collision.onBodyEnter = (res) => {
             const body = res.body
             if (body.tag.has("board")) {
-                this.scoreText.addScore() // 添加这个
+                this.scoreText.addScore() // Add this
                 // ...
             }
         }
@@ -324,7 +325,7 @@ class Ball extends Graphical {
     }
     reStart() {
         // ...
-        this.scoreText.reStart() // 添加这个
+        this.scoreText.reStart() // Add this
     }
 }
 
@@ -338,10 +339,10 @@ class MainSence extends Sence {
 }
 ```
 
-好了接下来你应该就可以运行这个游戏了，若无法运行或遇到问题，可查看[源码](https://github.com/Nightre/sparkle.js/blob/main/demo/pong)，
+Alright, now you should be able to run this game. If you cannot run or encounter problems, you can check the source code.
 
-### 接下来干什么...：
-* 阅读[小鸟跑步](https://nightre.github.io/sparkle.js/demo/chrome-dino)demo的源码
-* 阅读[教程](./tutorial.md)
-* 阅读[API](https://nightre.github.io/sparkle.js/docs/index)
-* 或者点个 star ？滑稽
+### What to do next...：
+* Read the source code of the Bird Running [demo](https://nightre.github.io/sparkle.js/demo/chrome-dino)
+* Read the [Tutorial](./tutorial.md)
+* Read the [API](https://nightre.github.io/sparkle.js/docs/index)
+* Or give a star? `*w*`

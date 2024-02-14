@@ -1,52 +1,51 @@
-# 目录
-* [场景](#场景)
-* [节点](#节点)
-  * [生命周期](#生命周期)
-  * [事件](#事件)
-  * [标签查找](#标签查找)
-* [游戏节点](#游戏节点)
-  * [精灵](#精灵)
-  * [文字](#文字)
-  * [计时器](#计时器)
-  * [碰撞](#碰撞)
-* [资源]()
-  * [资源预加载](#资源预加载)
-  * [纹理](#纹理)
-  * [音频](#音频)
-  * [动画](#动画)
-* [调试工具](#调试工具)
-* [输入](#输入)
-  * [鼠标输入](#鼠标输入)
-  * [键盘输入](#键盘输入)
+# Contents
+* [Scene](#Scene)
+* [Node](#Node)
+  * [Life Cycle](#Life-Cycle)
+  * [Events](#Events)
+  * [Tag Search](#Tag-Search)
+* [GameNode](#GameNode)
+  * [Sprite](#Sprite)
+  * [Text](#Text)
+  * [Timer](#Timer)
+  * [Collision](#Collision)
+* [Resources](#Resources)
+  * [Resource Preloading](#Resource-Preloading)
+  * [Texture](#Texture)
+  * [Audio](#Audio)
+  * [Animation](#Animation)
+* [Debugging Tools](#Debugging-Tools)
+* [Input](#Input)
+  * [Mouse Input](#Mouse-Input)
+  * [Keyboard Input](#Keyboard-Input)
 
 
 
-# 场景
+# Scene
 
-上面`MainSence`是一个游戏场景，场景的preload方法用于预加载资源
-当preload方法的所有资源都加载完成后，会调用场景的`create`方法，并将该方法返回的节点作为场景树的根节点
-场景树是组织和管理游戏场景中各个元素的数据结构。它类似于一棵树，而每个节点可以包含子节点。
-在sparkle.js中组件（比如下图的Timer就是一个组件）也是一个节点
-
+The above `MainSence` is a game scene, the preload method of the scene is used to preload resources. 
+Once all the resources of the preload method are loaded, the `create` method of the scene will be called, and the node returned by this method will be used as the root node of the scene tree. 
+The scene tree is a data structure for organizing and managing various elements in the game scene. It is similar to a tree, and each node can contain child nodes. 
+In sparkle.js, components (such as the Timer in the figure below) are also nodes.
 ```
-Sprite（用于显示）
+Sprite (Used for displaying)
   |
-  +-- Timer（计时器，可以用于计时加分）
+  +-- Timer (Timer, can be used for timing bonus points)
   |
-  +-- Collision（碰撞，可以用于检测碰撞）
+  +-- Collision (Collisions can be used to detect collisions)
 ```
 
-通过场景树，游戏开发者可以方便地管理场景中的元素，以及它们的相对位置、旋转、缩放等属性都是相对于父节点。
+Through the scene tree, game developers can easily manage the elements in the scene, and their relative positions, rotations, scales and other properties are relative to the parent node.
 
-使用`engine.changeToSence`来切换场景，如果想直接切换到一个节点那么可以使用`engine.changeSenceToContainer`
+Use `engine.changeToSence` to switch scenes, if you want to switch directly to a node then you can use `engine.changeSenceToContainer`
 
-# 节点
+# Node
 
-节点是构成场景树的基本单元，每个节点可以包含多个子节点和一个父节点，这样就可以形成一个层次化的结构。编写节点的代码时有两种方法
+The node is the basic unit that constitutes the scene tree. Each node can contain multiple child nodes and a parent node, so that a hierarchical structure can be formed. There are two methods when writing node code.
 
 ```js
 const player = ()=>{
-    // 创建节点
+    // Create node
     const node = new Sprite({
         texture:YourTexture
     })
@@ -54,14 +53,14 @@ const player = ()=>{
         // ...
     })
     node.addChild(
-        // 将timer节点加入到player节点，作为一个组件
+        // Add the timer node to the player node as a component
         timer
     )
     return player
 }
-// root 指向场景根节点
+// root points to the scene root node
 engine.root.addChild(player())
-// 另外一种写法
+// Another way of writing
 class Player extends Sprite{
     constructor(){
         super({
@@ -78,50 +77,50 @@ class Player extends Sprite{
 engine.root.addChild(new Player())
 ```
 
-两种写法都可以
+Both methods are possible.
 
-### 生命周期
+### Life Cycle
 
-节点的生命周期
+The life cycle of a node
 
 ```js
-// 创建这个节点
+// Create this node
 const node = new Container()
 node.onReady = () => {
-    // 当前节点且其子节点都已准备就绪
+    // The current node and its child nodes are all ready
 }
 node.onUpdate = (dt) => {
-    // 每一帧调用
+    // Call every frame
 }
 node.onEnterTree = () => {
-    // 当节点进入场景树
+    // When the node enters the scene tree
 }
 node.onExitTree = () => {
-    // 当节点离开场景树
+    // When the node leaves the scene tree
 }
-// 销毁这个节点
+// Destroy this node
 node.destory()
 ```
 
-#### 常驻节点
+#### Resident Node
 
-常驻节点在场景切换时不会被销毁
-`new Container({resident:true})` 来创建一个常驻节点，注意：常驻节点只能作为根节点的子节点
+Resident nodes will not be destroyed when the scene is switched `new Container({resident:true})` to create a resident node, note: resident nodes can only be child nodes of the root node
 
-### 事件
 
-节点有可以监听事件，或者发出事件
-使用下面这种方法监听事件，当节点被销毁时或是被移除场景树时自动取消监听
+### Events
+
+Nodes can listen to events or emit events.
+Use the following method to listen to events, which will automatically cancel the listening when the node is destroyed or removed from the scene tree:
 
 ```js
 const node = new Container()
 node.onEvent(timer, "timeout", ()=>{
     alert("timeout !")
 })
-// 使用offEvent来取消监听
+// Use offEvent to cancel listening
 ```
 
-还可以使用`waitEvent`来等待一个事件发出
+You can also use `waitEvent` to wait for an event to be emitted:
 
 ```js
 const node = new Container()
@@ -129,12 +128,12 @@ await node.waitEvent(timer, "timeout")
 alert("timeout !")
 ```
 
-若想知道每个节点的具体事件有那些，请查阅[API 文档](https://nightre.github.io/sparkle.js/docs/index)
+If you want to know what specific events each node has, please refer to the [API Documentation](https://nightre.github.io/sparkle.js/docs/index)
 
-### 标签查找
+### Tag Search
 
-当场景树中的节点变得越来越多，很难管理，这个时候就需要`TAG`了
-在实例化节点的时候可以设置tag，也可以在未来修改
+When the nodes in the scene tree become more and more, it is difficult to manage, at this time you need `TAG`.
+You can set tags when instantiating nodes, and you can also modify them in the future:
 
 ```js
 const node = new Container({
@@ -145,16 +144,18 @@ const node = new Container({
 ```
 
 ```js
-// 可以根据tag来查找节点
+// You can find nodes by tag
 engine.root.findByTag(["enemy","monster"])
-// 或者查看某个节点是否包含tag
+// Or check if a node contains a tag
 node.tags.has("enemy")
 ```
 
-# 游戏节点
-在sparklejs中主要分为`资源`,`场景`,`节点`这三种，场景只是创建了一个节点，他并不存在于场景树之中
-### 精灵
-精灵可以显示一个[纹理](#纹理)或者是播放一个动画
+# GameNode
+In Sparklejs, it is mainly divided into three types: resources, scenes, and nodes. Scenes only create a node and do not exist in the scene tree
+
+All GameNodes: [API](https://nightre.github.io/sparkle.js/docs/index)
+### Sprite
+Elves can display a [Texture](#Texture) or play an animation
 ```js
 const node = new Sprite({
     texture: yourTexture
@@ -163,37 +164,33 @@ node.position.set(0,0)
 node.visible = true
 node.color = Color.white()
 
-// 或者是一个动画
+// Or it could be an animation
 const player = new Sprite({
     animations: engine.getAssets("player_ani")
 })
 player.play("run", true) // loop
 ```
-使用`play`来播放动画，`stop`来停止，设置aniPaused`aniPaused`属性来暂停
-`play`第一个参数是动画名称，第二个参数表示是否循环若该动画播放完毕是否自动重新播放
-在调用`play`播放动画时，若同名动画正在播放时不会重新播放，若像强制重新播放就设置`restart`为true
+Use `play()` to play animations, `stop()` to stop, and set the aniused `aniused` property to pause
 
-sprite仅负责播放动画，关于动画的请查看[动画](#动画)
+`The first parameter is the animation name, and the second parameter indicates whether to loop. If the animation is played, it will automatically replay
 
-详细信息请查看API
+When calling `play` to play an animation, if the animation with the same name is currently playing, it will not be replayed. If it is forced to play again, set 'restart' to true
 
-### 文字
-用于显示一个文字
+Sprite is only responsible for playing animations. For more information on animations, please refer to [Animation](#Animation)
+### Text
+Used to display a text
 ```js
 const node = new Text({
-    text: "Hello!",//文字
-    font: "40px Arial", // 字体
-    anchor: TextAnchor.CENTER // 文字位置
+    text: "Hello!", // text
+    font: "40px Arial", // font
+    anchor: TextAnchor.CENTER // text position
 })
-//修改文字:
+// Modify the text:
 node.text = "6666"
 ```
-详细信息请查看API
-### 计时器
-计时器也是一个节点，可以作为组件（sparkle中组件即使节点）
-计时器节点，有个`timeout`信号
-timer必须在场景树里才会运行，若在场景树之外处于暂停状态
-若想让在场景树之外的timer同样保持运行，请手动调用update
+For more information, please refer to the [API](https://nightre.github.io/sparkle.js/docs/index).
+### Timer
+The timer is also a node and can be used as a component (in Sparkle, a component is a node). The timer node has a `timeout` signal. The timer must be in the scene tree to run, if it is outside the scene tree, it is in a paused state. If you want the timer to keep running outside the scene tree, please manually call update.
 ```js
 onUpdate(dt){
     timer.update(dt)
@@ -206,91 +203,90 @@ const node = new Timer({
     start: true
 });
 node.onTimeout = () => {};
-// 或者是用信号onTimeout（使用onEvent监听event当精灵被删除时或退出场景树自动取消监听）
+// Or use the signal onTimeout (use onEvent to listen to the event, it will automatically cancel the listening when the sprite is deleted or exits the scene tree)
 this.onEvent(node, "timeout", this.doSomeThing.bind(this))
 ```
-更多细节请查看API
-
-### 碰撞
-碰撞形状仅支持凸多边形，使用`SAT`检测碰撞，res有两个属性
-* `body` 碰撞的碰撞体
-* `overlap` 覆盖向量
+For more information, please refer to the [API](https://nightre.github.io/sparkle.js/docs/index).
+### Collision
+Collision shapes only support convex polygons, using `SAT` to detect collisions, res has two properties
+* `body` The collision body of the collision
+* `overlap` Overlap vector
 ```js
 const collision = new Collision({
     shape: Collision.rectShape(0, 0, 12, 10)
-    // 或者给一个Vector2数组
+    // Or give a Vector2 array
 })
-collision.onBodyEnter=(res)=>{} // 其他物理体进入
-collision.onBodyExit=(res)=>{} // 其他物理体离开
-collision.onClick=()=>{} //被鼠标点击
-// 以上上个均可以用事件连接
+collision.onBodyEnter=(res)=>{} // Other physical body enters
+collision.onBodyExit=(res)=>{} // Other physical body leaves
+collision.onClick=()=>{} // Clicked by the mouse
+// The above can all be connected with events
 ```
-详细信息请查看API
-### 资源
-资源使用 `engine.resource` 来加载，
-比如 `engine.resource.loadJSON(id, url)` 这是一个异步的方法
-加载好了的资源使用`engine.resource.get(id)`或者是`engine.getAssets(id)`来获取资源
+For detailed information, please check the [API](https://nightre.github.io/sparkle.js/docs/index).
+# Resources
+Resources use `engine.resource` to load,
+For example, `engine.resource.loadJSON(id, url)` This is an asynchronous method
+The loaded resources use `engine.resource.get(id)` or `engine.getAssets(id)` to get resources
 
-#### 资源预加载
-可以在场景的preload中，场景preload的资源全部加载完毕后才会调用场景的create函数
-如果你不想preload，也可以调用这个方法 `await engine.resource.loadJSON(id, url)`
+### Resource Preloading
+You can preload in the scene, and the resources of the scene preload will only call the scene's create function after all are loaded
+If you don't want to preload, you can also call this method `await engine.resource.loadJSON(id, url)`
 
-#### 纹理
+### Texture
 
-有两种纹理，一种是基本的纹理，还有一种是裁剪的纹理
+There are two types of textures, one is the basic texture, and the other is the cropped texture
 ```js
 engine.resource.loadTexture("static_img", "ground.png")
 engine.resource.loadAltasTexture("background", "static_img", new Rect(12, 11, 74, 37))
 engine.resource.loadAltasTexture("ground", "static_img", new Rect(10, 0, 74, 37))
 ```
-具体请查看API
-#### 音频
+For details, please check the [API](https://nightre.github.io/sparkle.js/docs/index).
+### Audio
 ```js
 engine.resource.loadAudio("die_muisc", "die.mp3")
-engine.getAssets("die_muisc").play() // 播放
+engine.getAssets("die_muisc").play() // Play
 ```
-#### 动画
+### Animation
 ```js
 engine.resource.loadTexture("player", "player.png")
 engine.resource.loadAnimation("player_ani", "player", {
-    hFrames: 4, // 横有几帧
-    vFrames: 2, // 竖有几帧
-    gapSize: 1, // 每一帧的间隔（像素）
+    hFrames: 4, // How many frames are there horizontally
+    vFrames: 2, // How many frames are there vertically
+    gapSize: 1, // The interval between each frame (pixels)
     animations: {
         "run": {
             fromFrames: 0,
             toFrames: 3,
-            time: 0.1 // 每一帧直接的时间（秒）
+            time: 0.1 // The time between each frame (seconds)
         },
         "fly": {
-            fromFrames: 4, // 从这一帧开始
-            toFrames: 7, // 到第7帧结束
-            time: 0.1 // 每一帧直接的时间（秒）
+            fromFrames: 4, // Start from this frame
+            toFrames: 7, // End at the 7th frame
+            time: 0.1 // The time between each frame (seconds)
         }
     }
 })
-// loadAnimation 也可以从url加载动画json
-// 使用 loadData 然后在animations 字段写 资源ID即可
+// loadAnimation can also load animation json from url
+// Use loadData and then write the resource ID in the animations field
 engine.resource.loadAnimation("player_ani", "player", {
-    hFrames: 4, // 横有几帧
-    vFrames: 2, // 竖有几帧
-    gapSize: 1, // 每一帧的间隔（像素）
+    hFrames: 4, // How many frames are there horizontally
+    vFrames: 2, // How many frames are there vertically
+    gapSize: 1, // The interval between each frame (pixels)
     animations: "json resource id"
 })
 ```
-### 调试工具
-按下 `ctrl+b` 可以打开调试工具，有碰撞是绿色的，纹理边框是蓝色的，中心点是红色的十字
-### 输入
+# Debugging Tools
+Press `ctrl+b` to open the debugging tools, the collision is green, the texture border is blue, and the center point is a red cross
+# Input
 
-### 鼠标输入
+### Mouse Input
 `engine.mouse`
-鼠标也有一些事件，具体查看API
-获取鼠标位置，可以使用Container（所有节点）的`getMouseGlobalPositon`
-继承于`transfrom2d`的节点可以使用`getMouselocalPositon`获取鼠标相对于我的位置
+The mouse also has some events, please check the API for details
+To get the mouse position, you can use Container (all nodes)'s `getMouseGlobalPositon`
+Nodes inherited from `transfrom2d` can use `getMouselocalPositon` to get the mouse position relative to me
 
-collision有当被鼠标点击事件，可以用做按钮
+collision has an event when clicked by the mouse, which can be used as a button
 
-具体请查看API
-### 键盘输入
+For details, please check the [API](https://nightre.github.io/sparkle.js/docs/index).
+### Keyboard Input
 `engine.input`
-这个有`pressedKeys`属性，还有一些事件，比如按下某个键，双击，释放等等，具体请查看API
+This has a `pressedKeys` attribute, and some events, such as pressing a key, double-clicking, releasing, etc., please check the [API](https://nightre.github.io/sparkle.js/docs/index). for details
