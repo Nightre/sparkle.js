@@ -117,7 +117,7 @@ const engine = new SparkleEngine({
 })
 ```
 
-Then write a [sence](./tutorial.md#Sence). This scene has an additional `preload` method compared to the scene in Helloworld. Load the resources that need to be preloaded in the `preload` method. When all the resources in the preload method are loaded, the node returned by the `create` method of the scene will be used as the root node of the scene. Resources can be obtained using `engine.getAssets("jump")`.
+Then write a [Sence](./tutorial.md#Sence). This scene has an additional `preload` method compared to the scene in Helloworld. Load the resources that need to be preloaded in the `preload` method. When all the resources in the preload method are loaded, the node returned by the `create` method of the scene will be used as the root node of the scene. Resources can be obtained using `engine.getAssets("jump")`.
 
 ```js
 class MainSence extends Sence {

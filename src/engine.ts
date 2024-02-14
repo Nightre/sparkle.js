@@ -1,7 +1,7 @@
 import Container from "./nodes/container"
 import { Renderer } from "./video/renderer"
 import { ISparkleEngineOption } from "./interface";
-import { AudioManager, IResources, Loader, Sence } from "./main";
+import { AudioManager, IResources, Loader, Scene } from "./main";
 import { TextureManager } from "./video/texture/texture";
 import { InputManager } from "./input/input"
 import pool from "./system/pool";
@@ -62,7 +62,7 @@ class SparkleEngine {
     maxFPS: number
     /**@ignore */
     toDestory: Container[] = []
-    private loadedSences: Set<new () => Sence> = new Set()
+    private loadedScenes: Set<new () => Scene> = new Set()
     constructor(options: ISparkleEngineOption) {
         if (!options.canvas) {
             throw new Error("Please provide a canvas");
@@ -81,7 +81,7 @@ class SparkleEngine {
         this.debugger = options.disableDebugger ? undefined : new Debugger(this)
         this.resource = new ResourcesManager(this);
         (window as any).sparkleEngine = this
-        this.changeSenceToContainer(new Container({ engine: this }))
+        this.changeSceneToContainer(new Container({ engine: this }))
         this.maxFPS = options.maxFPS ?? 60
         this.loop(0); // 开始游戏 循环
         this.getAssets = this.resource.get.bind(this.resource)
@@ -91,17 +91,17 @@ class SparkleEngine {
      * 转换到某个 Container
      * @example
      * ```js
-     * engine.changeSenceToContainer(Container)
+     * engine.changeSceneToContainer(Container)
      * ```
      */
-    changeSenceToContainer(sence: Container) {
+    changeSceneToContainer(Scene: Container) {
         this.residents.forEach((c) => {
-            c.setParent(sence)
+            c.setParent(Scene)
         })
         if (this.root) {
             this.root.doDestory()
         }
-        this.root = sence
+        this.root = Scene
     }
     /**
      * 删除一个常驻节点
@@ -154,32 +154,32 @@ class SparkleEngine {
      * 切换场景
      * @example
      * ```js
-     * class GameSence extends Sence {
+     * class GameScene extends Scene {
      *      ...
      * }
-     * engine.changeToSence(GameSence)
+     * engine.changeToScene(GameScene)
      * ```
-     * @param sence 
+     * @param Scene 
      */
-    async changeToSence(sence: new () => Sence) {
-        this.changeSenceToContainer(await this.instantiateSence(sence))
+    async changeToScene(Scene: new () => Scene) {
+        this.changeSceneToContainer(await this.instantiateScene(Scene))
     }
     /**
      * 实例化一个场景。由于场景有preload操作，所以该操作是异步的
-     * @param Sence 
+     * @param Scene 
      * @returns 
      */
-    instantiateSence<T extends Sence>(Sence: new () => T) {
+    instantiateScene<T extends Scene>(Scene: new () => T) {
         return new Promise<Container>((resolve) => {
             
             this.resource.startRegion()
-            const sence = new Sence()
-            if (!this.loadedSences.has(Sence)) {
-                sence.preload()
-                this.loadedSences.add(Sence)                
+            const Scene = new Scene()
+            if (!this.loadedScenes.has(Scene)) {
+                Scene.preload()
+                this.loadedScenes.add(Scene)                
             }
             this.resource.endRegion(() => {
-                resolve(sence.create(this))
+                resolve(Scene.create(this))
             })
         })
     }
@@ -188,8 +188,8 @@ class SparkleEngine {
      */
     reset() {
         // 重置场景
-        const sence = new Container({ engine: this })
-        this.changeSenceToContainer(sence)
+        const Scene = new Container({ engine: this })
+        this.changeSceneToContainer(Scene)
     }
 }
 

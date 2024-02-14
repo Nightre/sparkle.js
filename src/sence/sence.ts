@@ -4,7 +4,7 @@ import { Container, SparkleEngine } from "../main";
  * 场景
  * @example
  *  ```
- * class GameSence extends Sence{
+ * class GameScene extends Scene{
  *      preload(){
  *           engine.loader.baseUrl = "."
  *           engine.resource.loadTexture("static_img", "ground.png")
@@ -17,7 +17,7 @@ import { Container, SparkleEngine } from "../main";
  * 
  * ```
  */
-abstract class Sence {
+abstract class Scene {
     /**
      * 预加载，所有需要的资源可以在此处加载
      */
@@ -29,4 +29,4 @@ abstract class Sence {
     abstract create(engine: SparkleEngine): Container
 }
 
-export default Sence
+export default Scene
