@@ -117,10 +117,10 @@ const engine = new SparkleEngine({
 })
 ```
 
-Then write a [Sence](./tutorial.md#Sence). This scene has an additional `preload` method compared to the scene in Helloworld. Load the resources that need to be preloaded in the `preload` method. When all the resources in the preload method are loaded, the node returned by the `create` method of the scene will be used as the root node of the scene. Resources can be obtained using `engine.getAssets("jump")`.
+Then write a [Scene](./tutorial.md#Scene). This scene has an additional `preload` method compared to the scene in Helloworld. Load the resources that need to be preloaded in the `preload` method. When all the resources in the preload method are loaded, the node returned by the `create` method of the scene will be used as the root node of the scene. Resources can be obtained using `engine.getAssets("jump")`.
 
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     preload(){
         engine.loader.baseUrl = "."
         // Load a resource
@@ -135,7 +135,7 @@ class MainSence extends Sence {
     }
 }
 // 切换到目标场景
-engine.changeToSence(MainSence)
+engine.changeToScene(MainScene)
 ```
 Next, create a board for the table tennis game, which receives a position as a coordinate. Graphical can be used to display graphics (polygons, circles, squares, etc.), and then create a `Collision`, As a component. In Sparklejs, a component is also a node, for example, `Collision` and `Timer` are both components
 
@@ -173,7 +173,7 @@ Tags are a very useful thing that can simplify a lot of work. For more informati
 
 Then instantiate two boards and add them to the main scene
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     preload(){
         engine.loader.baseUrl = "."
         engine.resource.loadAudio("jump","jump.mp3")
@@ -243,7 +243,7 @@ class Ball extends Graphical {
 
 The two-dimensional vector operation function generally has a `create` parameter behind it, which means whether to create a new vector or modify the original vector, and then add the ball to the main scene
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     //...
     create() {
         const root = new Container()
@@ -330,7 +330,7 @@ class Ball extends Graphical {
     }
 }
 
-class MainSence extends Sence {
+class MainScene extends Scene {
     //...
     create() {
         //...

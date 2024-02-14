@@ -169,17 +169,17 @@ class SparkleEngine {
      * @param Scene 
      * @returns 
      */
-    instantiateScene<T extends Scene>(Scene: new () => T) {
+    instantiateScene<T extends Scene>(newScene: new () => T) {
         return new Promise<Container>((resolve) => {
             
             this.resource.startRegion()
-            const Scene = new Scene()
-            if (!this.loadedScenes.has(Scene)) {
-                Scene.preload()
-                this.loadedScenes.add(Scene)                
+            const s = new newScene()
+            if (!this.loadedScenes.has(newScene)) {
+                s.preload()
+                this.loadedScenes.add(newScene)                
             }
             this.resource.endRegion(() => {
-                resolve(Scene.create(this))
+                resolve(s.create(this))
             })
         })
     }

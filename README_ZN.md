@@ -77,7 +77,7 @@ const engine = new SparkleEngine({
 然后创建一个场景，切换到该场景
 
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     preload(){
         // 在这里加载资源，不过这个Helloworld项目不需要加载资源
         // 所以无需写任何代码
@@ -91,7 +91,7 @@ class MainSence extends Sence {
     }
 }
 // 切换场景
-engine.changeToSence(MainSence)
+engine.changeToScene(MainScene)
 ```
 
 然后你就能看见屏幕上有个`Hello World`了
@@ -119,7 +119,7 @@ const engine = new SparkleEngine({
 
 然后编写一个[场景](./tutorial_ZN.md#场景)，这个场景比 Helloworld 中的场景多了一个`preload`方法，在`preload`方法中加载需要预加载的资源，当`perload`方法中的所有资源加载完毕，会调用场景的`create`方法返回的节点将作为场景根节点，资源可以使用`engine.getAssets("jump")`获取
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     preload(){
         engine.loader.baseUrl = "."
         // 加载一个资源
@@ -134,7 +134,7 @@ class MainSence extends Sence {
     }
 }
 // 切换到目标场景
-engine.changeToSence(MainSence)
+engine.changeToScene(MainScene)
 ```
 接下来创建乒乓球游戏的板子，他接收一个position作为坐标，Graphical 可以用来显示图形（多边形，圆形，方形等），然后创建一个`Collision`子节点，作为一个组件。在Sparklejs中组件也是一个节点，比如`Collision`和`Timer`都是节点
 
@@ -172,7 +172,7 @@ class Board extends Graphical {
 
 然后实例化两个板子，并加入到主场景
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     preload(){
         engine.loader.baseUrl = "."
         engine.resource.loadAudio("jump","jump.mp3")
@@ -242,7 +242,7 @@ class Ball extends Graphical {
 二维向量操作函数一般后面都一个`create`参数，代表是否创建一个新的向量或者是修改原本的向量，然后把ball加入到主场景
 
 ```js
-class MainSence extends Sence {
+class MainScene extends Scene {
     //...
     create() {
         const root = new Container()
@@ -329,7 +329,7 @@ class Ball extends Graphical {
     }
 }
 
-class MainSence extends Sence {
+class MainScene extends Scene {
     //...
     create() {
         //...

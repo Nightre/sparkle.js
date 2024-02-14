@@ -23,7 +23,7 @@
 
 # Scene
 
-The above `MainSence` is a game scene, the preload method of the scene is used to preload resources. 
+The above `MainScene` is a game scene, the preload method of the scene is used to preload resources. 
 Once all the resources of the preload method are loaded, the `create` method of the scene will be called, and the node returned by this method will be used as the root node of the scene tree. 
 The scene tree is a data structure for organizing and managing various elements in the game scene. It is similar to a tree, and each node can contain child nodes. 
 In sparkle.js, components (such as the Timer in the figure below) are also nodes.
@@ -37,7 +37,7 @@ Sprite (Used for displaying)
 
 Through the scene tree, game developers can easily manage the elements in the scene, and their relative positions, rotations, scales and other properties are relative to the parent node.
 
-Use `engine.changeToSence` to switch scenes, if you want to switch directly to a node then you can use `engine.changeSenceToContainer`
+Use `engine.changeToScene` to switch scenes, if you want to switch directly to a node then you can use `engine.changeSceneToContainer`
 
 # Node
 
