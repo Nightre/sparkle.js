@@ -18,25 +18,25 @@ Sparkle.js 是一个基于WebGL的HTML5的0依赖轻量级小巧的游戏引擎�
 * [快速开始](#快速开始)
 * [第一个项目：HelloWord](#第一个项目HelloWord)
 * [第二个项目：乒乓球](#第二个项目乒乓球)
-* [场景](./tutorial_ZH.md#场景)
-* [节点](./tutorial_ZH.md#节点)
-  * [生命周期](./tutorial_ZH.md#生命周期)
-  * [事件](./tutorial_ZH.md#事件)
-  * [标签查找](./tutorial_ZH.md#标签查找)
-* [游戏节点](./tutorial_ZH.md#游戏节点)
-  * [精灵](./tutorial_ZH.md#精灵)
-  * [文字](./tutorial_ZH.md#文字)
-  * [计时器](./tutorial_ZH.md#计时器)
-  * [碰撞](./tutorial_ZH.md#碰撞)
-* [资源](./tutorial_ZH.md#资源)
-  * [资源预加载](./tutorial_ZH.md#资源预加载)
-  * [纹理](./tutorial_ZH.md#纹理)
-  * [音频](./tutorial_ZH.md#音频)
-  * [动画](./tutorial_ZH.md#动画)
-* [调试工具](./tutorial_ZH.md#调试工具)
-* [输入](./tutorial_ZH.md#输入)
-  * [鼠标输入](./tutorial_ZH.md#鼠标输入)
-  * [键盘输入](./tutorial_ZH.md#键盘输入)
+* [场景](./tutorial_ZN.md#场景)
+* [节点](./tutorial_ZN.md#节点)
+  * [生命周期](./tutorial_ZN.md#生命周期)
+  * [事件](./tutorial_ZN.md#事件)
+  * [标签查找](./tutorial_ZN.md#标签查找)
+* [游戏节点](./tutorial_ZN.md#游戏节点)
+  * [精灵](./tutorial_ZN.md#精灵)
+  * [文字](./tutorial_ZN.md#文字)
+  * [计时器](./tutorial_ZN.md#计时器)
+  * [碰撞](./tutorial_ZN.md#碰撞)
+* [资源](./tutorial_ZN.md#资源)
+  * [资源预加载](./tutorial_ZN.md#资源预加载)
+  * [纹理](./tutorial_ZN.md#纹理)
+  * [音频](./tutorial_ZN.md#音频)
+  * [动画](./tutorial_ZN.md#动画)
+* [调试工具](./tutorial_ZN.md#调试工具)
+* [输入](./tutorial_ZN.md#输入)
+  * [鼠标输入](./tutorial_ZN.md#鼠标输入)
+  * [键盘输入](./tutorial_ZN.md#键盘输入)
 
 # 快速开始
 
@@ -116,7 +116,7 @@ const engine = new SparkleEngine({
 })
 ```
 
-然后编写一个[场景](./tutorial_ZH.md#场景)，这个场景比 Helloworld 中的场景多了一个`preload`方法，在`preload`方法中加载需要预加载的资源，当`perload`方法中的所有资源加载完毕，会调用场景的`create`方法返回的节点将作为场景根节点，资源可以使用`engine.getAssets("jump")`获取
+然后编写一个[场景](./tutorial_ZN.md#场景)，这个场景比 Helloworld 中的场景多了一个`preload`方法，在`preload`方法中加载需要预加载的资源，当`perload`方法中的所有资源加载完毕，会调用场景的`create`方法返回的节点将作为场景根节点，资源可以使用`engine.getAssets("jump")`获取
 ```js
 class MainSence extends Sence {
     preload(){
@@ -137,7 +137,7 @@ engine.changeToSence(MainSence)
 ```
 接下来创建乒乓球游戏的板子，他接收一个position作为坐标，Graphical 可以用来显示图形（多边形，圆形，方形等），然后创建一个`Collision`子节点，作为一个组件。在Sparklejs中组件也是一个节点，比如`Collision`和`Timer`都是节点
 
-更多信息请查看[节点](./tutorial_ZH.md#节点)
+更多信息请查看[节点](./tutorial_ZN.md#节点)
 ```js
 class Board extends Graphical {
     constructor(position) {
@@ -167,7 +167,7 @@ class Board extends Graphical {
     }
 }
 ```
-标签是一个很有用的东西，能简化很多工作，详细信息请查看[标签查找](./tutorial_ZH.md#标签查找)
+标签是一个很有用的东西，能简化很多工作，详细信息请查看[标签查找](./tutorial_ZN.md#标签查找)
 
 然后实例化两个板子，并加入到主场景
 ```js
@@ -236,7 +236,7 @@ class Ball extends Graphical {
     }
 }
 ```
-`onUpdate`是每一帧都会调用的一个函数，`onReady`是该节点准备好且其子节点也准备好时被调用。具体请查看[生命周期](./tutorial_ZH.md#生命周期)
+`onUpdate`是每一帧都会调用的一个函数，`onReady`是该节点准备好且其子节点也准备好时被调用。具体请查看[生命周期](./tutorial_ZN.md#生命周期)
 
 二维向量操作函数一般后面都一个`create`参数，代表是否创建一个新的向量或者是修改原本的向量，然后把ball加入到主场景
 
@@ -276,7 +276,7 @@ class Ball extends Graphical {
     }
 }
 ```
-`engine.getAssets("jump")`用于获取资源，`onBodyEnter`将在有物理体进入ball时被调用，但你也可使用[事件](./tutorial_ZH.md#事件)来监听，好了现在你可以看见球碰到板子会反弹了
+`engine.getAssets("jump")`用于获取资源，`onBodyEnter`将在有物理体进入ball时被调用，但你也可使用[事件](./tutorial_ZN.md#事件)来监听，好了现在你可以看见球碰到板子会反弹了
 
 接下来添加一个分数
 ```js
@@ -305,7 +305,7 @@ class scoreText extends Text{
     }
 }
 ```
-你可能会好奇，为什么scoreText和collision写法有点不一样，这两种都是可以的，具体查看[节点](./tutorial_ZH.md#节点)，然后把scoreText加入到主场景，并在碰撞到板子的时候加分，球跑出屏幕外时restart
+你可能会好奇，为什么scoreText和collision写法有点不一样，这两种都是可以的，具体查看[节点](./tutorial_ZN.md#节点)，然后把scoreText加入到主场景，并在碰撞到板子的时候加分，球跑出屏幕外时restart
 ```js
 class Ball extends Graphical {
     constructor() {
@@ -342,6 +342,6 @@ class MainSence extends Sence {
 
 ### 接下来干什么...：
 * 阅读[小鸟跑步](https://nightre.github.io/sparkle.js/demo/chrome-dino)demo的源码
-* 阅读[教程](./tutorial_ZH.md)
+* 阅读[教程](./tutorial_ZN.md)
 * 阅读[API](https://nightre.github.io/sparkle.js/docs/index)
 * 或者点个 star ？滑稽
