@@ -6,7 +6,7 @@
 </div>
 
 Sparkle.js 是一个基于WebGL的HTML5的0依赖轻量级小巧的游戏引擎，让游戏开发变得简单且有趣！
-^_^
+^_^ [教程](./tutorial_ZN.md)
 
 # 目录
 
@@ -18,25 +18,26 @@ Sparkle.js 是一个基于WebGL的HTML5的0依赖轻量级小巧的游戏引擎�
 * [快速开始](#快速开始)
 * [第一个项目：HelloWord](#第一个项目HelloWord)
 * [第二个项目：乒乓球](#第二个项目乒乓球)
-* [场景](./tutorial_ZN.md#场景)
-* [节点](./tutorial_ZN.md#节点)
-  * [生命周期](./tutorial_ZN.md#生命周期)
-  * [事件](./tutorial_ZN.md#事件)
-  * [标签查找](./tutorial_ZN.md#标签查找)
-* [游戏节点](./tutorial_ZN.md#游戏节点)
-  * [精灵](./tutorial_ZN.md#精灵)
-  * [文字](./tutorial_ZN.md#文字)
-  * [计时器](./tutorial_ZN.md#计时器)
-  * [碰撞](./tutorial_ZN.md#碰撞)
-* [资源](./tutorial_ZN.md#资源)
-  * [资源预加载](./tutorial_ZN.md#资源预加载)
-  * [纹理](./tutorial_ZN.md#纹理)
-  * [音频](./tutorial_ZN.md#音频)
-  * [动画](./tutorial_ZN.md#动画)
-* [调试工具](./tutorial_ZN.md#调试工具)
-* [输入](./tutorial_ZN.md#输入)
-  * [鼠标输入](./tutorial_ZN.md#鼠标输入)
-  * [键盘输入](./tutorial_ZN.md#键盘输入)
+* [教程](./tutorial_ZN.md)
+    * [场景](./tutorial_ZN.md#场景)
+    * [节点](./tutorial_ZN.md#节点)
+        * [生命周期](./tutorial_ZN.md#生命周期)
+        * [事件](./tutorial_ZN.md#事件)
+        * [标签查找](./tutorial_ZN.md#标签查找)
+    * [游戏节点](./tutorial_ZN.md#游戏节点)
+        * [精灵](./tutorial_ZN.md#精灵)
+        * [文字](./tutorial_ZN.md#文字)
+        * [计时器](./tutorial_ZN.md#计时器)
+        * [碰撞](./tutorial_ZN.md#碰撞)
+    * [资源](./tutorial_ZN.md#资源)
+        * [资源预加载](./tutorial_ZN.md#资源预加载)
+        * [纹理](./tutorial_ZN.md#纹理)
+        * [音频](./tutorial_ZN.md#音频)
+        * [动画](./tutorial_ZN.md#动画)
+    * [调试工具](./tutorial_ZN.md#调试工具)
+    * [输入](./tutorial_ZN.md#输入)
+        * [鼠标输入](./tutorial_ZN.md#鼠标输入)
+        * [键盘输入](./tutorial_ZN.md#键盘输入)
 
 # 快速开始
 
