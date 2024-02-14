@@ -1,6 +1,6 @@
 import { 
     SparkleEngine,
-    Sence,
+    Scene,
     Container,
     Sprite,
     Rect,
@@ -76,7 +76,7 @@ const Player = () => {
             // 获取资源并播放
             engine.getAssets("die_muisc").play()
             // 切换场景
-            engine.changeToSence(LoseSence)
+            engine.changeToScene(LoseScene)
         } else if (body.tag.has("coin")) {
             // 拾取金币
             body.parent.pick()
@@ -99,7 +99,7 @@ const Player = () => {
 }
     
 // 这是另外一种编写模式，是继承某个类
-// 若你觉得这种方法不和你口味，可以使用上面的 playerSence的
+// 若你觉得这种方法不和你口味，可以使用上面的 playerScene的
 // 状态函数方式来写
 class GameManager extends Container { // Container 是所有节点的基类，他能有多个子节点，一个父节点
     constructor(options) {
@@ -187,7 +187,7 @@ class Coin extends MovingObject {
         this.rotation += dt * 1
     }
 }
-class GameSence extends Sence {
+class GameScene extends Scene {
     preload() {
         // 在preload函数中加载所需资源
         // 切换到场景的时候会先preload之后create
@@ -278,11 +278,11 @@ const PlayAgin = () => {
     }
     // 当被点击时触发，也可以用事件
     collision.onClick = () => {
-        engine.changeToSence(GameSence)
+        engine.changeToScene(GameScene)
     }
     return playAgin
 }
-class LoseSence extends Sence {
+class LoseScene extends Scene {
     create(_engine) {
         const root = new Container()
         root.addChild(new Text({
@@ -307,4 +307,4 @@ class LoseSence extends Sence {
 }
 
 // 切换到游戏场景
-engine.changeToSence(GameSence)
+engine.changeToScene(GameScene)

@@ -1,6 +1,6 @@
 import {
     SparkleEngine,
-    Sence,
+    Scene,
     Vector2,
     Text,
 } from "https://unpkg.com/sparkle-engine/dist/sparkle.js"
@@ -10,7 +10,7 @@ const engine = new SparkleEngine({
     canvas: document.getElementById("game"),
 })
 
-class MainSence extends Sence {
+class MainScene extends Scene {
     create(){
         const text = new Text({
             position: new Vector2(10,10),
@@ -21,4 +21,4 @@ class MainSence extends Sence {
     }
 }
 
-engine.changeToSence(MainSence)
+engine.changeToScene(MainScene)

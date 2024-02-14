@@ -1,6 +1,6 @@
 import {
     SparkleEngine,
-    Sence,
+    Scene,
     Vector2,
     Text,
     Color,
@@ -117,7 +117,7 @@ class scoreText extends Text {
     }
 }
 
-class MainSence extends Sence {
+class MainScene extends Scene {
     preload() {
         engine.loader.baseUrl = "."
         engine.resource.loadAudio("jump", "jump.mp3")
@@ -133,4 +133,4 @@ class MainSence extends Sence {
     }
 }
 
-engine.changeToSence(MainSence)
+engine.changeToScene(MainScene)
