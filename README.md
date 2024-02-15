@@ -7,7 +7,7 @@
 
 Sparkle.js is a lightweight and compact game engine based on WebGL for HTML5 with zero dependencies, making game development simple and fun!
 
-![img](https://github.com/Nightre/sparkle.js/assets/149653910/2127c1ca-1edd-4f63-bec7-d72f00b2c35d)
+[![img](https://github.com/Nightre/sparkle.js/assets/149653910/2127c1ca-1edd-4f63-bec7-d72f00b2c35d)](https://nightre.github.io/sparkle.js/demo/chrome-dino)
 
 [中文文档](./README_ZN.md)
 
