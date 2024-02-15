@@ -134,7 +134,7 @@ class MainScene extends Scene {
         return root
     }
 }
-// 切换到目标场景
+// Switch to the target scene
 engine.changeToScene(MainScene)
 ```
 Next, create a board for the table tennis game, which receives a position as a coordinate. Graphical can be used to display graphics (polygons, circles, squares, etc.), and then create a `Collision`, As a component. In Sparklejs, a component is also a node, for example, `Collision` and `Timer` are both components

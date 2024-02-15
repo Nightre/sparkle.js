@@ -7,7 +7,8 @@ import Timer from "./timer"
 import Animations from "../animation/animation";
 /**
  * 精灵
- * @example ```
+ * @example 
+ * ```
  * const node = new Sprite({
  *      texture: yourTexture
  * })
