@@ -4,7 +4,6 @@ import { IContainerEvent, IContainerOptions, IEventAble, IListened } from "../in
 import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import pool, { PoolManager } from "../system/pool";
-import Drawable from "./drawable";
 
 /**
  * 所有游戏对象的基类，可以容纳子节点

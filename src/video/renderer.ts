@@ -1,6 +1,6 @@
 import { SparkleEngine } from "../engine";
 import { IRenderOptions } from "../interface";
-import { Collision, Color, Drawable, IDrawLineOptions, IDrawOptions, IDrawPolygonOptions, PRIMITIVE_MODE, SCALE_MODE, Transform2D, Vector2 } from "../main";
+import { Color, IDrawLineOptions, IDrawOptions, IDrawPolygonOptions, PRIMITIVE_MODE, SCALE_MODE, Transform2D, Vector2 } from "../main";
 import Matrix from "../math/martix";
 import Container from "../nodes/container";
 import pool from "../system/pool";
