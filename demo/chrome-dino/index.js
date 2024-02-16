@@ -9,7 +9,7 @@ import {
     Text,
     TextAnchor,
     Timer,
-} from "https://unpkg.com/sparkle-engine/dist/sparkle.js"
+} from "../../src/main"//"https://unpkg.com/sparkle-engine/dist/sparkle.js"
 
 const engine = new SparkleEngine({
     // 指定游戏画布元素
@@ -236,7 +236,7 @@ class GameScene extends Scene {
         // 创建背景节点
         const bg = new Sprite({
             texture: engine.getAssets("background"),
-            scale: new Vector2(10)
+            scale: new Vector2(10),
         })
         bg.addChild(
             ground
@@ -257,7 +257,8 @@ class GameScene extends Scene {
 // 重来按钮
 const PlayAgin = () => {
     const collision = new Collision({
-        shape: Collision.rectShape(0, 0, 180, 50)
+        shape: Collision.rectShape(0, 0, 180, 50),
+        offset: new Vector2(180/2,0)
     })
 
     const playAgin = new Text({

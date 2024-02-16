@@ -140,13 +140,13 @@ class Sprite extends Drawable {
      * @ignore
      * @returns 
      */
-    draw(): void {
-        super.draw();
+    flush(): void {
+        super.flush()
         if (!this.texture || !this.visible) {
             return;
         }
-
         this.renderer.setCompositors("texture");
+        
         const compositors = this.renderer.currentCompositors as TextureCompositors;
         const baseTexture = this.texture.baseTexture!;
         const enableRegion = this.clipRegion()
@@ -154,14 +154,14 @@ class Sprite extends Drawable {
         this.drawSize.set(w, h)
 
         compositors.setColor(this.color)
-        compositors.flush();
+        compositors.flush();        
     }
     /**
      * @ignore
      */
-    drawDebug() {
+    flushDebug() {
         this.engine.debugger?.drawDebugFrame(this.drawSize.x, this.drawSize.y)
-        super.drawDebug()
+        super.flushDebug()
     }
     /**
      * 设置动画帧

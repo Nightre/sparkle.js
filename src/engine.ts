@@ -143,6 +143,7 @@ class SparkleEngine {
         this.update(dt)
         this.renderer.draw()
         this.destoryChild()
+        
         window.requestAnimationFrame(this.loop.bind(this))
     }
     private destoryChild() {
