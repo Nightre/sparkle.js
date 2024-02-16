@@ -52,7 +52,7 @@ class Collision extends Transform2D {
             })
 
             this.collisions = nowCollisions
-            this.results = nowResults            
+            this.results = nowResults
         }
 
         super.update(dt)
@@ -104,9 +104,8 @@ class Collision extends Transform2D {
 
     draw(): void {
         super.draw()
-        const model = this.renderer.modelMatrix
         this.shape.forEach((v, index) => {
-            const [x, y] = model.apply(v.x, v.y)
+            const [x, y] = this.modelMatrix.apply(v.x, v.y)
             this.ShapePosition[index].set(
                 x, y
             )
@@ -115,10 +114,10 @@ class Collision extends Transform2D {
     }
 
     flushDebug(): void {
+        super.flushDebug()
         this.engine.debugger?.drawDebugCollision(
             this.shape
         )
-        super.flushDebug()
     }
     clearShape() {
         this.ShapePosition.forEach((v) => {

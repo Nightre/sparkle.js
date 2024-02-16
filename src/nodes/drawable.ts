@@ -14,10 +14,7 @@ class Drawable extends Transform2D {
     visible: boolean = true
     /** 绘制的大小 */
     drawSize: Vector2 = this.pool.Vector2.pull(0, 0)
-    /**
-     * 图层排序
-     */
-    zindex:number=0
+
     constructor(options: IDrawableOptions) {
         super(options)
         this.color = options.color ?? this.pool.Color.pull(1, 1, 1, 1)

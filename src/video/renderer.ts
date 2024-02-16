@@ -253,9 +253,12 @@ class Renderer {
         this.clear()
         this.root.draw()
         this.root.postDraw()
-        this.toDraw.sort((a, b) => a.zindex - b.zindex);
+        this.toDraw.sort((a, b) => a.z - b.z);
         for (const drawable of this.toDraw) {
             drawable.flush();
+            if (this.engine.debugger?.debugger) {
+                drawable.flushDebug();
+            }
         }
     }
 
