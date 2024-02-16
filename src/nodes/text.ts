@@ -48,8 +48,12 @@ class Text extends Drawable {
      * @ignore
      * @returns 
      */
-    draw(): void {
-        super.draw();
+
+    flush(): void {
+        super.flush()
+        if (!this.visible) {
+            return
+        }
         const m = this.renderer.modelMatrix
         switch (this.anchor) {
             case TextAnchor.CENTER:
@@ -59,9 +63,7 @@ class Text extends Drawable {
                 m.translate(-this.drawSize.x, 0)
                 break;
         }
-        if (!this.visible) {
-            return
-        }
+
         this.renderer.setCompositors("texture");
         const compositors = this.renderer.currentCompositors as TextureCompositors;
         compositors.addQuad(this.texture, false);

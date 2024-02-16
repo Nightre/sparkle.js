@@ -50,6 +50,7 @@ export interface ITransform2DOptions extends IContainerOptions {
     rotation?: number;
     skew?: Vector2;
     offset?: Vector2;
+    z?: number;
 }
 export interface ISpriteOptions extends IDrawableOptions {
     texture?: Texture;

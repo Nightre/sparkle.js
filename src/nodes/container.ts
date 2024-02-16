@@ -4,6 +4,7 @@ import { IContainerEvent, IContainerOptions, IEventAble, IListened } from "../in
 import { SparkleEngine } from "../engine";
 import EventEmitter from "../system/event";
 import pool, { PoolManager } from "../system/pool";
+import Drawable from "./drawable";
 
 /**
  * 所有游戏对象的基类，可以容纳子节点
@@ -211,10 +212,6 @@ class Container implements IEventAble<IContainerEvent> {
     /**
      * @ignore
      */
-    drawDebug() { }
-    /**
-     * @ignore
-     */
     draw() { }
     /**
      * @ignore
@@ -222,9 +219,6 @@ class Container implements IEventAble<IContainerEvent> {
     postDraw() {
         this.forEachChildren((child) => {
             child.draw();
-            if (this.engine.debugger?.debugger) {
-                child.drawDebug()
-            }
             child.postDraw();
             if (!child.isReady) {
                 child.ready()

@@ -19,7 +19,10 @@ class Transform2D extends Container {
     skew: Vector2;
     /** 偏移 */
     offset: Vector2;
-
+    /**
+     * 图层排序
+     */
+    z:number=0
     /** 
      * 全局坐标 
      * @readonly
@@ -31,7 +34,7 @@ class Transform2D extends Container {
      */
     globalRotation: number = 0
 
-    private modelMatrix: Matrix
+    modelMatrix: Matrix
 
     // setGlobalPosition(v: Vector2) {
     //     const invert = this.beforeModelMatrix.invert()
@@ -62,7 +65,7 @@ class Transform2D extends Container {
     constructor(options: ITransform2DOptions) {
         super(options)
         this.modelMatrix = this.pool.Matrix.pull()
-
+        this.z = options.z ?? 0
         this.position = options.position ?? this.pool.Vector2.pull(0, 0);
         this.scale = options.scale ?? this.pool.Vector2.pull(1, 1);
         this.skew = options.skew ?? this.pool.Vector2.pull(0, 0);
@@ -78,47 +81,45 @@ class Transform2D extends Container {
         this.renderer.save()
 
         this.renderer.modelMatrix.translate(
-            this.position!.x, this.position!.y
+            this.position.x, this.position.y
         );
 
         this.renderer.modelMatrix.rotate(
-            this.rotation!
+            this.rotation
         );
         this.globalRotation = this.renderer.modelMatrix.getRotation()
 
         this.renderer.modelMatrix.scale(
-            this.scale!.x, this.scale!.y
+            this.scale.x, this.scale.y
         );
 
         this.renderer.modelMatrix.skew(
-            this.skew!.x, this.skew!.y
+            this.skew.x, this.skew.y
         );
-
 
         const [x, y] = this.renderer.modelMatrix.apply(0, 0)
         this.globalPosition.set(x, y)
+        this.renderer.toDraw.push(this)
+
         this.modelMatrix.copy(this.renderer.modelMatrix)
-        this.renderer.modelMatrix.translate(
-            -this.offset!.x, -this.offset!.y
+        this.modelMatrix.translate(
+            -this.offset.x, -this.offset.y
         );
+    }
+    flush(){
+        this.renderer.modelMatrix.copy(this.modelMatrix)
     }
     /**
      * @ignore
      */
-    drawDebug() {
-        super.drawDebug()
-        this.renderer.save()
-        this.renderer.modelMatrix.copy(this.modelMatrix)
+    flushDebug() {
+        // this.renderer.modelMatrix.copy(this.modelMatrix)
         this.engine.debugger?.addDebugCross()
-        this.renderer.restore()
     }
     /**
      * @ignore
      */
     postDraw(): void {
-        this.renderer.modelMatrix.translate(
-            this.offset!.x, this.offset!.y
-        );
         super.postDraw();
         this.renderer.restore();
     }
