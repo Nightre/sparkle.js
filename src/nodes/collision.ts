@@ -22,8 +22,9 @@ class Collision extends Transform2D {
     physics: PhysicsManager
     results: ICollisionResult[] = []
     collisions: Collision[] = []
+    shapeReady: boolean = false
     declare event: EventEmitter<ICollisionEvent>;
-    
+
     constructor(options: ICollisionOptions) {
         super(options)
         this.setShape(options.shape ?? [])
@@ -32,27 +33,28 @@ class Collision extends Transform2D {
         // 获取所有 Collision this.physics.getCollision(this)
     }
     update(dt: number): void {
-        
+        if (this.shapeReady) {
+            const nowResults = this.collisionDetection()
+            const nowCollisions: Collision[] = []
 
-        const nowResults = this.collisionDetection()
-        const nowCollisions: Collision[] = []
+            nowResults.forEach((r) => {
+                if (!this.collisions.includes(r.body)) {
+                    this.onBodyEnter(r)
+                    this.event.emit("onBodyEnter", r)
+                }
+                nowCollisions.push(r.body)
+            })
+            this.collisions.forEach((body) => {
+                if (!nowCollisions.includes(body)) {
+                    this.onBodyExit(body)
+                    this.event.emit("onBodyExit", body)
+                }
+            })
 
-        nowResults.forEach((r) => {
-            if (!this.collisions.includes(r.body)) {
-                this.onBodyEnter(r)
-                this.event.emit("onBodyEnter", r)
-            }
-            nowCollisions.push(r.body)
-        })
-        this.collisions.forEach((body) => {
-            if (!nowCollisions.includes(body)) {
-                this.onBodyExit(body)
-                this.event.emit("onBodyExit", body)
-            }
-        })
+            this.collisions = nowCollisions
+            this.results = nowResults            
+        }
 
-        this.collisions = nowCollisions
-        this.results = nowResults
         super.update(dt)
     }
     setShape(shape: Vector2[]) {
@@ -61,6 +63,7 @@ class Collision extends Transform2D {
             this.shape.push(v.clone())
             this.ShapePosition.push(v.clone())
         })
+        this.shapeReady = false
     }
     /**
      * 检测碰撞，一般不需要手动调用
@@ -108,12 +111,14 @@ class Collision extends Transform2D {
                 x, y
             )
         });
+        this.shapeReady = true
     }
-    drawDebug(): void {
+
+    flushDebug(): void {
         this.engine.debugger?.drawDebugCollision(
             this.shape
         )
-        super.drawDebug()
+        super.flushDebug()
     }
     clearShape() {
         this.ShapePosition.forEach((v) => {

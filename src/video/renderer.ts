@@ -1,6 +1,6 @@
 import { SparkleEngine } from "../engine";
 import { IRenderOptions } from "../interface";
-import { Color, IDrawLineOptions, IDrawOptions, IDrawPolygonOptions, PRIMITIVE_MODE, SCALE_MODE, Vector2 } from "../main";
+import { Collision, Color, Drawable, IDrawLineOptions, IDrawOptions, IDrawPolygonOptions, PRIMITIVE_MODE, SCALE_MODE, Transform2D, Vector2 } from "../main";
 import Matrix from "../math/martix";
 import Container from "../nodes/container";
 import pool from "../system/pool";
@@ -51,6 +51,7 @@ class Renderer {
     private visableStack: boolean[] = []
     /** 合成器存储  */
     private compositors: Map<string, Compositor> = new Map
+    toDraw: Array<Transform2D> = []
 
     constructor(engine: SparkleEngine, options: IRenderOptions) {
         this.gl = getContext(options.canvas, {
@@ -201,7 +202,9 @@ class Renderer {
     clear() {
         const gl = this.gl
         const bg = this.backgroundColor
-        
+        this.toDraw = []
+        this.modelMatrix.identity()
+        this.visable = true
         gl.clearColor(bg.r, bg.g, bg.b, bg.alpha)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     }
@@ -250,17 +253,21 @@ class Renderer {
         this.clear()
         this.root.draw()
         this.root.postDraw()
+        this.toDraw.sort((a, b) => a.zindex - b.zindex);
+        for (const drawable of this.toDraw) {
+            drawable.flush();
+        }
     }
 
-    private initCostumDraw(options:IDrawOptions){
+    private initCostumDraw(options: IDrawOptions) {
         this.setCompositors("primitive", options.shader)
         if (options.color) {
             this.currentCompositors.setColor(options.color)
         } else {
-            this.currentCompositors.setColorByRGBA(0,0,0,1)
+            this.currentCompositors.setColorByRGBA(0, 0, 0, 1)
         }
     }
-    
+
     drawLine(options: IDrawLineOptions) {
         this.initCostumDraw(options);
         const compositors = (this.currentCompositors as PrimitiveCompositors)

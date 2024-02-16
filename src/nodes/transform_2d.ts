@@ -94,31 +94,25 @@ class Transform2D extends Container {
             this.skew!.x, this.skew!.y
         );
 
-
         const [x, y] = this.renderer.modelMatrix.apply(0, 0)
         this.globalPosition.set(x, y)
         this.modelMatrix.copy(this.renderer.modelMatrix)
-        this.renderer.modelMatrix.translate(
-            -this.offset!.x, -this.offset!.y
-        );
+        this.renderer.toDraw.push(this)
+    }
+    flush(){
+        this.renderer.modelMatrix.copy(this.modelMatrix)
+        this.flushDebug()
     }
     /**
      * @ignore
      */
-    drawDebug() {
-        super.drawDebug()
-        this.renderer.save()
-        this.renderer.modelMatrix.copy(this.modelMatrix)
+    flushDebug() {
         this.engine.debugger?.addDebugCross()
-        this.renderer.restore()
     }
     /**
      * @ignore
      */
     postDraw(): void {
-        this.renderer.modelMatrix.translate(
-            this.offset!.x, this.offset!.y
-        );
         super.postDraw();
         this.renderer.restore();
     }
