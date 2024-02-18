@@ -7,11 +7,11 @@
     "dist/*",
     "index.d.ts"
   ],
-  "main": "./src/index.ts",
+  "main": "./dist/sparkle.umd.cjs",
   "module": "./dist/sparkle.js",
   "types": "./dist/main.d.ts",
   "exports": {
-    "types": "./index.d.ts",
+    "types": "./dist/main.d.ts",
     "import": "./dist/sparkle.js",
     "require": "./dist/sparkle.umd.cjs"
   },
