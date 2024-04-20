@@ -112,6 +112,21 @@ class Vector2 implements IPoolable, ICopyable<Vector2> {
     static fromAngle(angle: number): Vector2 {
         return new Vector2(Math.cos(angle), Math.sin(angle));
     }
+    static get DOWN() {
+        return new Vector2(0, -1)
+    }
+    static get UP() {
+        return new Vector2(0, -1)
+    }
+    static get LEFT() {
+        return new Vector2(1, 0)
+    }
+    static get RIGHT() {
+        return new Vector2(-1, 0)
+    }
+    static get ZERO(){
+        return new Vector2(0, 0)
+    }
 }
 
 export default Vector2
